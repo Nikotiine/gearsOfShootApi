@@ -8,6 +8,8 @@ import { CommonModule } from './common/common.module';
 import { WeaponModule } from './weapon/weapon.module';
 import { AmmunitionModule } from './ammunition/ammunition.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { NodemailerModule } from './nodemailer/nodemailer.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { UserModule } from './user/user.module';
     WeaponModule,
     AmmunitionModule,
     UserModule,
+    AuthModule,
+    NodemailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
