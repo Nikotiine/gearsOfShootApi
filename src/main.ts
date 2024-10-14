@@ -6,8 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
-    .setTitle('NikoArme API')
-    .setDescription('NikoArme API description')
+    .setTitle('Gears of shoot')
+    .setDescription('Gears of shoot API')
     .setVersion('1.0')
     .addBearerAuth(
       {
