@@ -1,6 +1,6 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { ThreadedSize } from './threadedSize.entity';
+import { ThreadedSize } from './threaded-size.entity';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
 @Entity()

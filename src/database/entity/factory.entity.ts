@@ -3,8 +3,8 @@ import { BaseEntity } from './base.entity';
 import { Weapon } from './weapon.entity';
 import { FactoryType } from '../../enum/factoryTypes.enum';
 import { Ammunition } from './ammunition.entity';
-import { WeaponMagazine } from './weaponMagazine.entity';
-import { SoundNoiseReducer } from './soundNoiseReducer.entity';
+import { WeaponMagazine } from './weapon-magazine.entity';
+import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 
 @Entity()
 export class Factory extends BaseEntity {

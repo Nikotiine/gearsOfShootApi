@@ -7,10 +7,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Weapon } from '../database/entity/weapon.entity';
 import { WeaponType } from '../database/entity/weaponType.entity';
 import { WeaponMagazine } from '../database/entity/weaponMagazine.entity';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   controllers: [WeaponController, WeaponTypeController],
   providers: [WeaponService, WeaponTypeService],
-  imports: [TypeOrmModule.forFeature([Weapon, WeaponType, WeaponMagazine])],
+  imports: [
+    TypeOrmModule.forFeature([Weapon, WeaponType, WeaponMagazine]),
+    CommonModule,
+  ],
 })
 export class WeaponModule {}

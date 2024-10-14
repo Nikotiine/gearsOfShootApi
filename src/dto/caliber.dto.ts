@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCaliberDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: '17 HMR',
+  })
   name: string;
 }
 export class CaliberDto extends CreateCaliberDto {

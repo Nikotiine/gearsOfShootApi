@@ -3,16 +3,16 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { LegislationCategories } from '../../enum/legislationCategories.enum';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
-import { WeaponType } from './weaponType.entity';
+import { WeaponType } from './weapon-type.entity';
 import { BarrelTypes } from '../../enum/barrelTypes.enum';
-import { ThreadedSize } from './threadedSize.entity';
+import { ThreadedSize } from './threaded-size.entity';
 @Entity()
 export class Weapon extends BaseEntity {
   @Column()
   name: string;
-  @Column()
+  @Column({ nullable: true })
   variation: string;
-  @Column()
+  @Column({ nullable: true })
   description: string;
   @Column({ enum: LegislationCategories })
   category: LegislationCategories;
@@ -22,7 +22,7 @@ export class Weapon extends BaseEntity {
   factory: Factory;
   @ManyToOne(() => WeaponType, (type) => type.weapons)
   type: WeaponType;
-  @Column()
+  @Column({ nullable: true })
   barrelLength: number;
   @Column({ default: false })
   isOpticReady: boolean;

@@ -1,10 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { TokenDto } from '../dto/user.dto';
 import { User } from '../database/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { promisify } from 'util';
 import { pbkdf2 as _pbkdf2 } from 'crypto';
+import { CodeError } from '../enum/code-error.enum';
 
 @Injectable()
 export class AuthService {
@@ -26,22 +31,13 @@ export class AuthService {
   }
 
   public async validateUser(email: string, password: string): Promise<User> {
-    const invalidCredentialMessage = 'credentials';
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
-      throw new HttpException(
-        invalidCredentialMessage,
-        HttpStatus.BAD_REQUEST,
-        {
-          cause: new Error(),
-        },
-      );
+      throw new BadRequestException(CodeError.BAD_CREDENTIAL);
     }
 
     if (!(await this.verifyPassword(user.password, password))) {
-      throw new HttpException(invalidCredentialMessage, HttpStatus.FORBIDDEN, {
-        cause: new Error(),
-      });
+      throw new ForbiddenException(CodeError.BAD_CREDENTIAL);
     }
     return user;
   }

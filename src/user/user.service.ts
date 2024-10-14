@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UserDto } from '../dto/user.dto';
+import { CodeError } from '../enum/code-error.enum';
 
 @Injectable()
 export class UserService {
@@ -25,7 +26,7 @@ export class UserService {
   public async insert(user: CreateUserDto): Promise<UserDto> {
     const isExist = await this.findOneByEmail(user.email);
     if (isExist) {
-      throw new BadRequestException('deja pris');
+      throw new BadRequestException(CodeError.EMAIL_IS_USED);
     }
     const entity = this.userRepository.create({
       firstName: user.firstName,

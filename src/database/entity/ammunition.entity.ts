@@ -3,15 +3,15 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { LegislationCategories } from '../../enum/legislationCategories.enum';
 import { Factory } from './factory.entity';
 import { Caliber } from './caliber.entity';
-import { AmmunitionHeadType } from './ammunitionHeadType.entity';
-import { AmmunitionBodyType } from './ammunitionBodyType.entity';
+import { AmmunitionHeadType } from './ammunition-head-type.entity';
+import { AmmunitionBodyType } from './ammunition-body-type.entity';
 import { PercussionType } from '../../enum/percussionTypes.enum';
 
 @Entity()
 export class Ammunition extends BaseEntity {
   @Column()
   name: string;
-  @Column()
+  @Column({ nullable: true })
   description: string;
   @Column({ enum: LegislationCategories })
   category: LegislationCategories;
