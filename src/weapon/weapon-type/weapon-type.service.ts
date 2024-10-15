@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WeaponType } from '../../database/entity/weaponType.entity';
+import { WeaponType } from '../../database/entity/weapon-type.entity';
 import { Repository } from 'typeorm';
-import { WeaponTypeDto } from '../../dto/weaponType.dto';
+import { CreateWeaponTypeDto, WeaponTypeDto } from '../../dto/weapon.dto';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class WeaponTypeService {
@@ -11,6 +12,9 @@ export class WeaponTypeService {
     private readonly weaponTypeRepository: Repository<WeaponType>,
   ) {}
 
+  /**
+   * Retourne tout les type d'arme different
+   */
   public async findAll(): Promise<WeaponTypeDto[]> {
     const weaponTypes: WeaponType[] = await this.weaponTypeRepository.find();
     return weaponTypes.map((type) => {
@@ -18,6 +22,39 @@ export class WeaponTypeService {
         id: type.id,
         name: type.name,
       };
+    });
+  }
+
+  /**
+   * Ajout d'un nouveau type d'arme
+   * On verfie avant l'insertion si le nom est pas deja present en bdd
+   * @param weaponType {CreateWeaponTypeDto}
+   */
+  public async insert(weaponType: CreateWeaponTypeDto): Promise<WeaponTypeDto> {
+    const isExist = await this.findByName(weaponType.name);
+    if (isExist) {
+      throw new BadRequestException(CodeError.WEAPON_TYPE_NAME_USED);
+    }
+    const entity = this.weaponTypeRepository.create({
+      name: weaponType.name,
+    });
+    const created = await this.weaponTypeRepository.save(entity);
+    return {
+      id: created.id,
+      name: created.name,
+    };
+  }
+
+  /**
+   * Retourne un weaponType si il est trouver par son nom
+   * @param name {string} nom du type d'arme
+   * @private
+   */
+  private async findByName(name: string): Promise<WeaponType> {
+    return this.weaponTypeRepository.findOne({
+      where: {
+        name: name,
+      },
     });
   }
 }

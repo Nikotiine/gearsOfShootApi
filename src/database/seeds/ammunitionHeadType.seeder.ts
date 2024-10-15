@@ -1,6 +1,6 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { AmmunitionHeadType } from '../entity/ammunitionHeadType.entity';
+import { AmmunitionHeadType } from '../entity/ammunition-head-type.entity';
 
 export default class AmmunitionHeadTypeSeeder implements Seeder {
   /**

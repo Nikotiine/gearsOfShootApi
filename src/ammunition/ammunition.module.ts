@@ -5,12 +5,14 @@ import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-hea
 import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ammunition } from '../database/entity/ammunition.entity';
-import { AmmunitionBodyType } from '../database/entity/ammunitionBodyType.entity';
-import { AmmunitionHeadType } from '../database/entity/ammunitionHeadType.entity';
+import { AmmunitionBodyType } from '../database/entity/ammunition-body-type.entity';
+import { AmmunitionHeadType } from '../database/entity/ammunition-head-type.entity';
 import { CommonModule } from '../common/common.module';
+import { AmmunitionHeadTypeController } from './ammunition-head-type/ammunition-head-type.controller';
+import { AmmunitionBodyTypeController } from './ammunition-body-type/ammunition-body-type.controller';
 
 @Module({
-  controllers: [AmmunitionController],
+  controllers: [AmmunitionController, AmmunitionHeadTypeController, AmmunitionBodyTypeController],
   providers: [
     AmmunitionService,
     AmmunitionHeadTypeService,

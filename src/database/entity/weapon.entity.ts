@@ -1,12 +1,13 @@
 import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
-import { LegislationCategories } from '../../enum/legislationCategories.enum';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { LegislationCategories } from '../../enum/legislation-categories.enum';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
 import { WeaponType } from './weapon-type.entity';
-import { BarrelTypes } from '../../enum/barrelTypes.enum';
+import { BarrelTypes } from '../../enum/barrel-types.enum';
 import { ThreadedSize } from './threaded-size.entity';
 @Entity()
+@Unique(['name', 'variation', 'caliber', 'factory'])
 export class Weapon extends BaseEntity {
   @Column()
   name: string;

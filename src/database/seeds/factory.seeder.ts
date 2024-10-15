@@ -1,7 +1,7 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Factory } from '../entity/factory.entity';
-import { FactoryType } from '../../enum/factoryTypes.enum';
+import { FactoryType } from '../../enum/factory-types.enum';
 
 export default class FactorySeeder implements Seeder {
   /**

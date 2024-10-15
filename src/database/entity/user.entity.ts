@@ -1,13 +1,13 @@
 import { BaseEntity } from './base.entity';
 import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
-import { UserRoles } from '../../enum/userRoles.enum';
+import { UserRoles } from '../../enum/user-roles.enum';
 import { promisify } from 'util';
 import { pbkdf2 as _pbkdf2, randomBytes } from 'crypto';
-import { CostumerRoles } from '../../enum/costumerRoles.enum';
+import { CostumerRoles } from '../../enum/costumer-roles.enum';
 import { VerificationCode } from './verification-code.entity';
 @Entity('users')
 export class User extends BaseEntity {
-  @Column()
+  @Column({ unique: true })
   email: string;
   @Column()
   password: string;
@@ -33,8 +33,8 @@ export class User extends BaseEntity {
   )
   verificationCodes: VerificationCode[];
   @BeforeInsert()
-  async setPassword(password: string) {
-    this.password = await this.hashPassword(password);
+  async setPassword() {
+    this.password = await this.hashPassword(this.password);
   }
 
   private async hashPassword(password: string): Promise<string> {

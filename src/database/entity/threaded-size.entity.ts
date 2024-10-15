@@ -13,6 +13,6 @@ export class ThreadedSize extends BaseEntity {
   )
   soundNoiseReducers: SoundNoiseReducer[];
 
-  @Column()
+  @Column({ unique: true })
   size: string;
 }

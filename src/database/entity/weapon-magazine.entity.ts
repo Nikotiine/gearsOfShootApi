@@ -1,6 +1,6 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { MagazineBody } from '../../enum/magazineBody.enum';
+import { MagazineBody } from '../../enum/magazine-body.enum';
 import { Factory } from './factory.entity';
 @Entity()
 export class WeaponMagazine extends BaseEntity {

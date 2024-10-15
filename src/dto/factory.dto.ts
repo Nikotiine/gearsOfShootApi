@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FactoryType } from '../enum/factoryTypes.enum';
+import { FactoryType } from '../enum/factory-types.enum';
 export class CreateFactoryDto {
   @ApiProperty({
     example: 'Colt',

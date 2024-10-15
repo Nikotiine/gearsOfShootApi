@@ -6,6 +6,7 @@ import {
   AmmunitionBodyTypeDto,
   CreateAmmunitionBodyTypeDto,
 } from '../../dto/ammunition.dto';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class AmmunitionBodyTypeService {
@@ -33,12 +34,16 @@ export class AmmunitionBodyTypeService {
     });
   }
 
+  /**
+   * Ajout d'un nouveau type de douille en bdd
+   * @param body {CreateAmmunitionBodyTypeDto}
+   */
   public async insert(
     body: CreateAmmunitionBodyTypeDto,
   ): Promise<AmmunitionBodyTypeDto> {
     const isExist = await this.findByName(body.name);
     if (isExist) {
-      throw new BadRequestException();
+      throw new BadRequestException(CodeError.AMMUNITION_BODY_TYPE_NAME_USED);
     }
 
     const entity = this.ammunitionBodyTypeRepository.create({
@@ -51,6 +56,11 @@ export class AmmunitionBodyTypeService {
     };
   }
 
+  /**
+   * Recherche une douille par son nom
+   * @param name {string} nom de la douille
+   * @private
+   */
   private findByName(name: string): Promise<AmmunitionBodyType> {
     return this.ammunitionBodyTypeRepository.findOne({
       where: {

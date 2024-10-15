@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
-import { LegislationCategories } from '../enum/legislationCategories.enum';
-import { PercussionType } from '../enum/percussionTypes.enum';
+import { LegislationCategories } from '../enum/legislation-categories.enum';
+import { PercussionType } from '../enum/percussion-types.enum';
 import { FactoryDto } from './factory.dto';
 import { CaliberDto } from './caliber.dto';
 
@@ -87,4 +87,23 @@ export class CreateAmmunitionDto {
 export class AmmunitionDto extends CreateAmmunitionDto {
   @ApiProperty()
   id: number;
+}
+
+export class ListOfPrerequisitesAmmunitionDto {
+  @ApiProperty({
+    type: [CaliberDto],
+  })
+  calibers: CaliberDto[];
+  @ApiProperty({
+    type: [FactoryDto],
+  })
+  factories: FactoryDto[];
+  @ApiProperty({
+    type: [AmmunitionHeadTypeDto],
+  })
+  headTypes: AmmunitionHeadTypeDto[];
+  @ApiProperty({
+    type: [AmmunitionBodyTypeDto],
+  })
+  bodyTypes: AmmunitionBodyTypeDto[];
 }

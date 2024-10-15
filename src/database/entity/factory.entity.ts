@@ -1,12 +1,13 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Weapon } from './weapon.entity';
-import { FactoryType } from '../../enum/factoryTypes.enum';
+import { FactoryType } from '../../enum/factory-types.enum';
 import { Ammunition } from './ammunition.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 
 @Entity()
+@Unique(['name', 'factoryType'])
 export class Factory extends BaseEntity {
   @Column()
   name: string;

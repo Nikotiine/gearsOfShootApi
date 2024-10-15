@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { TokenDto } from '../dto/user.dto';
@@ -33,7 +35,13 @@ export class AuthService {
   public async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
-      throw new BadRequestException(CodeError.BAD_CREDENTIAL);
+      throw new HttpException(
+        CodeError.BAD_CREDENTIAL,
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: new Error(),
+        },
+      );
     }
 
     if (!(await this.verifyPassword(user.password, password))) {

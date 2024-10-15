@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
-import { LegislationCategories } from '../enum/legislationCategories.enum';
+import { LegislationCategories } from '../enum/legislation-categories.enum';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
-import { BarrelTypes } from '../enum/barrelTypes.enum';
+import { BarrelTypes } from '../enum/barrel-types.enum';
 
-import { ThreadedSize } from '../database/entity/threadedSize.entity';
+import { ThreadedSize } from '../database/entity/threaded-size.entity';
 import { ThreadedSizeDto } from './threaded-size.dto';
 export class CreateWeaponTypeDto {
   @ApiProperty({
@@ -91,4 +91,8 @@ export class CreateWeaponDto {
     type: ThreadedSizeDto,
   })
   threadedSize: ThreadedSize;
+}
+export class WeaponDto extends CreateWeaponDto {
+  @ApiProperty()
+  id: number;
 }

@@ -1,13 +1,15 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
+  ApiBody,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { FactoryService } from './factory.service';
-import { FactoryDto } from '../../dto/factory.dto';
-import { FactoryType } from '../../enum/factoryTypes.enum';
+import { CreateFactoryDto, FactoryDto } from '../../dto/factory.dto';
+import { FactoryType } from '../../enum/factory-types.enum';
 
 @Controller('factory')
 @ApiTags('Factory')
@@ -41,5 +43,20 @@ export class FactoryController {
     @Param('type') type: FactoryType,
   ): Promise<FactoryDto[]> {
     return await this.factoryService.findByType(type);
+  }
+
+  @Post('')
+  @ApiOperation({
+    summary: 'Ajout d une marque',
+    description: 'Ajout d une nouvelle marque pour un type FactoryType',
+  })
+  @ApiCreatedResponse({
+    type: FactoryDto,
+  })
+  @ApiBody({
+    type: CreateFactoryDto,
+  })
+  public async create(@Body() factory: CreateFactoryDto): Promise<FactoryDto> {
+    return await this.factoryService.insert(factory);
   }
 }
