@@ -5,7 +5,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { TokenDto } from '../dto/user.dto';
+import { TokenDto, UserDto } from '../dto/user.dto';
 import { User } from '../database/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -58,5 +58,9 @@ export class AuthService {
     const [salt, hash] = storedHash.split(':');
     const hashToVerify = await pbkdf2(password, salt, 10000, 64, 'sha512');
     return hash === hashToVerify.toString('hex');
+  }
+
+  public async getProfile(id: number): Promise<UserDto> {
+    return this.userService.findById(id);
   }
 }

@@ -22,6 +22,8 @@ export class User extends BaseEntity {
   @Column()
   city: string;
   @Column()
+  zipCode: string;
+  @Column()
   state: string;
   @Column({ enum: UserRoles, default: UserRoles.USER })
   role: UserRoles;

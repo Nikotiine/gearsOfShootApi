@@ -37,8 +37,28 @@ export class UserService {
       phone: user.phone,
       city: user.city,
       state: user.state,
+      zipCode: user.zipCode,
     });
     const created = await this.userRepository.save(entity);
     return created;
+  }
+
+  public async findById(id: number): Promise<UserDto> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      address: user.address,
+      city: user.city,
+      phone: user.phone,
+      email: user.email,
+      state: user.state,
+      zipCode: user.zipCode,
+    };
   }
 }
