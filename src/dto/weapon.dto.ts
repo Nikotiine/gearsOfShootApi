@@ -7,6 +7,7 @@ import { BarrelTypes } from '../enum/barrel-types.enum';
 
 import { ThreadedSize } from '../database/entity/threaded-size.entity';
 import { ThreadedSizeDto } from './threaded-size.dto';
+import { AmmunitionBodyTypeDto, AmmunitionHeadTypeDto } from './ammunition.dto';
 export class CreateWeaponTypeDto {
   @ApiProperty({
     example: 'Fusil a verrou',
@@ -95,4 +96,26 @@ export class CreateWeaponDto {
 export class WeaponDto extends CreateWeaponDto {
   @ApiProperty()
   id: number;
+  @ApiProperty()
+  reference: string;
+}
+export class ListOfPrerequisitesWeaponDto {
+  @ApiProperty({
+    type: [CaliberDto],
+  })
+  calibers: CaliberDto[];
+  @ApiProperty({
+    type: [FactoryDto],
+  })
+  factories: FactoryDto[];
+
+  @ApiProperty({
+    type: [WeaponTypeDto],
+  })
+  types: WeaponTypeDto[];
+
+  @ApiProperty({
+    type: [ThreadedSizeDto],
+  })
+  threadedSizes: ThreadedSizeDto[];
 }

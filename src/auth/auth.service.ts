@@ -34,6 +34,7 @@ export class AuthService {
 
   public async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findOneByEmail(email);
+    console.log('iciicicici', user);
     if (!user) {
       throw new HttpException(
         CodeError.BAD_CREDENTIAL,

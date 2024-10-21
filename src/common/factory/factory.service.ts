@@ -40,7 +40,7 @@ export class FactoryService {
    * Filtre les marque par type / Arme / Munition / Optique ....
    * @param type {FactoryType} le type de la marque
    */
-  async findByType(type: FactoryType) {
+  async findByType(type: FactoryType): Promise<FactoryDto[]> {
     const factories = await this.factoryRepository.find({
       where: {
         factoryType: type,

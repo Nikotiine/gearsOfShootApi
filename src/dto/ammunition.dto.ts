@@ -87,6 +87,8 @@ export class CreateAmmunitionDto {
 export class AmmunitionDto extends CreateAmmunitionDto {
   @ApiProperty()
   id: number;
+  @ApiProperty()
+  reference: string;
 }
 
 export class ListOfPrerequisitesAmmunitionDto {

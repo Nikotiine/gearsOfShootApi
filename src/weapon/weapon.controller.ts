@@ -1,12 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { WeaponService } from './weapon.service';
-import { CreateWeaponDto, WeaponDto } from '../dto/weapon.dto';
+import {
+  CreateWeaponDto,
+  ListOfPrerequisitesWeaponDto,
+  WeaponDto,
+} from '../dto/weapon.dto';
 
 @Controller('weapon')
 @ApiTags('Weapon')
@@ -26,5 +31,18 @@ export class WeaponController {
   })
   public async create(weapon: CreateWeaponDto): Promise<WeaponDto> {
     return this.weaponService.insert(weapon);
+  }
+
+  @Get('prerequisites')
+  @ApiOkResponse({
+    type: ListOfPrerequisitesWeaponDto,
+  })
+  @ApiOperation({
+    summary: 'Liste des pre-requis',
+    description:
+      'Retourne la liste des pre-requis necesssaire a la creation d une arme',
+  })
+  public async findPrerequisitesWeaponList(): Promise<ListOfPrerequisitesWeaponDto> {
+    return this.weaponService.getListOfPrerequisitesWeaponList();
   }
 }

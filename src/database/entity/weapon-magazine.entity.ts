@@ -16,4 +16,6 @@ export class WeaponMagazine extends BaseEntity {
   height: number;
   @Column()
   width: number;
+  @Column()
+  reference: string;
 }

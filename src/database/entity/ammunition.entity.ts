@@ -30,4 +30,6 @@ export class Ammunition extends BaseEntity {
   percussionType: PercussionType;
   @Column()
   packaging: number;
+  @Column()
+  reference: string;
 }

@@ -5,8 +5,16 @@ import { Repository } from 'typeorm';
 import { WeaponTypeService } from './weapon-type/weapon-type.service';
 import { CaliberService } from '../common/caliber/caliber.service';
 import { FactoryService } from '../common/factory/factory.service';
-import { CreateWeaponDto, WeaponDto } from '../dto/weapon.dto';
+import {
+  CreateWeaponDto,
+  ListOfPrerequisitesWeaponDto,
+  WeaponDto,
+} from '../dto/weapon.dto';
 import { CodeError } from '../enum/code-error.enum';
+import { FactoryType } from '../enum/factory-types.enum';
+import { LegislationCategories } from '../enum/legislation-categories.enum';
+import { BarrelTypes } from '../enum/barrel-types.enum';
+import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
 
 @Injectable()
 export class WeaponService {
@@ -16,6 +24,7 @@ export class WeaponService {
     private readonly weaponTypeService: WeaponTypeService,
     private readonly caliberService: CaliberService,
     private readonly factoryService: FactoryService,
+    private readonly threadSizeService: ThreadedSizeService,
   ) {}
 
   /**
@@ -69,6 +78,7 @@ export class WeaponService {
       barrelType: created.barrelType,
       category: created.category,
       threadedSize: created.threadedSize,
+      reference: created.reference,
     };
   }
 
@@ -99,5 +109,18 @@ export class WeaponService {
       },
     });
     return !!weapon;
+  }
+
+  public async getListOfPrerequisitesWeaponList(): Promise<ListOfPrerequisitesWeaponDto> {
+    const calibers = await this.caliberService.findAll();
+    const factories = await this.factoryService.findByType(FactoryType.WEAPON);
+    const types = await this.weaponTypeService.findAll();
+    const threadedSizes = await this.threadSizeService.getAll();
+    return {
+      calibers: calibers,
+      factories: factories,
+      types: types,
+      threadedSizes: threadedSizes,
+    };
   }
 }

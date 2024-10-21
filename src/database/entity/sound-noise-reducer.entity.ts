@@ -24,4 +24,6 @@ export class SoundNoiseReducer extends BaseEntity {
   factory: Factory;
   @Column({ default: false })
   isCleanable: boolean;
+  @Column()
+  reference: string;
 }

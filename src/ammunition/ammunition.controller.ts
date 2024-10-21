@@ -62,7 +62,7 @@ export class AmmunitionController {
     description:
       'Retourne la liste des pre-requis necesssaire a la creation d une nouvelle munition',
   })
-  public async findPrerequisitesList(): Promise<ListOfPrerequisitesAmmunitionDto> {
+  public async findPrerequisitesAmmunitionList(): Promise<ListOfPrerequisitesAmmunitionDto> {
     return this.ammunitionService.getListOfPrerequisitesAmmunitionDto();
   }
 }

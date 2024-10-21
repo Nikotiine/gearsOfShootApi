@@ -38,6 +38,7 @@ export class UserService {
       city: user.city,
       state: user.state,
       zipCode: user.zipCode,
+      role: user.role,
     });
     const created = await this.userRepository.save(entity);
     return created;
@@ -59,6 +60,7 @@ export class UserService {
       email: user.email,
       state: user.state,
       zipCode: user.zipCode,
+      role: user.role,
     };
   }
 }

@@ -68,6 +68,7 @@ export class AmmunitionService {
       percussionType: created.percussionType,
       packaging: created.packaging,
       initialSpeed: created.initialSpeed,
+      reference: created.reference,
     };
   }
 
@@ -105,6 +106,7 @@ export class AmmunitionService {
         percussionType: ammuntion.percussionType,
         packaging: ammuntion.packaging,
         initialSpeed: ammuntion.initialSpeed,
+        reference: ammuntion.reference,
       };
     });
   }

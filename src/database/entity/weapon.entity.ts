@@ -35,4 +35,6 @@ export class Weapon extends BaseEntity {
   barrelType: BarrelTypes;
   @ManyToOne(() => ThreadedSize, (threadedSize) => threadedSize.weapons)
   threadedSize: ThreadedSize;
+  @Column()
+  reference: string;
 }
