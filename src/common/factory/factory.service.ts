@@ -32,6 +32,7 @@ export class FactoryService {
         name: factory.name,
         type: factory.factoryType,
         description: factory.description,
+        ref: factory.ref,
       };
     });
   }
@@ -50,6 +51,7 @@ export class FactoryService {
         id: true,
         factoryType: true,
         description: true,
+        ref: true,
       },
     });
     return factories.map((factory: Factory) => {
@@ -58,6 +60,7 @@ export class FactoryService {
         name: factory.name,
         type: factory.factoryType,
         description: factory.description,
+        ref: factory.ref,
       };
     });
   }
@@ -76,6 +79,7 @@ export class FactoryService {
       name: factory.name,
       description: factory.description,
       factoryType: factory.type,
+      ref: factory.ref,
     });
     const created = await this.factoryRepository.save(entity);
     return {
@@ -83,6 +87,7 @@ export class FactoryService {
       name: created.name,
       type: created.factoryType,
       description: created.description,
+      ref: created.ref,
     };
   }
 
@@ -103,5 +108,15 @@ export class FactoryService {
       },
     });
     return !!factory;
+  }
+
+  public async findFactoryReferenceById(id: number): Promise<string> {
+    const factory = await this.factoryRepository.findOne({
+      where: { id: id },
+      select: {
+        ref: true,
+      },
+    });
+    return factory.ref;
   }
 }

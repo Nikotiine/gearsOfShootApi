@@ -30,6 +30,7 @@ export class AmmunitionHeadTypeService {
       return {
         id: head.id,
         name: head.name,
+        ref: head.ref,
       };
     });
   }
@@ -51,8 +52,22 @@ export class AmmunitionHeadTypeService {
     }
     const entity = this.ammunitionHeadTypeRepository.create({
       name: ammunitionHeadType.name,
+      ref: ammunitionHeadType.ref,
     });
     const created = await this.ammunitionHeadTypeRepository.save(entity);
-    return { id: created.id, name: created.name };
+    return { id: created.id, name: created.name, ref: created.ref };
+  }
+
+  public async findById(headTypeId: number): Promise<AmmunitionHeadTypeDto> {
+    const headType = await this.ammunitionHeadTypeRepository.findOne({
+      where: {
+        id: headTypeId,
+      },
+    });
+    return {
+      id: headType.id,
+      name: headType.name,
+      ref: headType.ref,
+    };
   }
 }

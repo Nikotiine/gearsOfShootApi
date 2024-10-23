@@ -8,4 +8,6 @@ export class AmmunitionHeadType extends BaseEntity {
   name: string;
   @OneToMany(() => Ammunition, (ammunition) => ammunition.headType)
   ammunitions: Ammunition[];
+  @Column()
+  ref: string;
 }

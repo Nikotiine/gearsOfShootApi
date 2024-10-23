@@ -32,7 +32,7 @@ export class AmmunitionService {
   public async insert(ammunition: CreateAmmunitionDto): Promise<AmmunitionDto> {
     const isExist = await this.verifyIfNotExist(
       ammunition.name,
-      ammunition.factory.id,
+      ammunition.factoryId,
       ammunition.packaging,
     );
     if (isExist) {
@@ -41,11 +41,19 @@ export class AmmunitionService {
     const entity = this.ammunitionRepository.create({
       name: ammunition.name,
       description: ammunition.description,
-      headType: ammunition.headType,
-      bodyType: ammunition.bodyType,
-      caliber: ammunition.caliber,
+      headType: {
+        id: ammunition.headTypeId,
+      },
+      bodyType: {
+        id: ammunition.bodyTypeId,
+      },
+      caliber: {
+        id: ammunition.caliberId,
+      },
       category: ammunition.category,
-      factory: ammunition.factory,
+      factory: {
+        id: ammunition.factoryId,
+      },
       percussionType: ammunition.percussionType,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
@@ -64,6 +72,7 @@ export class AmmunitionService {
         type: created.factory.factoryType,
         name: created.factory.name,
         description: created.factory.description,
+        ref: created.factory.ref,
       },
       percussionType: created.percussionType,
       packaging: created.packaging,
@@ -102,6 +111,7 @@ export class AmmunitionService {
           type: ammuntion.factory.factoryType,
           name: ammuntion.factory.name,
           description: ammuntion.factory.description,
+          ref: ammuntion.factory.ref,
         },
         percussionType: ammuntion.percussionType,
         packaging: ammuntion.packaging,
@@ -152,5 +162,23 @@ export class AmmunitionService {
       headTypes: headTypes,
       bodyTypes: bodyTypes,
     };
+  }
+
+  /**
+   * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
+   * @private
+   * @param ammunition
+   */
+  private async createReference(
+    ammunition: CreateAmmunitionDto,
+  ): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      ammunition.factoryId,
+    );
+    const caliber = await this.caliberService.findById(ammunition.caliberId);
+    const headType = await this.ammunitionHeadTypeService.findById(
+      ammunition.headTypeId,
+    );
+    return `${factoryRef.toUpperCase()}-${caliber.ref.toUpperCase()}-${ammunition.name.toUpperCase()}${headType.ref.toUpperCase()}`;
   }
 }
