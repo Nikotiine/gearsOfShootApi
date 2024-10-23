@@ -1,6 +1,7 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { AmmunitionBodyType } from '../entity/ammunition-body-type.entity';
+import { CreateAmmunitionBodyTypeDto } from '../../dto/ammunition.dto';
 
 export default class AmmunitionBodyTypeSeeder implements Seeder {
   /**
@@ -14,12 +15,26 @@ export default class AmmunitionBodyTypeSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const names: string[] = ['Laiton', 'Cuivre', 'Inox'];
+    const bodys: CreateAmmunitionBodyTypeDto[] = [
+      {
+        name: 'Laiton',
+        ref: 'LTN',
+      },
+      {
+        name: 'Cuivre',
+        ref: 'CUI',
+      },
+      {
+        name: 'Inox',
+        ref: 'INX',
+      },
+    ];
     const repository = dataSource.getRepository(AmmunitionBodyType);
-    for (const name of names) {
+    for (const body of bodys) {
       await repository.insert([
         {
-          name: name,
+          name: body.name,
+          ref: body.ref,
         },
       ]);
     }

@@ -7,4 +7,6 @@ export class AmmunitionBodyType extends BaseEntity {
   name: string;
   @OneToMany(() => Ammunition, (ammunition) => ammunition.bodyType)
   ammunitions: Ammunition[];
+  @Column()
+  ref: string;
 }

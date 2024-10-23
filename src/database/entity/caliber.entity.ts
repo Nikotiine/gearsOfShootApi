@@ -7,6 +7,8 @@ import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 export class Caliber extends BaseEntity {
   @Column({ unique: true })
   name: string;
+  @Column()
+  ref: string;
   @OneToMany(() => Weapon, (weapon) => weapon.caliber)
   weapons: Weapon[];
   @OneToMany(() => Ammunition, (ammunition) => ammunition.caliber)

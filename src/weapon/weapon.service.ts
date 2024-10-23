@@ -12,9 +12,8 @@ import {
 } from '../dto/weapon.dto';
 import { CodeError } from '../enum/code-error.enum';
 import { FactoryType } from '../enum/factory-types.enum';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
-import { BarrelTypes } from '../enum/barrel-types.enum';
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
+import { LegislationCategories } from '../enum/legislation-categories.enum';
 
 @Injectable()
 export class WeaponService {
@@ -36,26 +35,37 @@ export class WeaponService {
     const isExist = await this.verifyIfIsExist(
       weapon.name,
       weapon.variation,
-      weapon.factory.id,
-      weapon.caliber.id,
+      weapon.factoryId,
+      weapon.caliberId,
     );
     if (isExist) {
       throw new BadRequestException(CodeError.WEAPON_IS_EXIST);
     }
-    const entity = this.weaponRepository.create({
+
+    const entity: Weapon = this.weaponRepository.create({
       name: weapon.name,
       variation: weapon.variation,
-      factory: weapon.factory,
+      factory: {
+        id: weapon.factoryId,
+      },
       isThreadedBarrel: weapon.isThreadedBarrel,
       isAdjustableTrigger: weapon.isAdjustableTrigger,
       isOpticReady: weapon.isOpticReady,
-      caliber: weapon.caliber,
-      type: weapon.type,
+      caliber: {
+        id: weapon.caliberId,
+      },
+      type: {
+        id: weapon.typeId,
+      },
       description: weapon.description,
       barrelLength: weapon.barrelLength,
       barrelType: weapon.barrelType,
       category: weapon.category,
-      threadedSize: weapon.threadedSize,
+      threadedSize: {
+        id: weapon.threadedSizeId,
+      },
+      adjustableTriggerValue: weapon.adjustableTriggerValue,
+      reference: await this.createReference(weapon),
     });
     const created = await this.weaponRepository.save(entity);
     return {
@@ -67,6 +77,7 @@ export class WeaponService {
         name: created.factory.name,
         type: created.factory.factoryType,
         description: created.factory.description,
+        ref: created.factory.ref,
       },
       isThreadedBarrel: created.isThreadedBarrel,
       isAdjustableTrigger: created.isAdjustableTrigger,
@@ -79,7 +90,67 @@ export class WeaponService {
       category: created.category,
       threadedSize: created.threadedSize,
       reference: created.reference,
+      adjustableTriggerValue: created.adjustableTriggerValue,
     };
+  }
+
+  /**
+   * Retourne la liste des prerequis de creation d'arme
+   * Calibres Marques Types d'armes Taille de Filetage
+   */
+  public async getListOfPrerequisitesWeaponList(): Promise<ListOfPrerequisitesWeaponDto> {
+    const calibers = await this.caliberService.findAll();
+    const factories = await this.factoryService.findByType(FactoryType.WEAPON);
+    const types = await this.weaponTypeService.findAll();
+    const threadedSizes = await this.threadSizeService.findAll();
+    return {
+      calibers: calibers,
+      factories: factories,
+      types: types,
+      threadedSizes: threadedSizes,
+    };
+  }
+
+  public async findAllByCategory(
+    categoy: LegislationCategories,
+  ): Promise<WeaponDto[]> {
+    const weapons: Weapon[] = await this.weaponRepository.find({
+      where: {
+        category: categoy,
+      },
+      relations: {
+        factory: true,
+        caliber: true,
+        type: true,
+        threadedSize: true,
+      },
+    });
+    return weapons.map((weapon) => {
+      return {
+        id: weapon.id,
+        name: weapon.name,
+        variation: weapon.variation,
+        factory: {
+          id: weapon.factory.id,
+          name: weapon.factory.name,
+          type: weapon.factory.factoryType,
+          description: weapon.factory.description,
+          ref: weapon.factory.ref,
+        },
+        isThreadedBarrel: weapon.isThreadedBarrel,
+        isAdjustableTrigger: weapon.isAdjustableTrigger,
+        isOpticReady: weapon.isOpticReady,
+        caliber: weapon.caliber,
+        type: weapon.type,
+        description: weapon.description,
+        barrelLength: weapon.barrelLength,
+        barrelType: weapon.barrelType,
+        category: weapon.category,
+        threadedSize: weapon.threadedSize,
+        reference: weapon.reference,
+        adjustableTriggerValue: weapon.adjustableTriggerValue,
+      };
+    });
   }
 
   /**
@@ -111,16 +182,16 @@ export class WeaponService {
     return !!weapon;
   }
 
-  public async getListOfPrerequisitesWeaponList(): Promise<ListOfPrerequisitesWeaponDto> {
-    const calibers = await this.caliberService.findAll();
-    const factories = await this.factoryService.findByType(FactoryType.WEAPON);
-    const types = await this.weaponTypeService.findAll();
-    const threadedSizes = await this.threadSizeService.getAll();
-    return {
-      calibers: calibers,
-      factories: factories,
-      types: types,
-      threadedSizes: threadedSizes,
-    };
+  /**
+   * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
+   * @param weapon
+   * @private
+   */
+  private async createReference(weapon: CreateWeaponDto): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      weapon.factoryId,
+    );
+    const caliber = await this.caliberService.findById(weapon.caliberId);
+    return `${factoryRef.toUpperCase()}-${caliber.ref.toUpperCase()}-${weapon.name.toUpperCase()}${weapon.variation ? '-' + weapon.variation.substring(0, 3).toUpperCase() : ''}`;
   }
 }

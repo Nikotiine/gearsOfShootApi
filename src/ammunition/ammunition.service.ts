@@ -13,6 +13,7 @@ import { CaliberService } from '../common/caliber/caliber.service';
 import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
 import { FactoryType } from '../enum/factory-types.enum';
+import { LegislationCategories } from '../enum/legislation-categories.enum';
 
 @Injectable()
 export class AmmunitionService {
@@ -32,7 +33,7 @@ export class AmmunitionService {
   public async insert(ammunition: CreateAmmunitionDto): Promise<AmmunitionDto> {
     const isExist = await this.verifyIfNotExist(
       ammunition.name,
-      ammunition.factory.id,
+      ammunition.factoryId,
       ammunition.packaging,
     );
     if (isExist) {
@@ -41,14 +42,23 @@ export class AmmunitionService {
     const entity = this.ammunitionRepository.create({
       name: ammunition.name,
       description: ammunition.description,
-      headType: ammunition.headType,
-      bodyType: ammunition.bodyType,
-      caliber: ammunition.caliber,
+      headType: {
+        id: ammunition.headTypeId,
+      },
+      bodyType: {
+        id: ammunition.bodyTypeId,
+      },
+      caliber: {
+        id: ammunition.caliberId,
+      },
       category: ammunition.category,
-      factory: ammunition.factory,
+      factory: {
+        id: ammunition.factoryId,
+      },
       percussionType: ammunition.percussionType,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
+      reference: await this.createReference(ammunition),
     });
     const created = await this.ammunitionRepository.save(entity);
     return {
@@ -64,6 +74,7 @@ export class AmmunitionService {
         type: created.factory.factoryType,
         name: created.factory.name,
         description: created.factory.description,
+        ref: created.factory.ref,
       },
       percussionType: created.percussionType,
       packaging: created.packaging,
@@ -88,27 +99,63 @@ export class AmmunitionService {
         caliber: true,
       },
     });
-    return ammunitions.map((ammuntion) => {
-      return {
-        id: ammuntion.id,
-        name: ammuntion.name,
-        description: ammuntion.description,
-        headType: ammuntion.headType,
-        bodyType: ammuntion.bodyType,
-        caliber: ammuntion.caliber,
-        category: ammuntion.category,
-        factory: {
-          id: ammuntion.factory.id,
-          type: ammuntion.factory.factoryType,
-          name: ammuntion.factory.name,
-          description: ammuntion.factory.description,
-        },
-        percussionType: ammuntion.percussionType,
-        packaging: ammuntion.packaging,
-        initialSpeed: ammuntion.initialSpeed,
-        reference: ammuntion.reference,
-      };
+    return this.mapEntityArrayToDtoArray(ammunitions);
+  }
+
+  /**
+   * Retourne la liste des pre-requis necessaire a l ajout d une munition en bdd
+   * Calibre / marque / type d'ogive / type d'etui
+   */
+  public async getListOfPrerequisitesAmmunitionDto(): Promise<ListOfPrerequisitesAmmunitionDto> {
+    const calibers = await this.caliberService.findAll();
+    const headTypes = await this.ammunitionHeadTypeService.findAll();
+    const bodyTypes = await this.ammunitionBodyTypeService.findAll();
+    const factories = await this.factoryService.findByType(
+      FactoryType.AMMUNITION,
+    );
+    return {
+      factories: factories,
+      calibers: calibers,
+      headTypes: headTypes,
+      bodyTypes: bodyTypes,
+    };
+  }
+
+  /**
+   * Retourne les munition suivant leurs categorisation
+   * @param category
+   */
+  public async findByCategory(
+    category: LegislationCategories,
+  ): Promise<AmmunitionDto[]> {
+    const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
+      where: {
+        category: category,
+      },
+      relations: {
+        factory: true,
+        caliber: true,
+      },
     });
+    return this.mapEntityArrayToDtoArray(ammunitions);
+  }
+
+  /**
+   * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
+   * @private
+   * @param ammunition
+   */
+  private async createReference(
+    ammunition: CreateAmmunitionDto,
+  ): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      ammunition.factoryId,
+    );
+    const caliber = await this.caliberService.findById(ammunition.caliberId);
+    const headType = await this.ammunitionHeadTypeService.findById(
+      ammunition.headTypeId,
+    );
+    return `${factoryRef.toUpperCase()}-${caliber.ref.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${headType.ref.toUpperCase()}`;
   }
 
   /**
@@ -135,22 +182,28 @@ export class AmmunitionService {
     return !!ammunition;
   }
 
-  /**
-   * Retourne la liste des pre-requis necessaire a l ajout d une munition en bdd
-   * Calibre / marque / type d'ogive / type d'etui
-   */
-  public async getListOfPrerequisitesAmmunitionDto(): Promise<ListOfPrerequisitesAmmunitionDto> {
-    const calibers = await this.caliberService.findAll();
-    const headTypes = await this.ammunitionHeadTypeService.findAll();
-    const bodyTypes = await this.ammunitionBodyTypeService.findAll();
-    const factories = await this.factoryService.findByType(
-      FactoryType.AMMUNITION,
-    );
-    return {
-      factories: factories,
-      calibers: calibers,
-      headTypes: headTypes,
-      bodyTypes: bodyTypes,
-    };
+  private mapEntityArrayToDtoArray(ammunitions: Ammunition[]): AmmunitionDto[] {
+    return ammunitions.map((ammuntion) => {
+      return {
+        id: ammuntion.id,
+        name: ammuntion.name,
+        description: ammuntion.description,
+        headType: ammuntion.headType,
+        bodyType: ammuntion.bodyType,
+        caliber: ammuntion.caliber,
+        category: ammuntion.category,
+        factory: {
+          id: ammuntion.factory.id,
+          type: ammuntion.factory.factoryType,
+          name: ammuntion.factory.name,
+          description: ammuntion.factory.description,
+          ref: ammuntion.factory.ref,
+        },
+        percussionType: ammuntion.percussionType,
+        packaging: ammuntion.packaging,
+        initialSpeed: ammuntion.initialSpeed,
+        reference: ammuntion.reference,
+      };
+    });
   }
 }

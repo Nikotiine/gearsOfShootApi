@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -33,5 +34,17 @@ export class AmmunitionHeadTypeController {
     @Body() ammunitionHeadType: CreateAmmunitionHeadTypeDto,
   ): Promise<AmmunitionHeadTypeDto> {
     return this.ammunitionHeadTypeService.insert(ammunitionHeadType);
+  }
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Toutes les oviges',
+    description: 'Retourne la liste de toutes les oviges disponible',
+  })
+  @ApiOkResponse({
+    type: [AmmunitionHeadTypeDto],
+  })
+  public async findAllHeadTypes(): Promise<AmmunitionHeadTypeDto[]> {
+    return await this.ammunitionHeadTypeService.findAll();
   }
 }

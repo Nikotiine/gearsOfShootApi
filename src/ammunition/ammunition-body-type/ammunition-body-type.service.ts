@@ -24,12 +24,14 @@ export class AmmunitionBodyTypeService {
         select: {
           id: true,
           name: true,
+          ref: true,
         },
       });
     return bodyTypes.map((body) => {
       return {
         id: body.id,
         name: body.name,
+        ref: body.ref,
       };
     });
   }
@@ -48,11 +50,13 @@ export class AmmunitionBodyTypeService {
 
     const entity = this.ammunitionBodyTypeRepository.create({
       name: body.name,
+      ref: body.ref,
     });
     const created = await this.ammunitionBodyTypeRepository.save(entity);
     return {
       id: created.id,
       name: created.name,
+      ref: created.ref,
     };
   }
 

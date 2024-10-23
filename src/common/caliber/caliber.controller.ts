@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -26,5 +27,17 @@ export class CaliberController {
   })
   public async create(@Body() caliber: CreateCaliberDto): Promise<CaliberDto> {
     return this.caliberService.insert(caliber);
+  }
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Liste des calibres',
+    description: 'Retourne la liste de tous les calibres disponible',
+  })
+  @ApiOkResponse({
+    type: [CaliberDto],
+  })
+  public async findAllCalibers(): Promise<CaliberDto[]> {
+    return await this.caliberService.findAll();
   }
 }

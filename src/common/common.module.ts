@@ -8,9 +8,10 @@ import { CaliberService } from './caliber/caliber.service';
 import { Caliber } from '../database/entity/caliber.entity';
 import { ThreadedSizeService } from './threaded-size/threaded-size.service';
 import { ThreadedSize } from '../database/entity/threaded-size.entity';
+import { ThreadedSizeController } from './threaded-size/threaded-size.controller';
 
 @Module({
-  controllers: [FactoryController, CaliberController],
+  controllers: [FactoryController, CaliberController, ThreadedSizeController],
   providers: [FactoryService, CaliberService, ThreadedSizeService],
   imports: [TypeOrmModule.forFeature([Factory, Caliber, ThreadedSize])],
   exports: [CaliberService, FactoryService, ThreadedSizeService],

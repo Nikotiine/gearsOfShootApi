@@ -1,5 +1,5 @@
 import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { LegislationCategories } from '../../enum/legislation-categories.enum';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
@@ -33,8 +33,13 @@ export class Weapon extends BaseEntity {
   isThreadedBarrel: boolean;
   @Column({ enum: BarrelTypes, default: BarrelTypes.NORMAL })
   barrelType: BarrelTypes;
-  @ManyToOne(() => ThreadedSize, (threadedSize) => threadedSize.weapons)
-  threadedSize: ThreadedSize;
+  @ManyToOne(() => ThreadedSize, (threadedSize) => threadedSize.weapons, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'threadedSizeId' })
+  threadedSize?: ThreadedSize | null;
   @Column()
   reference: string;
+  @Column({ nullable: true })
+  adjustableTriggerValue: string;
 }

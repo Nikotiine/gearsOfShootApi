@@ -22,6 +22,7 @@ export class CaliberService {
       return {
         name: caliber.name,
         id: caliber.id,
+        ref: caliber.ref,
       };
     });
   }
@@ -37,11 +38,13 @@ export class CaliberService {
     }
     const entity = this.caliberRepository.create({
       name: caliber.name,
+      ref: caliber.ref,
     });
     const created = await this.caliberRepository.save(entity);
     return {
       id: created.id,
       name: created.name,
+      ref: created.ref,
     };
   }
 
@@ -56,5 +59,18 @@ export class CaliberService {
         name: name,
       },
     });
+  }
+
+  public async findById(id: number): Promise<CaliberDto> {
+    const caliber: Caliber = await this.caliberRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return {
+      id: caliber.id,
+      ref: caliber.ref,
+      name: caliber.name,
+    };
   }
 }

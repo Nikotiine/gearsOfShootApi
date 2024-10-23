@@ -21,6 +21,8 @@ export class WeaponTypeService {
       return {
         id: type.id,
         name: type.name,
+        mode: type.mode,
+        ref: type.ref,
       };
     });
   }
@@ -37,11 +39,15 @@ export class WeaponTypeService {
     }
     const entity = this.weaponTypeRepository.create({
       name: weaponType.name,
+      mode: weaponType.mode,
+      ref: weaponType.ref,
     });
     const created = await this.weaponTypeRepository.save(entity);
     return {
       id: created.id,
       name: created.name,
+      mode: created.mode,
+      ref: created.ref,
     };
   }
 

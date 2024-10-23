@@ -10,6 +10,8 @@ export class CreateAmmunitionBodyTypeDto {
     example: 'Laiton',
   })
   name: string;
+  @ApiProperty()
+  ref: string;
 }
 export class AmmunitionBodyTypeDto extends CreateAmmunitionBodyTypeDto {
   @ApiProperty()
@@ -20,6 +22,8 @@ export class CreateAmmunitionHeadTypeDto {
     example: 'Full metal jacket',
   })
   name: string;
+  @ApiProperty()
+  ref: string;
 }
 export class AmmunitionHeadTypeDto extends CreateAmmunitionHeadTypeDto {
   @ApiProperty()
@@ -34,6 +38,63 @@ export class CreateAmmunitionDto {
   @ApiProperty({
     example:
       'Une description de la munition, qualite / origine / conseil d utilisation',
+    nullable: true,
+  })
+  @IsOptional()
+  description: string;
+
+  @ApiProperty({
+    enum: LegislationCategories,
+    example: LegislationCategories.C,
+  })
+  category: LegislationCategories;
+
+  @ApiProperty({
+    example: 320,
+  })
+  @IsNumber()
+  initialSpeed: number;
+
+  @ApiProperty({
+    enum: PercussionType,
+    example: PercussionType.CENTRAL,
+  })
+  percussionType: PercussionType;
+
+  @ApiProperty({
+    example: 50,
+  })
+  @IsPositive()
+  @IsNumber()
+  packaging: number;
+
+  @ApiProperty()
+  headTypeId: number;
+
+  @ApiProperty()
+  bodyTypeId: number;
+
+  @ApiProperty()
+  factoryId: number;
+
+  @ApiProperty()
+  caliberId: number;
+}
+
+export class AmmunitionDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  reference: string;
+  @ApiProperty({
+    example: 'Sk Standard',
+  })
+  name: string;
+
+  @ApiProperty({
+    example:
+      'Une description de la munition, qualite / origine / conseil d utilisation',
+    nullable: true,
   })
   @IsOptional()
   description: string;
@@ -82,13 +143,6 @@ export class CreateAmmunitionDto {
     type: CaliberDto,
   })
   caliber: CaliberDto;
-}
-
-export class AmmunitionDto extends CreateAmmunitionDto {
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  reference: string;
 }
 
 export class ListOfPrerequisitesAmmunitionDto {

@@ -5,7 +5,7 @@ import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 @Entity()
 export class ThreadedSize extends BaseEntity {
   @OneToMany(() => Weapon, (weapon) => weapon.threadedSize)
-  weapons: Weapon[];
+  weapons?: Weapon[];
 
   @OneToMany(
     () => SoundNoiseReducer,
@@ -15,4 +15,6 @@ export class ThreadedSize extends BaseEntity {
 
   @Column({ unique: true })
   size: string;
+  @Column()
+  ref: string;
 }

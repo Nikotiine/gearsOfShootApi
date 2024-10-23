@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -33,5 +34,17 @@ export class AmmunitionBodyTypeController {
     @Body() ammunitionBodyType: CreateAmmunitionBodyTypeDto,
   ): Promise<AmmunitionBodyTypeDto> {
     return this.ammunitionBodyTypeService.insert(ammunitionBodyType);
+  }
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Toutes les douilles',
+    description: 'Retourne la liste de toutes les douilles disponible',
+  })
+  @ApiOkResponse({
+    type: [AmmunitionBodyTypeDto],
+  })
+  public async findAllBodyTypes(): Promise<AmmunitionBodyTypeDto[]> {
+    return await this.ammunitionBodyTypeService.findAll();
   }
 }

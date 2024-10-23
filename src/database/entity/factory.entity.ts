@@ -11,6 +11,8 @@ import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 export class Factory extends BaseEntity {
   @Column()
   name: string;
+  @Column()
+  ref: string;
   @Column({ nullable: true })
   description: string;
   @OneToMany(() => Weapon, (weapon) => weapon.factory)
