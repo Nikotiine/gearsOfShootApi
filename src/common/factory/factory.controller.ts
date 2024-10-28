@@ -7,9 +7,13 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { FactoryService } from './factory.service';
-import { CreateFactoryDto, FactoryDto } from '../../dto/factory.dto';
-import { FactoryType } from '../../enum/factory-types.enum';
+import { FactoryService, FactoryTypes } from './factory.service';
+import {
+  CreateFactoryDto,
+  FactoryDto,
+  ListOfPrerequisitesFactoryDto,
+} from '../../dto/factory.dto';
+import { ListOfPrerequisitesWeaponDto } from '../../dto/weapon.dto';
 
 @Controller('factory')
 @ApiTags('Factory')
@@ -40,7 +44,7 @@ export class FactoryController {
     name: 'type',
   })
   public async findByType(
-    @Param('type') type: FactoryType,
+    @Param('type') type: FactoryTypes,
   ): Promise<FactoryDto[]> {
     return await this.factoryService.findByType(type);
   }
@@ -58,5 +62,18 @@ export class FactoryController {
   })
   public async create(@Body() factory: CreateFactoryDto): Promise<FactoryDto> {
     return await this.factoryService.insert(factory);
+  }
+
+  @Get('prerequisites')
+  @ApiOkResponse({
+    type: ListOfPrerequisitesFactoryDto,
+  })
+  @ApiOperation({
+    summary: 'Liste des pre-requis',
+    description:
+      'Retourne la liste des pre-requis necesssaire a la creation d une marque',
+  })
+  public async findPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
+    return this.factoryService.getListOfPrerequisitesFactoryList();
   }
 }

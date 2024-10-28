@@ -12,7 +12,6 @@ import { FactoryService } from '../common/factory/factory.service';
 import { CaliberService } from '../common/caliber/caliber.service';
 import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
-import { FactoryType } from '../enum/factory-types.enum';
 import { LegislationCategories } from '../enum/legislation-categories.enum';
 
 @Injectable()
@@ -71,7 +70,7 @@ export class AmmunitionService {
       category: created.category,
       factory: {
         id: created.factory.id,
-        type: created.factory.factoryType,
+        type: created.factory.type,
         name: created.factory.name,
         description: created.factory.description,
         ref: created.factory.ref,
@@ -110,9 +109,7 @@ export class AmmunitionService {
     const calibers = await this.caliberService.findAll();
     const headTypes = await this.ammunitionHeadTypeService.findAll();
     const bodyTypes = await this.ammunitionBodyTypeService.findAll();
-    const factories = await this.factoryService.findByType(
-      FactoryType.AMMUNITION,
-    );
+    const factories = await this.factoryService.findByType('ammunition');
     return {
       factories: factories,
       calibers: calibers,
@@ -133,7 +130,9 @@ export class AmmunitionService {
         category: category,
       },
       relations: {
-        factory: true,
+        factory: {
+          type: true,
+        },
         caliber: true,
       },
     });
@@ -194,7 +193,7 @@ export class AmmunitionService {
         category: ammuntion.category,
         factory: {
           id: ammuntion.factory.id,
-          type: ammuntion.factory.factoryType,
+          type: ammuntion.factory.type,
           name: ammuntion.factory.name,
           description: ammuntion.factory.description,
           ref: ammuntion.factory.ref,

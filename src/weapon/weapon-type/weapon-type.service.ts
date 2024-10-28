@@ -16,7 +16,14 @@ export class WeaponTypeService {
    * Retourne tout les type d'arme different
    */
   public async findAll(): Promise<WeaponTypeDto[]> {
-    const weaponTypes: WeaponType[] = await this.weaponTypeRepository.find();
+    const weaponTypes: WeaponType[] = await this.weaponTypeRepository.find({
+      select: {
+        id: true,
+        name: true,
+        mode: true,
+        ref: true,
+      },
+    });
     return weaponTypes.map((type) => {
       return {
         id: type.id,

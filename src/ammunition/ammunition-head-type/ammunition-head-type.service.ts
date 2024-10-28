@@ -24,6 +24,7 @@ export class AmmunitionHeadTypeService {
         select: {
           id: true,
           name: true,
+          ref: true,
         },
       });
     return headTypes.map((head) => {

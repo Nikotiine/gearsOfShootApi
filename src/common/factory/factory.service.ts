@@ -1,16 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateFactoryDto, FactoryDto } from '../../dto/factory.dto';
+import {
+  CreateFactoryDto,
+  FactoryDto,
+  ListOfPrerequisitesFactoryDto,
+} from '../../dto/factory.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Factory } from '../../database/entity/factory.entity';
-import { FactoryType } from '../../enum/factory-types.enum';
+
 import { CodeError } from '../../enum/code-error.enum';
+import { FactoryTypeService } from '../factory-type/factory-type.service';
 
 @Injectable()
 export class FactoryService {
   constructor(
     @InjectRepository(Factory)
     private readonly factoryRepository: Repository<Factory>,
+    private readonly factoryTypeService: FactoryTypeService,
   ) {}
 
   /**
@@ -18,11 +24,18 @@ export class FactoryService {
    */
   public async findAll(): Promise<FactoryDto[]> {
     const factories: Factory[] = await this.factoryRepository.find({
+      relations: {
+        type: true,
+      },
       select: {
         name: true,
         id: true,
-        factoryType: true,
+        type: {
+          id: true,
+          name: true,
+        },
         description: true,
+        ref: true,
       },
     });
 
@@ -30,7 +43,7 @@ export class FactoryService {
       return {
         id: factory.id,
         name: factory.name,
-        type: factory.factoryType,
+        type: factory.type,
         description: factory.description,
         ref: factory.ref,
       };
@@ -41,15 +54,23 @@ export class FactoryService {
    * Filtre les marque par type / Arme / Munition / Optique ....
    * @param type {FactoryType} le type de la marque
    */
-  async findByType(type: FactoryType): Promise<FactoryDto[]> {
+  async findByType(type: FactoryTypes): Promise<FactoryDto[]> {
     const factories = await this.factoryRepository.find({
       where: {
-        factoryType: type,
+        type: {
+          name: type,
+        },
+      },
+      relations: {
+        type: true,
       },
       select: {
         name: true,
         id: true,
-        factoryType: true,
+        type: {
+          id: true,
+          name: true,
+        },
         description: true,
         ref: true,
       },
@@ -58,7 +79,7 @@ export class FactoryService {
       return {
         id: factory.id,
         name: factory.name,
-        type: factory.factoryType,
+        type: factory.type,
         description: factory.description,
         ref: factory.ref,
       };
@@ -71,40 +92,42 @@ export class FactoryService {
    * @param factory {CreateFactoryDto}
    */
   public async insert(factory: CreateFactoryDto): Promise<FactoryDto> {
-    const isExist = await this.verifyIfFactoryExist(factory.name, factory.type);
+    const isExist = await this.verifyIfFactoryExist(
+      factory.name,
+      factory.typeId,
+    );
     if (isExist) {
       throw new BadRequestException(CodeError.FACTORY_NAME_IS_USED);
     }
     const entity = this.factoryRepository.create({
       name: factory.name,
       description: factory.description,
-      factoryType: factory.type,
+      type: {
+        id: factory.typeId,
+      },
       ref: factory.ref,
     });
     const created = await this.factoryRepository.save(entity);
-    return {
-      id: created.id,
-      name: created.name,
-      type: created.factoryType,
-      description: created.description,
-      ref: created.ref,
-    };
+
+    return this.findById(created.id);
   }
 
   /**
    * Verification que la marque n'existe pas
    * @param name {string} son nom
-   * @param type {FactoryType} son type
+   * @param typeId {number} id du type de marque
    * @private
    */
   private async verifyIfFactoryExist(
     name: string,
-    type: FactoryType,
+    typeId: number,
   ): Promise<boolean> {
     const factory = await this.factoryRepository.findOne({
       where: {
         name: name,
-        factoryType: type,
+        type: {
+          id: typeId,
+        },
       },
     });
     return !!factory;
@@ -119,4 +142,33 @@ export class FactoryService {
     });
     return factory.ref;
   }
+
+  public async getListOfPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
+    return {
+      types: await this.factoryTypeService.findAll(),
+    };
+  }
+
+  private async findById(id: number): Promise<FactoryDto> {
+    return this.factoryRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        type: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        ref: true,
+        type: {
+          id: true,
+          name: true,
+        },
+      },
+    });
+  }
 }
+
+export type FactoryTypes = 'weapon' | 'ammunition' | 'optic' | 'rds';

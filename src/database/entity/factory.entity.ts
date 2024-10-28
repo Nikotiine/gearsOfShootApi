@@ -1,13 +1,14 @@
-import { Column, Entity, OneToMany, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Weapon } from './weapon.entity';
-import { FactoryType } from '../../enum/factory-types.enum';
+
 import { Ammunition } from './ammunition.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
+import { FactoryType } from './factoryType.entity';
 
 @Entity()
-@Unique(['name', 'factoryType'])
+@Unique(['name', 'type'])
 export class Factory extends BaseEntity {
   @Column()
   name: string;
@@ -26,6 +27,6 @@ export class Factory extends BaseEntity {
     (soundNoiseReducer) => soundNoiseReducer.factory,
   )
   soundNoiseReducers: SoundNoiseReducer[];
-  @Column({ enum: FactoryType })
-  factoryType: FactoryType;
+  @ManyToOne(() => FactoryType, (type) => type.factories)
+  type: FactoryType;
 }

@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -28,5 +29,17 @@ export class WeaponTypeController {
     @Body() weaponType: CreateWeaponTypeDto,
   ): Promise<WeaponTypeDto> {
     return this.weaponTypeService.insert(weaponType);
+  }
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Liste des types d arme',
+    description: 'Retourne la liste des diffents type d arme possible',
+  })
+  @ApiOkResponse({
+    type: [WeaponTypeDto],
+  })
+  public async findAllWeaponTypes(): Promise<WeaponTypeDto[]> {
+    return await this.weaponTypeService.findAll();
   }
 }

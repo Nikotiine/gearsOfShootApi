@@ -1,16 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FactoryType } from '../enum/factory-types.enum';
+
 import { IsNotEmpty } from 'class-validator';
+
+export class CreateFactoryTypeDto {
+  @ApiProperty({
+    example: 'Arme',
+  })
+  name: string;
+}
+export class FactoryTypeDto extends CreateFactoryTypeDto {
+  @ApiProperty()
+  id: number;
+}
 export class CreateFactoryDto {
   @ApiProperty({
     example: 'Colt',
   })
   name: string;
-  @ApiProperty({
-    enum: FactoryType,
-    example: FactoryType.WEAPON,
-  })
-  type: FactoryType;
+  @ApiProperty({})
+  typeId: number;
   @ApiProperty({
     example: 'Une description de la marque et ses produits',
   })
@@ -19,7 +27,26 @@ export class CreateFactoryDto {
   @IsNotEmpty()
   ref: string;
 }
-export class FactoryDto extends CreateFactoryDto {
+export class FactoryDto {
   @ApiProperty()
   id: number;
+  @ApiProperty({
+    example: 'Une description de la marque et ses produits',
+  })
+  description: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  ref: string;
+  @ApiProperty()
+  type: FactoryTypeDto;
+  @ApiProperty({
+    example: 'Colt',
+  })
+  name: string;
+}
+export class ListOfPrerequisitesFactoryDto {
+  @ApiProperty({
+    type: [FactoryTypeDto],
+  })
+  types: FactoryTypeDto[];
 }

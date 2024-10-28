@@ -1,8 +1,9 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Factory } from '../entity/factory.entity';
-import { FactoryType } from '../../enum/factory-types.enum';
-import { CreateFactoryDto } from '../../dto/factory.dto';
+
+import { CreateFactoryDto, CreateFactoryTypeDto } from '../../dto/factory.dto';
+import { FactoryType } from '../entity/factoryType.entity';
 
 export default class FactorySeeder implements Seeder {
   /**
@@ -16,96 +17,115 @@ export default class FactorySeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
+    const weaponFactory: CreateFactoryTypeDto = {
+      name: 'weapon',
+    };
+    const ammoFactory: CreateFactoryTypeDto = {
+      name: 'ammunition',
+    };
+    const opticFactory: CreateFactoryTypeDto = {
+      name: 'optic',
+    };
+    const rdsFactory: CreateFactoryTypeDto = {
+      name: 'rds',
+    };
+
+    const factoryTypeRepo = dataSource.getRepository(FactoryType);
+    const wf = await factoryTypeRepo.save(weaponFactory);
+    const af = await factoryTypeRepo.save(ammoFactory);
+    const of = await factoryTypeRepo.save(opticFactory);
+    const rf = await factoryTypeRepo.save(rdsFactory);
+
     const factoriesW: CreateFactoryDto[] = [
       {
         name: 'CZ',
         description: 'Description',
         ref: 'CZ',
-        type: FactoryType.WEAPON,
+        typeId: wf.id,
       },
       {
         name: 'Taurus',
         description: 'Description',
         ref: 'TAU',
-        type: FactoryType.WEAPON,
+        typeId: wf.id,
       },
       {
         name: 'Winchester',
         description: 'Description',
         ref: 'WIN',
-        type: FactoryType.WEAPON,
+        typeId: wf.id,
       },
       {
         name: 'KMR',
         description: 'Description',
         ref: 'KMR',
-        type: FactoryType.WEAPON,
+        typeId: wf.id,
       },
       {
         name: 'Glock',
         description: 'Description',
         ref: 'GLK',
-        type: FactoryType.WEAPON,
+        typeId: wf.id,
       },
       {
         name: 'SK',
         description: 'Description',
         ref: 'SK',
-        type: FactoryType.AMMUNITION,
+        typeId: af.id,
       },
       {
         name: 'Lapua',
         description: 'Description',
         ref: 'LAP',
-        type: FactoryType.AMMUNITION,
+        typeId: af.id,
       },
       {
         name: 'RWS',
         description: 'Description',
         ref: 'RWS',
-        type: FactoryType.AMMUNITION,
+        typeId: af.id,
       },
       {
         name: 'Aguila',
         description: 'Description',
         ref: 'AGL',
-        type: FactoryType.AMMUNITION,
+        typeId: af.id,
       },
       {
         name: 'SAK',
         description: 'Description',
         ref: 'SAK',
-        type: FactoryType.SOUND_NOISE_REDUCER,
+        typeId: rf.id,
       },
       {
         name: 'Nielsen',
         description: 'Description',
         ref: 'NIEL',
-        type: FactoryType.SOUND_NOISE_REDUCER,
+        typeId: rf.id,
       },
       {
         name: 'Atec',
         description: 'Description',
         ref: 'ATC',
-        type: FactoryType.SOUND_NOISE_REDUCER,
+        typeId: rf.id,
       },
       {
         name: 'Konus',
         description: 'Description',
         ref: 'KNS',
-        type: FactoryType.OPTIC,
+        typeId: of.id,
       },
       {
         name: 'Vortex optics',
         description: 'Description',
         ref: 'VOROPT',
-        type: FactoryType.OPTIC,
+        typeId: of.id,
       },
       {
         name: 'Vector optics',
         description: 'Description',
         ref: 'VECOPT',
-        type: FactoryType.OPTIC,
+        typeId: of.id,
       },
     ];
     const repository = dataSource.getRepository(Factory);
@@ -113,7 +133,9 @@ export default class FactorySeeder implements Seeder {
       await repository.insert([
         {
           name: factory.name,
-          factoryType: factory.type,
+          type: {
+            id: factory.typeId,
+          },
           description: factory.description,
           ref: factory.ref,
         },

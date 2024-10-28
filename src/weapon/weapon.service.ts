@@ -11,7 +11,6 @@ import {
   WeaponDto,
 } from '../dto/weapon.dto';
 import { CodeError } from '../enum/code-error.enum';
-import { FactoryType } from '../enum/factory-types.enum';
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
 import { LegislationCategories } from '../enum/legislation-categories.enum';
 
@@ -75,7 +74,7 @@ export class WeaponService {
       factory: {
         id: created.factory.id,
         name: created.factory.name,
-        type: created.factory.factoryType,
+        type: created.factory.type,
         description: created.factory.description,
         ref: created.factory.ref,
       },
@@ -100,7 +99,7 @@ export class WeaponService {
    */
   public async getListOfPrerequisitesWeaponList(): Promise<ListOfPrerequisitesWeaponDto> {
     const calibers = await this.caliberService.findAll();
-    const factories = await this.factoryService.findByType(FactoryType.WEAPON);
+    const factories = await this.factoryService.findByType('weapon');
     const types = await this.weaponTypeService.findAll();
     const threadedSizes = await this.threadSizeService.findAll();
     return {
@@ -133,7 +132,7 @@ export class WeaponService {
         factory: {
           id: weapon.factory.id,
           name: weapon.factory.name,
-          type: weapon.factory.factoryType,
+          type: weapon.factory.type,
           description: weapon.factory.description,
           ref: weapon.factory.ref,
         },
