@@ -10,6 +10,7 @@ import { AmmunitionModule } from './ammunition/ammunition.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { NodemailerModule } from './nodemailer/nodemailer.module';
+import { OpticModule } from './optic/optic.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { NodemailerModule } from './nodemailer/nodemailer.module';
     UserModule,
     AuthModule,
     NodemailerModule,
+    OpticModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,4 @@
 import {
-  Column,
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryGeneratedColumn,
@@ -15,6 +14,4 @@ export class BaseEntity {
   updatedAt: Date;
   @DeleteDateColumn()
   deletedAt: Date;
-  @Column({ default: true })
-  isActive: boolean;
 }

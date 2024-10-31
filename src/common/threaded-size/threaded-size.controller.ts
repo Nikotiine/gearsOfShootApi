@@ -1,7 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ThreadedSizeService } from './threaded-size.service';
-import { ThreadedSizeDto } from '../../dto/threaded-size.dto';
+import {
+  CreateThreadedSizeDto,
+  ThreadedSizeDto,
+} from '../../dto/threaded-size.dto';
 
 @Controller('threaded-size')
 @ApiTags('Threaded-size')
@@ -18,5 +27,22 @@ export class ThreadedSizeController {
   })
   public async findAllThreadedSize(): Promise<ThreadedSizeDto[]> {
     return await this.threadedSieService.findAll();
+  }
+
+  @Post('')
+  @ApiOperation({
+    summary: 'Ajout d un filetage',
+    description: 'Ajouter un nouveux type de filetage arme ou rds ',
+  })
+  @ApiCreatedResponse({
+    type: ThreadedSizeDto,
+  })
+  @ApiBody({
+    type: CreateThreadedSizeDto,
+  })
+  public async create(
+    @Body() threadedSize: CreateThreadedSizeDto,
+  ): Promise<ThreadedSizeDto> {
+    return await this.threadedSieService.insert(threadedSize);
   }
 }

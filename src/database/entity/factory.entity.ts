@@ -6,6 +6,7 @@ import { Ammunition } from './ammunition.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 import { FactoryType } from './factoryType.entity';
+import { Optic } from './optic.entity';
 
 @Entity()
 @Unique(['name', 'type'])
@@ -20,6 +21,8 @@ export class Factory extends BaseEntity {
   weapons: Weapon[];
   @OneToMany(() => Ammunition, (ammunition) => ammunition.factory)
   ammunitions: Ammunition[];
+  @OneToMany(() => Optic, (optic) => optic.factory)
+  optics: Optic[];
   @OneToMany(() => WeaponMagazine, (magazine) => magazine.factory)
   magazines: WeaponMagazine[];
   @OneToMany(

@@ -7,6 +7,7 @@ import {
   CreateAmmunitionHeadTypeDto,
 } from '../../dto/ammunition.dto';
 import { CodeError } from '../../enum/code-error.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Injectable()
 export class AmmunitionHeadTypeService {
@@ -69,6 +70,15 @@ export class AmmunitionHeadTypeService {
       id: headType.id,
       name: headType.name,
       ref: headType.ref,
+    };
+  }
+
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.ammunitionHeadTypeRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: 'toto',
     };
   }
 }

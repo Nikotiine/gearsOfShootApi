@@ -120,7 +120,7 @@ export class AmmunitionService {
 
   /**
    * Retourne les munition suivant leurs categorisation
-   * @param category
+   * @param category {LegislationCategories}
    */
   public async findByCategory(
     category: LegislationCategories,
@@ -142,7 +142,7 @@ export class AmmunitionService {
   /**
    * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
    * @private
-   * @param ammunition
+   * @param ammunition {CreateAmmunitionDto}
    */
   private async createReference(
     ammunition: CreateAmmunitionDto,
