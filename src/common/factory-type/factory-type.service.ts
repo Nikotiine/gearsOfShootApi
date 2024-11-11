@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FactoryType } from '../../database/entity/factoryType.entity';
+import { FactoryType } from '../../database/entity/factory-type.entity';
 import { Repository } from 'typeorm';
 import { FactoryTypeDto } from '../../dto/factory.dto';
 

@@ -13,6 +13,8 @@ import { CaliberService } from '../common/caliber/caliber.service';
 import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
 import { LegislationCategories } from '../enum/legislation-categories.enum';
+import { ApiDeleteResponseDto } from '../dto/api-response.dto';
+import { CodeSuccess } from '../enum/code-success.enum';
 
 @Injectable()
 export class AmmunitionService {
@@ -140,6 +142,19 @@ export class AmmunitionService {
   }
 
   /**
+   * Soft delete de la munition
+   * @param id {number} id de la munition
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.ammunitionRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.AMMUNITION_DELETE,
+    };
+  }
+
+  /**
    * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
    * @private
    * @param ammunition {CreateAmmunitionDto}
@@ -182,26 +197,26 @@ export class AmmunitionService {
   }
 
   private mapEntityArrayToDtoArray(ammunitions: Ammunition[]): AmmunitionDto[] {
-    return ammunitions.map((ammuntion) => {
+    return ammunitions.map((ammunition) => {
       return {
-        id: ammuntion.id,
-        name: ammuntion.name,
-        description: ammuntion.description,
-        headType: ammuntion.headType,
-        bodyType: ammuntion.bodyType,
-        caliber: ammuntion.caliber,
-        category: ammuntion.category,
+        id: ammunition.id,
+        name: ammunition.name,
+        description: ammunition.description,
+        headType: ammunition.headType,
+        bodyType: ammunition.bodyType,
+        caliber: ammunition.caliber,
+        category: ammunition.category,
         factory: {
-          id: ammuntion.factory.id,
-          type: ammuntion.factory.type,
-          name: ammuntion.factory.name,
-          description: ammuntion.factory.description,
-          ref: ammuntion.factory.ref,
+          id: ammunition.factory.id,
+          type: ammunition.factory.type,
+          name: ammunition.factory.name,
+          description: ammunition.factory.description,
+          ref: ammunition.factory.ref,
         },
-        percussionType: ammuntion.percussionType,
-        packaging: ammuntion.packaging,
-        initialSpeed: ammuntion.initialSpeed,
-        reference: ammuntion.reference,
+        percussionType: ammunition.percussionType,
+        packaging: ammunition.packaging,
+        initialSpeed: ammunition.initialSpeed,
+        reference: ammunition.reference,
       };
     });
   }

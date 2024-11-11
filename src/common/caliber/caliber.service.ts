@@ -5,6 +5,8 @@ import { Caliber } from '../../database/entity/caliber.entity';
 import { Repository } from 'typeorm';
 import { CaliberDto, CreateCaliberDto } from '../../dto/caliber.dto';
 import { CodeError } from '../../enum/code-error.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class CaliberService {
@@ -45,6 +47,19 @@ export class CaliberService {
       id: created.id,
       name: created.name,
       ref: created.ref,
+    };
+  }
+
+  /**
+   * Soft delete du calibre
+   * @param id {number} id du calibre
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.caliberRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.CALIBER_DELETE,
     };
   }
 

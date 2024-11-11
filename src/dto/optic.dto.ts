@@ -3,6 +3,27 @@ import { IsNumber, IsOptional } from 'class-validator';
 import { FactoryDto } from './factory.dto';
 import { FocalPlane, OpticUnit } from '../database/entity/optic.entity';
 
+export class CreateOpticTypeDto {
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  ref: string;
+}
+
+export class OpticTypeDto extends CreateOpticTypeDto {
+  @ApiProperty()
+  id: number;
+}
+export class ListOfPrerequisitesOpticDto {
+  @ApiProperty({
+    type: [OpticTypeDto],
+  })
+  types: OpticTypeDto[];
+  @ApiProperty({
+    type: [FactoryDto],
+  })
+  factories: FactoryDto[];
+}
 export class CreateOpticDto {
   @ApiProperty()
   name: string;

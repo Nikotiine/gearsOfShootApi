@@ -5,7 +5,7 @@ import { Weapon } from './weapon.entity';
 import { Ammunition } from './ammunition.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
-import { FactoryType } from './factoryType.entity';
+import { FactoryType } from './factory-type.entity';
 import { Optic } from './optic.entity';
 
 @Entity()

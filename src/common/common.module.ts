@@ -9,12 +9,17 @@ import { Caliber } from '../database/entity/caliber.entity';
 import { ThreadedSizeService } from './threaded-size/threaded-size.service';
 import { ThreadedSize } from '../database/entity/threaded-size.entity';
 import { ThreadedSizeController } from './threaded-size/threaded-size.controller';
-import { FactoryType } from '../database/entity/factoryType.entity';
+import { FactoryType } from '../database/entity/factory-type.entity';
 import { FactoryTypeService } from './factory-type/factory-type.service';
 
 @Module({
   controllers: [FactoryController, CaliberController, ThreadedSizeController],
-  providers: [FactoryService, CaliberService, ThreadedSizeService, FactoryTypeService],
+  providers: [
+    FactoryService,
+    CaliberService,
+    ThreadedSizeService,
+    FactoryTypeService,
+  ],
   imports: [
     TypeOrmModule.forFeature([Factory, Caliber, ThreadedSize, FactoryType]),
   ],

@@ -1,13 +1,15 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { MagazineBody } from '../../enum/magazine-body.enum';
+
 import { Factory } from './factory.entity';
+import { Caliber } from './caliber.entity';
+import { WeaponMagazineBodyType } from './weapon-magazine-body-type.entity';
 @Entity()
 export class WeaponMagazine extends BaseEntity {
   @Column()
   capacity: number;
-  @Column({ enum: MagazineBody })
-  body: MagazineBody;
+  @ManyToOne(() => WeaponMagazineBodyType, (body) => body.magazines)
+  body: WeaponMagazineBodyType;
   @ManyToOne(() => Factory, (factory) => factory.magazines)
   factory: Factory;
   @Column()
@@ -18,4 +20,6 @@ export class WeaponMagazine extends BaseEntity {
   width: number;
   @Column()
   reference: string;
+  @ManyToOne(() => Caliber, (caliber) => caliber.magazines)
+  caliber: Caliber;
 }

@@ -10,6 +10,8 @@ import { Factory } from '../../database/entity/factory.entity';
 
 import { CodeError } from '../../enum/code-error.enum';
 import { FactoryTypeService } from '../factory-type/factory-type.service';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class FactoryService {
@@ -133,6 +135,10 @@ export class FactoryService {
     return !!factory;
   }
 
+  /**
+   * Retourne uniquement la reference de la maque sous forme de {string}
+   * @param id {number} id de la marque
+   */
   public async findFactoryReferenceById(id: number): Promise<string> {
     const factory = await this.factoryRepository.findOne({
       where: { id: id },
@@ -143,12 +149,33 @@ export class FactoryService {
     return factory.ref;
   }
 
+  /**
+   * Retorune la liste des prerequis pour creer une nohvelle marque
+   */
   public async getListOfPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
     return {
       types: await this.factoryTypeService.findAll(),
     };
   }
 
+  /**
+   * Soft delete de la marque
+   * @param id {number} id de la marque
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.factoryRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.FACTORY_DELETE,
+    };
+  }
+
+  /**
+   * Retourne FactoryDto avec son id
+   * @param id {number} id de la marque
+   * @private
+   */
   private async findById(id: number): Promise<FactoryDto> {
     return this.factoryRepository.findOne({
       where: {
@@ -171,4 +198,9 @@ export class FactoryService {
   }
 }
 
-export type FactoryTypes = 'weapon' | 'ammunition' | 'optic' | 'rds';
+export type FactoryTypes =
+  | 'weapon'
+  | 'ammunition'
+  | 'optic'
+  | 'rds'
+  | 'magazine';

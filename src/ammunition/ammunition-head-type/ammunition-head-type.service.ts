@@ -8,6 +8,7 @@ import {
 } from '../../dto/ammunition.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class AmmunitionHeadTypeService {
@@ -60,6 +61,10 @@ export class AmmunitionHeadTypeService {
     return { id: created.id, name: created.name, ref: created.ref };
   }
 
+  /**
+   * Retourne la douille en focntion de son id
+   * @param headTypeId {number} id de la douille
+   */
   public async findById(headTypeId: number): Promise<AmmunitionHeadTypeDto> {
     const headType = await this.ammunitionHeadTypeRepository.findOne({
       where: {
@@ -73,12 +78,16 @@ export class AmmunitionHeadTypeService {
     };
   }
 
+  /**
+   * Soft delete de la douille
+   * @param id {number} id de la douille
+   */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.ammunitionHeadTypeRepository.softDelete(id);
     return {
       id: id,
       isSuccess: deleted.affected > 0,
-      message: 'toto',
+      message: CodeSuccess.HEAD_TYPE_DELETE,
     };
   }
 }

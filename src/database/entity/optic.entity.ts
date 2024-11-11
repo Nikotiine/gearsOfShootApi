@@ -1,6 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Factory } from './factory.entity';
+import { OpticType } from './optic-type.entity';
 export enum FocalPlane {
   FPP = 'Premier plan focal',
   SFP = 'Second plan focal',
@@ -25,7 +26,7 @@ export class Optic extends BaseEntity {
   bodyDiameter: number;
   @Column()
   lensDiameter: number;
-  @Column({ enum: FocalPlane, default: FocalPlane.SFP })
+  @Column({ enum: FocalPlane, nullable: true, default: null })
   focalPlane: FocalPlane;
   @Column({ default: false })
   isParallax: boolean;
@@ -41,4 +42,6 @@ export class Optic extends BaseEntity {
   minParallax: number;
   @Column()
   maxParallax: number;
+  @ManyToOne(() => OpticType, (type) => type.optics)
+  type: OpticType;
 }

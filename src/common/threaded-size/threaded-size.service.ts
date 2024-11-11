@@ -7,6 +7,8 @@ import {
   ThreadedSizeDto,
 } from '../../dto/threaded-size.dto';
 import { CodeError } from '../../enum/code-error.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class ThreadedSizeService {
@@ -15,6 +17,9 @@ export class ThreadedSizeService {
     private readonly threadedSizeRepository: Repository<ThreadedSize>,
   ) {}
 
+  /**
+   * Retourne la liste de tous les filletage disponible
+   */
   public async findAll(): Promise<ThreadedSizeDto[]> {
     const sizes: ThreadedSize[] = await this.threadedSizeRepository.find({
       select: {
@@ -32,6 +37,10 @@ export class ThreadedSizeService {
     });
   }
 
+  /**
+   * Creation d'un nouveau filletage
+   * @param size {CreateThreadedSizeDto}
+   */
   public async insert(size: CreateThreadedSizeDto): Promise<ThreadedSizeDto> {
     const isExist = await this.findBySize(size.size);
     if (isExist) {
@@ -49,6 +58,24 @@ export class ThreadedSizeService {
     };
   }
 
+  /**
+   * Soft delete du type de filetage
+   * @param id {number} id du type de filetage
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.threadedSizeRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.THREADED_SIZE_DELETE,
+    };
+  }
+
+  /**
+   * Retourne l'objet {ThreadedSize} avec sa siez en paremetre
+   * @param size {string} taille du filletage
+   * @private
+   */
   private async findBySize(size: string): Promise<ThreadedSize> {
     return this.threadedSizeRepository.findOne({
       where: {

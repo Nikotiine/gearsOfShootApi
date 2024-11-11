@@ -8,12 +8,34 @@ import { Weapon } from '../database/entity/weapon.entity';
 import { WeaponType } from '../database/entity/weapon-type.entity';
 import { WeaponMagazine } from '../database/entity/weapon-magazine.entity';
 import { CommonModule } from '../common/common.module';
+import { MagazineService } from './magazine/magazine.service';
+import { MagazineController } from './magazine/magazine.controller';
+import { SoundReducerController } from './sound-reducer/sound-reducer.controller';
+import { SoundNoiseReducer } from '../database/entity/sound-noise-reducer.entity';
+import { SoundReducerService } from './sound-reducer/sound-reducer.service';
+import { WeaponMagazineBodyType } from '../database/entity/weapon-magazine-body-type.entity';
 
 @Module({
-  controllers: [WeaponController, WeaponTypeController],
-  providers: [WeaponService, WeaponTypeService],
+  controllers: [
+    WeaponController,
+    WeaponTypeController,
+    MagazineController,
+    SoundReducerController,
+  ],
+  providers: [
+    WeaponService,
+    WeaponTypeService,
+    MagazineService,
+    SoundReducerService,
+  ],
   imports: [
-    TypeOrmModule.forFeature([Weapon, WeaponType, WeaponMagazine]),
+    TypeOrmModule.forFeature([
+      Weapon,
+      WeaponType,
+      WeaponMagazine,
+      SoundNoiseReducer,
+      WeaponMagazineBodyType,
+    ]),
     CommonModule,
   ],
 })

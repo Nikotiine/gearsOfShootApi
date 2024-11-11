@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Factory } from '../entity/factory.entity';
 
 import { CreateFactoryDto, CreateFactoryTypeDto } from '../../dto/factory.dto';
-import { FactoryType } from '../entity/factoryType.entity';
+import { FactoryType } from '../entity/factory-type.entity';
 
 export default class FactorySeeder implements Seeder {
   /**
@@ -29,12 +29,16 @@ export default class FactorySeeder implements Seeder {
     const rdsFactory: CreateFactoryTypeDto = {
       name: 'rds',
     };
+    const magFactory: CreateFactoryTypeDto = {
+      name: 'magazine',
+    };
 
     const factoryTypeRepo = dataSource.getRepository(FactoryType);
     const wf = await factoryTypeRepo.save(weaponFactory);
     const af = await factoryTypeRepo.save(ammoFactory);
     const of = await factoryTypeRepo.save(opticFactory);
     const rf = await factoryTypeRepo.save(rdsFactory);
+    const mf = await factoryTypeRepo.save(magFactory);
 
     const factoriesW: CreateFactoryDto[] = [
       {
@@ -126,6 +130,18 @@ export default class FactorySeeder implements Seeder {
         description: 'Description',
         ref: 'VECOPT',
         typeId: of.id,
+      },
+      {
+        name: 'MagPul',
+        description: 'Description',
+        ref: 'MAGPUL',
+        typeId: mf.id,
+      },
+      {
+        name: 'CZ',
+        description: 'Description',
+        ref: 'CZ',
+        typeId: mf.id,
       },
     ];
     const repository = dataSource.getRepository(Factory);

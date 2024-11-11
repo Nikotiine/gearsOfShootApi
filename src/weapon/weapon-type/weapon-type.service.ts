@@ -4,6 +4,8 @@ import { WeaponType } from '../../database/entity/weapon-type.entity';
 import { Repository } from 'typeorm';
 import { CreateWeaponTypeDto, WeaponTypeDto } from '../../dto/weapon.dto';
 import { CodeError } from '../../enum/code-error.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class WeaponTypeService {
@@ -55,6 +57,19 @@ export class WeaponTypeService {
       name: created.name,
       mode: created.mode,
       ref: created.ref,
+    };
+  }
+
+  /**
+   * Soft delete du type d arme
+   * @param id {number} id du type d arme
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.weaponTypeRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.WEAPON_TYPE_DELETE,
     };
   }
 

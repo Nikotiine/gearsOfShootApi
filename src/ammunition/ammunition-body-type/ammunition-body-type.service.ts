@@ -7,6 +7,8 @@ import {
   CreateAmmunitionBodyTypeDto,
 } from '../../dto/ammunition.dto';
 import { CodeError } from '../../enum/code-error.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class AmmunitionBodyTypeService {
@@ -71,5 +73,18 @@ export class AmmunitionBodyTypeService {
         name: name,
       },
     });
+  }
+
+  /**
+   * Soft delete de l ogive
+   * @param id {number} id de l ogive
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.ammunitionBodyTypeRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.BODY_TYPE_DELETE,
+    };
   }
 }

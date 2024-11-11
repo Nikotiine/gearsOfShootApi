@@ -13,6 +13,8 @@ import {
 import { CodeError } from '../enum/code-error.enum';
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
 import { LegislationCategories } from '../enum/legislation-categories.enum';
+import { ApiDeleteResponseDto } from '../dto/api-response.dto';
+import { CodeSuccess } from '../enum/code-success.enum';
 
 @Injectable()
 export class WeaponService {
@@ -111,11 +113,11 @@ export class WeaponService {
   }
 
   public async findAllByCategory(
-    categoy: LegislationCategories,
+    category: LegislationCategories,
   ): Promise<WeaponDto[]> {
     const weapons: Weapon[] = await this.weaponRepository.find({
       where: {
-        category: categoy,
+        category: category,
       },
       relations: {
         factory: true,
@@ -150,6 +152,19 @@ export class WeaponService {
         adjustableTriggerValue: weapon.adjustableTriggerValue,
       };
     });
+  }
+
+  /**
+   * Soft delete de l arme
+   * @param id {number} id de l arme
+   */
+  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.weaponRepository.softDelete(id);
+    return {
+      id: id,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.WEAPON_DELETE,
+    };
   }
 
   /**
