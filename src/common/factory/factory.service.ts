@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   CreateFactoryDto,
+  EditFactoryDto,
   FactoryDto,
   ListOfPrerequisitesFactoryDto,
 } from '../../dto/factory.dto';
@@ -41,15 +42,7 @@ export class FactoryService {
       },
     });
 
-    return factories.map((factory: Factory) => {
-      return {
-        id: factory.id,
-        name: factory.name,
-        type: factory.type,
-        description: factory.description,
-        ref: factory.ref,
-      };
-    });
+    return this.mapArrayEntityToArrayDto(factories);
   }
 
   /**
@@ -77,15 +70,7 @@ export class FactoryService {
         ref: true,
       },
     });
-    return factories.map((factory: Factory) => {
-      return {
-        id: factory.id,
-        name: factory.name,
-        type: factory.type,
-        description: factory.description,
-        ref: factory.ref,
-      };
-    });
+    return this.mapArrayEntityToArrayDto(factories);
   }
 
   /**
@@ -159,6 +144,24 @@ export class FactoryService {
   }
 
   /**
+   * Edition d'une marque
+   * @param id
+   * @param factory
+   */
+  public async edit(id: number, factory: EditFactoryDto): Promise<FactoryDto> {
+    const updateResult = await this.factoryRepository.update(id, {
+      id: id,
+      name: factory.name,
+      ref: factory.ref,
+      description: factory.description,
+    });
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(CodeError.FACTORY_UPDATE_FAILED);
+    }
+    return this.findById(id);
+  }
+
+  /**
    * Soft delete de la marque
    * @param id {number} id de la marque
    */
@@ -195,6 +198,24 @@ export class FactoryService {
         },
       },
     });
+  }
+
+  private mapArrayEntityToArrayDto(factories: Factory[]): FactoryDto[] {
+    const array: FactoryDto[] = [];
+    for (const factory of factories) {
+      array.push(this.mapEntityToDto(factory));
+    }
+    return array;
+  }
+
+  private mapEntityToDto(factory: Factory) {
+    return {
+      id: factory.id,
+      name: factory.name,
+      type: factory.type,
+      description: factory.description,
+      ref: factory.ref,
+    };
   }
 }
 

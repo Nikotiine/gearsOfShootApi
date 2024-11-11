@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -10,10 +18,11 @@ import {
 import { FactoryService, FactoryTypes } from './factory.service';
 import {
   CreateFactoryDto,
+  EditFactoryDto,
   FactoryDto,
   ListOfPrerequisitesFactoryDto,
 } from '../../dto/factory.dto';
-import { ListOfPrerequisitesWeaponDto } from '../../dto/weapon.dto';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Controller('factory')
 @ApiTags('Factory')
@@ -22,8 +31,8 @@ export class FactoryController {
 
   @Get('all')
   @ApiOperation({
-    summary: 'Get all factories',
-    description: 'Retourne toutes les marques sans distinction',
+    summary: 'Liste complete',
+    description: 'Retourne la listes de toutes les marques sans distinction',
   })
   @ApiOkResponse({
     type: [FactoryDto],
@@ -34,8 +43,8 @@ export class FactoryController {
 
   @Get('by/:type')
   @ApiOperation({
-    summary: 'Get all factories by type',
-    description: 'Retourne toutes les marques suivant leur type',
+    summary: 'Liste par type',
+    description: 'Retourne la liste des marques suivant leur type ',
   })
   @ApiOkResponse({
     type: [FactoryDto],
@@ -49,10 +58,24 @@ export class FactoryController {
     return await this.factoryService.findByType(type);
   }
 
+  @Get('prerequisites')
+  @ApiOkResponse({
+    type: ListOfPrerequisitesFactoryDto,
+  })
+  @ApiOperation({
+    summary: 'Pre-requis de creation',
+    description:
+      'Retourne la liste des pre-requis necesssaire a la creation d une marque',
+  })
+  public async findPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
+    return this.factoryService.getListOfPrerequisitesFactoryList();
+  }
+
   @Post('')
   @ApiOperation({
-    summary: 'Ajout d une marque',
-    description: 'Ajout d une nouvelle marque pour un type FactoryType',
+    summary: 'Ajout',
+    description:
+      'Ajout d une nouvelle marque pour un type specifique et retourne le dto apres creation',
   })
   @ApiCreatedResponse({
     type: FactoryDto,
@@ -64,16 +87,39 @@ export class FactoryController {
     return await this.factoryService.insert(factory);
   }
 
-  @Get('prerequisites')
-  @ApiOkResponse({
-    type: ListOfPrerequisitesFactoryDto,
+  @Put(':id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiCreatedResponse({
+    type: FactoryDto,
+  })
+  @ApiBody({
+    type: EditFactoryDto,
   })
   @ApiOperation({
-    summary: 'Liste des pre-requis',
-    description:
-      'Retourne la liste des pre-requis necesssaire a la creation d une marque',
+    summary: 'Edition',
+    description: 'Edition d une marque (ne pas editier son type)',
   })
-  public async findPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
-    return this.factoryService.getListOfPrerequisitesFactoryList();
+  public async edit(
+    @Param('id') id: number,
+    @Body() factory: EditFactoryDto,
+  ): Promise<FactoryDto> {
+    return await this.factoryService.edit(id, factory);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiOkResponse({
+    type: ApiDeleteResponseDto,
+  })
+  @ApiOperation({
+    summary: 'Suppression logique',
+    description: 'Sppression logique de la marque',
+  })
+  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+    return await this.factoryService.delete(id);
   }
 }
