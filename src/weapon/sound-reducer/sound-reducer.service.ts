@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SoundNoiseReducer } from '../../database/entity/sound-noise-reducer.entity';
 import { Repository } from 'typeorm';
@@ -6,12 +6,14 @@ import {
   CreateSoundNoiseReducerDto,
   ListOfPrerequisitesSoundNoiseReducerDto,
   SoundNoiseReducerDto,
+  UpdateSoundNoiseReducerDto,
 } from '../../dto/sound-noise-reducer.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { FactoryService } from '../../common/factory/factory.service';
 import { CaliberService } from '../../common/caliber/caliber.service';
 import { ThreadedSizeService } from '../../common/threaded-size/threaded-size.service';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class SoundReducerService {
@@ -79,6 +81,35 @@ export class SoundReducerService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.SOUND_REDUCER_DELETE,
     };
+  }
+
+  public async edit(
+    id: number,
+    soundNoiseReducer: UpdateSoundNoiseReducerDto,
+  ): Promise<SoundNoiseReducerDto> {
+    const updateResult = await this.soundNoiseReducerRepository.update(id, {
+      name: soundNoiseReducer.name,
+      length: soundNoiseReducer.length,
+      factory: {
+        id: soundNoiseReducer.factoryId,
+      },
+      threadedSize: {
+        id: soundNoiseReducer.threadedSizeId,
+      },
+      caliber: {
+        id: soundNoiseReducer.caliberId,
+      },
+      description: soundNoiseReducer.description,
+      reference: soundNoiseReducer.reference,
+      isCleanable: soundNoiseReducer.isCleanable,
+      diameter: soundNoiseReducer.diameter,
+    });
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(
+        CodeError.SOUND_NOISE_REDUCER_UPDATE_FAILED,
+      );
+    }
+    return await this.findById(id);
   }
 
   public async getListOfPrerequisitesSoundNoiseReducerList(): Promise<ListOfPrerequisitesSoundNoiseReducerDto> {

@@ -62,6 +62,35 @@ export class AmmunitionBodyTypeService {
     };
   }
 
+  public async edit(
+    id: number,
+    body: AmmunitionBodyTypeDto,
+  ): Promise<AmmunitionBodyTypeDto> {
+    const updatedResult = await this.ammunitionBodyTypeRepository.update(id, {
+      name: body.name,
+      ref: body.ref,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(
+        CodeError.AMMUNITION_BODY_TYPE_UPDATE_FAILED,
+      );
+    }
+    return this.findById(id);
+  }
+
+  private async findById(id: number): Promise<AmmunitionBodyTypeDto> {
+    const body = await this.ammunitionBodyTypeRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return {
+      id: body.id,
+      ref: body.ref,
+      name: body.name,
+    };
+  }
+
   /**
    * Recherche une douille par son nom
    * @param name {string} nom de la douille

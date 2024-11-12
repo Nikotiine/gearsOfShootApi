@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AmmunitionHeadType } from '../../database/entity/ammunition-head-type.entity';
 import { Repository } from 'typeorm';
 import {
+  AmmunitionBodyTypeDto,
   AmmunitionHeadTypeDto,
   CreateAmmunitionHeadTypeDto,
 } from '../../dto/ammunition.dto';
@@ -36,6 +37,22 @@ export class AmmunitionHeadTypeService {
         ref: head.ref,
       };
     });
+  }
+
+  public async edit(
+    id: number,
+    body: AmmunitionHeadTypeDto,
+  ): Promise<AmmunitionHeadTypeDto> {
+    const updatedResult = await this.ammunitionHeadTypeRepository.update(id, {
+      name: body.name,
+      ref: body.ref,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(
+        CodeError.AMMUNITION_HEAD_TYPE_UPDATE_FAILED,
+      );
+    }
+    return this.findById(id);
   }
 
   /**

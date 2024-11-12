@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { AmmunitionHeadTypeService } from './ammunition-head-type.service';
@@ -11,6 +20,7 @@ import {
   AmmunitionHeadTypeDto,
   CreateAmmunitionHeadTypeDto,
 } from '../../dto/ammunition.dto';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Controller('ammunition-head-type')
 @ApiTags('AmmunitionHeadType')
@@ -18,6 +28,18 @@ export class AmmunitionHeadTypeController {
   constructor(
     private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
   ) {}
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Toutes les oviges',
+    description: 'Retourne la liste de toutes les oviges disponible',
+  })
+  @ApiOkResponse({
+    type: [AmmunitionHeadTypeDto],
+  })
+  public async findAllHeadTypes(): Promise<AmmunitionHeadTypeDto[]> {
+    return await this.ammunitionHeadTypeService.findAll();
+  }
 
   @Post('')
   @ApiOperation({
@@ -35,16 +57,39 @@ export class AmmunitionHeadTypeController {
   ): Promise<AmmunitionHeadTypeDto> {
     return this.ammunitionHeadTypeService.insert(ammunitionHeadType);
   }
-
-  @Get('')
+  @Put(':id')
   @ApiOperation({
-    summary: 'Toutes les oviges',
-    description: 'Retourne la liste de toutes les oviges disponible',
+    summary: 'Edition',
+    description: 'Edition d un  type d ovige',
+  })
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiBody({
+    type: AmmunitionHeadTypeDto,
+  })
+  @ApiCreatedResponse({
+    type: AmmunitionHeadTypeDto,
+  })
+  public async edit(
+    @Param('id') id: number,
+    body: AmmunitionHeadTypeDto,
+  ): Promise<AmmunitionHeadTypeDto> {
+    return await this.ammunitionHeadTypeService.edit(id, body);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiOperation({
+    summary: 'Suppression logique',
+    description: 'Suppression logique d une ovige',
   })
   @ApiOkResponse({
-    type: [AmmunitionHeadTypeDto],
+    type: ApiDeleteResponseDto,
   })
-  public async findAllHeadTypes(): Promise<AmmunitionHeadTypeDto[]> {
-    return await this.ammunitionHeadTypeService.findAll();
+  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+    return await this.ammunitionHeadTypeService.delete(id);
   }
 }

@@ -80,6 +80,10 @@ export class CreateAmmunitionDto {
   @ApiProperty()
   caliberId: number;
 }
+export class UpdateAmmunitionDto extends CreateAmmunitionDto {
+  @ApiProperty()
+  id: number;
+}
 
 export class AmmunitionDto {
   @ApiProperty()

@@ -71,6 +71,21 @@ export class ThreadedSizeService {
     };
   }
 
+  public async edit(
+    id: number,
+    size: ThreadedSizeDto,
+  ): Promise<ThreadedSizeDto> {
+    const updatedResult = await this.threadedSizeRepository.update(id, {
+      size: size.size,
+      ref: size.ref,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(CodeError.THREAD_UPDATE_FAILED);
+    }
+    const updatedEntity = await this.findById(id);
+    return this.mapEntityToDto(updatedEntity);
+  }
+
   /**
    * Retourne l'objet {ThreadedSize} avec sa siez en paremetre
    * @param size {string} taille du filletage
@@ -82,5 +97,21 @@ export class ThreadedSizeService {
         size: size,
       },
     });
+  }
+
+  private async findById(id: number): Promise<ThreadedSize> {
+    return await this.threadedSizeRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  private mapEntityToDto(threadedSize: ThreadedSize): ThreadedSizeDto {
+    return {
+      id: threadedSize.id,
+      ref: threadedSize.ref,
+      size: threadedSize.ref,
+    };
   }
 }

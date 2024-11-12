@@ -27,6 +27,10 @@ export class CreateWeaponMagazineDto {
   @ApiProperty()
   caliberId: number;
 }
+export class UpdateWeaponMagazineDto extends CreateWeaponMagazineDto {
+  @ApiProperty()
+  id: number;
+}
 export class WeaponMagazineDto {
   @ApiProperty()
   id: number;

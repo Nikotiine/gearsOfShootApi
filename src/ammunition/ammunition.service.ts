@@ -6,6 +6,7 @@ import {
   AmmunitionDto,
   CreateAmmunitionDto,
   ListOfPrerequisitesAmmunitionDto,
+  UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
 import { CodeError } from '../enum/code-error.enum';
 import { FactoryService } from '../common/factory/factory.service';
@@ -62,26 +63,7 @@ export class AmmunitionService {
       reference: await this.createReference(ammunition),
     });
     const created = await this.ammunitionRepository.save(entity);
-    return {
-      id: created.id,
-      name: created.name,
-      description: created.description,
-      headType: created.headType,
-      bodyType: created.bodyType,
-      caliber: created.caliber,
-      category: created.category,
-      factory: {
-        id: created.factory.id,
-        type: created.factory.type,
-        name: created.factory.name,
-        description: created.factory.description,
-        ref: created.factory.ref,
-      },
-      percussionType: created.percussionType,
-      packaging: created.packaging,
-      initialSpeed: created.initialSpeed,
-      reference: created.reference,
-    };
+    return this.findById(created.id);
   }
 
   /**
@@ -101,6 +83,52 @@ export class AmmunitionService {
       },
     });
     return this.mapEntityArrayToDtoArray(ammunitions);
+  }
+
+  public async findById(id: number): Promise<AmmunitionDto> {
+    const ammunition = await this.ammunitionRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        factory: true,
+        caliber: true,
+        bodyType: true,
+        headType: true,
+      },
+    });
+    return this.mapEntityToDto(ammunition);
+  }
+
+  public async edit(
+    id: number,
+    ammunition: UpdateAmmunitionDto,
+  ): Promise<AmmunitionDto> {
+    const updatedResult = await this.ammunitionRepository.update(id, {
+      caliber: {
+        id: ammunition.caliberId,
+      },
+      factory: {
+        id: ammunition.factoryId,
+      },
+      headType: {
+        id: ammunition.headTypeId,
+      },
+      bodyType: {
+        id: ammunition.bodyTypeId,
+      },
+      name: ammunition.name,
+      description: ammunition.description,
+      packaging: ammunition.packaging,
+      initialSpeed: ammunition.initialSpeed,
+      reference: await this.createReference(ammunition),
+      category: ammunition.category,
+      percussionType: ammunition.percussionType,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
+    }
+    return this.findById(id);
   }
 
   /**
@@ -194,6 +222,23 @@ export class AmmunitionService {
       },
     });
     return !!ammunition;
+  }
+
+  private mapEntityToDto(ammunition: Ammunition): AmmunitionDto {
+    return {
+      id: ammunition.id,
+      name: ammunition.name,
+      description: ammunition.description,
+      headType: ammunition.headType,
+      bodyType: ammunition.bodyType,
+      caliber: ammunition.caliber,
+      category: ammunition.category,
+      factory: ammunition.factory,
+      percussionType: ammunition.percussionType,
+      packaging: ammunition.packaging,
+      initialSpeed: ammunition.initialSpeed,
+      reference: ammunition.reference,
+    };
   }
 
   private mapEntityArrayToDtoArray(ammunitions: Ammunition[]): AmmunitionDto[] {

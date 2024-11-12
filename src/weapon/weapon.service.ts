@@ -8,6 +8,7 @@ import { FactoryService } from '../common/factory/factory.service';
 import {
   CreateWeaponDto,
   ListOfPrerequisitesWeaponDto,
+  UpdateWeaponDto,
   WeaponDto,
 } from '../dto/weapon.dto';
 import { CodeError } from '../enum/code-error.enum';
@@ -69,30 +70,7 @@ export class WeaponService {
       reference: await this.createReference(weapon),
     });
     const created = await this.weaponRepository.save(entity);
-    return {
-      id: created.id,
-      name: created.name,
-      variation: created.variation,
-      factory: {
-        id: created.factory.id,
-        name: created.factory.name,
-        type: created.factory.type,
-        description: created.factory.description,
-        ref: created.factory.ref,
-      },
-      isThreadedBarrel: created.isThreadedBarrel,
-      isAdjustableTrigger: created.isAdjustableTrigger,
-      isOpticReady: created.isOpticReady,
-      caliber: created.caliber,
-      type: created.type,
-      description: created.description,
-      barrelLength: created.barrelLength,
-      barrelType: created.barrelType,
-      category: created.category,
-      threadedSize: created.threadedSize,
-      reference: created.reference,
-      adjustableTriggerValue: created.adjustableTriggerValue,
-    };
+    return this.findById(created.id);
   }
 
   /**
@@ -126,6 +104,22 @@ export class WeaponService {
         threadedSize: true,
       },
     });
+    return this.mapArrayEntityToArrayDto(weapons);
+  }
+
+  public async findAll(): Promise<WeaponDto[]> {
+    const weapons = await this.weaponRepository.find({
+      relations: {
+        factory: true,
+        caliber: true,
+        type: true,
+        threadedSize: true,
+      },
+    });
+    return this.mapArrayEntityToArrayDto(weapons);
+  }
+
+  private mapArrayEntityToArrayDto(weapons: Weapon[]): WeaponDto[] {
     return weapons.map((weapon) => {
       return {
         id: weapon.id,
@@ -152,6 +146,74 @@ export class WeaponService {
         adjustableTriggerValue: weapon.adjustableTriggerValue,
       };
     });
+  }
+
+  public async findById(id: number): Promise<WeaponDto> {
+    const weapon = await this.weaponRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        factory: true,
+        type: true,
+        caliber: true,
+        threadedSize: true,
+      },
+    });
+    return this.mapEntityToDto(weapon);
+  }
+
+  public async edit(id: number, weapon: UpdateWeaponDto): Promise<WeaponDto> {
+    const updateResult = await this.weaponRepository.update(id, {
+      name: weapon.name,
+      variation: weapon.variation,
+      factory: {
+        id: weapon.factoryId,
+      },
+      isThreadedBarrel: weapon.isThreadedBarrel,
+      isAdjustableTrigger: weapon.isAdjustableTrigger,
+      isOpticReady: weapon.isOpticReady,
+      caliber: {
+        id: weapon.caliberId,
+      },
+      type: {
+        id: weapon.typeId,
+      },
+      description: weapon.description,
+      barrelLength: weapon.barrelLength,
+      barrelType: weapon.barrelType,
+      category: weapon.category,
+      threadedSize: {
+        id: weapon.threadedSizeId,
+      },
+      adjustableTriggerValue: weapon.adjustableTriggerValue,
+      reference: await this.createReference(weapon),
+    });
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
+    }
+    return this.findById(id);
+  }
+
+  private mapEntityToDto(weapon: Weapon): WeaponDto {
+    return {
+      id: weapon.id,
+      barrelLength: weapon.barrelLength,
+      name: weapon.name,
+      description: weapon.description,
+      type: weapon.type,
+      threadedSize: weapon.threadedSize,
+      reference: weapon.reference,
+      adjustableTriggerValue: weapon.adjustableTriggerValue,
+      barrelType: weapon.barrelType,
+      isAdjustableTrigger: weapon.isAdjustableTrigger,
+      isOpticReady: weapon.isOpticReady,
+      caliber: weapon.caliber,
+      category: weapon.category,
+      factory: weapon.factory,
+      variation: weapon.variation,
+      isThreadedBarrel: weapon.isThreadedBarrel,
+    };
   }
 
   /**

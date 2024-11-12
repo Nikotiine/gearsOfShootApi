@@ -1,17 +1,28 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { MagazineService } from './magazine.service';
 import {
   CreateWeaponMagazineDto,
   ListOfPrerequisitesWeaponMagazineDto,
+  UpdateWeaponMagazineDto,
   WeaponMagazineDto,
 } from '../../dto/weapon-magazine.dto';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Controller('magazine')
 @ApiTags('Magazine')
@@ -28,6 +39,21 @@ export class MagazineController {
   })
   public async findAll(): Promise<WeaponMagazineDto[]> {
     return await this.magzineService.findAll();
+  }
+
+  @Get('by/:id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiOperation({
+    summary: 'Par id',
+    description: 'Retourne le detail du chargeur',
+  })
+  @ApiOkResponse({
+    type: WeaponMagazineDto,
+  })
+  public async findById(@Param('id') id: number): Promise<WeaponMagazineDto> {
+    return await this.magzineService.findById(id);
   }
 
   @Get('prerequisites')
@@ -58,5 +84,41 @@ export class MagazineController {
     @Body() magazine: CreateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
     return await this.magzineService.insert(magazine);
+  }
+
+  @Put(':id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiCreatedResponse({
+    type: WeaponMagazineDto,
+  })
+  @ApiOperation({
+    summary: 'Edition',
+    description: 'Edition d un chargeur',
+  })
+  @ApiBody({
+    type: UpdateWeaponMagazineDto,
+  })
+  public async edit(
+    @Param('id') id: number,
+    @Body() magazine: UpdateWeaponMagazineDto,
+  ): Promise<WeaponMagazineDto> {
+    return await this.magzineService.edit(id, magazine);
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+  })
+  @ApiOperation({
+    summary: 'Suppression logique',
+    description: 'Suppression logique  d un chargeur',
+  })
+  @ApiOkResponse({
+    type: ApiDeleteResponseDto,
+  })
+  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+    return await this.magzineService.delete(id);
   }
 }

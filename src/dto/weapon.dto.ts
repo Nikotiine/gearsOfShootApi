@@ -100,6 +100,11 @@ export class CreateWeaponDto {
   @IsOptional()
   adjustableTriggerValue: string;
 }
+
+export class UpdateWeaponDto extends CreateWeaponDto {
+  @ApiProperty()
+  id: number;
+}
 export class WeaponDto {
   @ApiProperty()
   id: number;

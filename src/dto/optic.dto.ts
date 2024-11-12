@@ -73,6 +73,12 @@ export class CreateOpticDto {
   })
   focalPlane: FocalPlane;
 }
+
+export class UpdateOpticDto extends CreateOpticDto {
+  @ApiProperty()
+  id: number;
+}
+
 export class OpticDto {
   @ApiProperty()
   id: number;

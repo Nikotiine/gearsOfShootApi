@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
-import { WeaponMagazineBodyDto } from './weapon-magazine.dto';
 
 export class CreateSoundNoiseReducerDto {
   @ApiProperty()
@@ -24,6 +23,12 @@ export class CreateSoundNoiseReducerDto {
   @ApiProperty()
   isCleanable: boolean;
 }
+
+export class UpdateSoundNoiseReducerDto extends CreateSoundNoiseReducerDto {
+  @ApiProperty()
+  id: number;
+}
+
 export class SoundNoiseReducerDto {
   @ApiProperty()
   id: number;

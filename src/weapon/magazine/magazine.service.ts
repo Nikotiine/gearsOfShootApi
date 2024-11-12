@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponMagazine } from '../../database/entity/weapon-magazine.entity';
 import { Repository } from 'typeorm';
 import {
   CreateWeaponMagazineDto,
   ListOfPrerequisitesWeaponMagazineDto,
+  UpdateWeaponMagazineDto,
   WeaponMagazineDto,
 } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
@@ -12,6 +13,7 @@ import { CodeSuccess } from '../../enum/code-success.enum';
 import { FactoryService } from '../../common/factory/factory.service';
 import { CaliberService } from '../../common/caliber/caliber.service';
 import { WeaponMagazineBodyType } from '../../database/entity/weapon-magazine-body-type.entity';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class MagazineService {
@@ -95,6 +97,32 @@ export class MagazineService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.MAGAZINE_DELETE,
     };
+  }
+
+  public async edit(
+    id: number,
+    magazine: UpdateWeaponMagazineDto,
+  ): Promise<WeaponMagazineDto> {
+    const updateResult = await this.weaponMagazineRepository.update(id, {
+      caliber: {
+        id: magazine.caliberId,
+      },
+      factory: {
+        id: magazine.factoryId,
+      },
+      body: {
+        id: magazine.bodyId,
+      },
+      length: magazine.length,
+      reference: magazine.reference,
+      height: magazine.height,
+      capacity: magazine.capacity,
+      width: magazine.width,
+    });
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
+    }
+    return this.findById(id);
   }
 
   /**

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
 import { Repository } from 'typeorm';
-import { CreateOpticDto, OpticDto } from '../dto/optic.dto';
+import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
+import { CodeError } from '../enum/code-error.enum';
 
 @Injectable()
 export class OpticService {
@@ -60,6 +61,32 @@ export class OpticService {
       },
     });
     return this.mapOpticsArrayToOpticsDtoArray(optics);
+  }
+
+  public async edit(id: number, optic: UpdateOpticDto) {
+    const updatedResult = await this.opticRepository.update(id, {
+      name: optic.name,
+      maxParallax: optic.maxParallax,
+      minParallax: optic.minParallax,
+      maxZoom: optic.maxZoom,
+      minElevation: optic.minElevation,
+      maxElevation: optic.maxElevation,
+      minZoom: optic.minZoom,
+      description: optic.description,
+      factory: {
+        id: optic.factoryId,
+      },
+      valueOfOneClick: optic.valueOfOneClick,
+      lensDiameter: optic.lensDiameter,
+      isParallax: optic.isParallax,
+      bodyDiameter: optic.bodyDiameter,
+      focalPlane: optic.focalPlane,
+      opticUnit: optic.opticUnit,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
+    }
+    return this.findById(id);
   }
 
   public async delete(id: number): Promise<ApiDeleteResponseDto> {

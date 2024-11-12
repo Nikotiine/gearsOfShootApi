@@ -73,6 +73,32 @@ export class WeaponTypeService {
     };
   }
 
+  public async edit(id: number, type: WeaponTypeDto): Promise<WeaponTypeDto> {
+    const updateResult = await this.weaponTypeRepository.update(id, {
+      ref: type.ref,
+      name: type.name,
+      mode: type.mode,
+    });
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(CodeError.WEAPON_TYPE_UPDATE_FAILED);
+    }
+    return await this.findById(id);
+  }
+
+  private async findById(id: number): Promise<WeaponTypeDto> {
+    const type = await this.weaponTypeRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return {
+      id: type.id,
+      name: type.name,
+      ref: type.ref,
+      mode: type.mode,
+    };
+  }
+
   /**
    * Retourne un weaponType si il est trouver par son nom
    * @param name {string} nom du type d'arme

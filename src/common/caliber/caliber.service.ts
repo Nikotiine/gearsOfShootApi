@@ -43,11 +43,7 @@ export class CaliberService {
       ref: caliber.ref,
     });
     const created = await this.caliberRepository.save(entity);
-    return {
-      id: created.id,
-      name: created.name,
-      ref: created.ref,
-    };
+    return this.mapEntityToDto(created);
   }
 
   /**
@@ -64,6 +60,30 @@ export class CaliberService {
   }
 
   /**
+   * Retroune le calibre en fonction de son id
+   * @param id
+   */
+  public async findById(id: number): Promise<CaliberDto> {
+    const caliber: Caliber = await this.caliberRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return this.mapEntityToDto(caliber);
+  }
+
+  public async edit(id: number, caliber: CaliberDto): Promise<CaliberDto> {
+    const updatedResult = await this.caliberRepository.update(id, {
+      name: caliber.name,
+      ref: caliber.ref,
+    });
+    if (updatedResult.affected === 0) {
+      throw new BadRequestException(CodeError.CALIBER_UPDATE_FAILED);
+    }
+    return this.findById(id);
+  }
+
+  /**
    * Retourne le calibre si il est trouve par son nom
    * @param name {string} nom du calibre
    * @private
@@ -76,12 +96,7 @@ export class CaliberService {
     });
   }
 
-  public async findById(id: number): Promise<CaliberDto> {
-    const caliber: Caliber = await this.caliberRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+  private mapEntityToDto(caliber: Caliber): CaliberDto {
     return {
       id: caliber.id,
       ref: caliber.ref,
