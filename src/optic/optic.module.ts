@@ -6,10 +6,11 @@ import { Optic } from '../database/entity/optic.entity';
 import { OpticTypeService } from './optic-type/optic-type.service';
 import { OpticType } from '../database/entity/optic-type.entity';
 import { OpticTypeController } from './optic-type/optic-type.controller';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   controllers: [OpticController, OpticTypeController],
   providers: [OpticService, OpticTypeService],
-  imports: [TypeOrmModule.forFeature([Optic, OpticType])],
+  imports: [TypeOrmModule.forFeature([Optic, OpticType]), CommonModule],
 })
 export class OpticModule {}

@@ -33,7 +33,7 @@ export class OpticTypeController {
     type: [OpticTypeDto],
   })
   public async findAll(): Promise<OpticTypeDto[]> {
-    return await this.opticTypeService.getAll();
+    return await this.opticTypeService.findAll();
   }
 
   @Post('')

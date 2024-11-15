@@ -16,7 +16,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
+import {
+  CreateOpticDto,
+  ListOfPrerequisitesOpticDto,
+  OpticDto,
+  UpdateOpticDto,
+} from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 
 @Controller('optic')
@@ -49,6 +54,19 @@ export class OpticController {
   })
   public async findById(@Param('id') id: number): Promise<OpticDto> {
     return await this.opticService.findById(id);
+  }
+
+  @Get('prerequisites')
+  @ApiOkResponse({
+    type: ListOfPrerequisitesOpticDto,
+  })
+  @ApiOperation({
+    summary: 'Liste des pre-requis',
+    description:
+      'Retourne la liste des pre-requis necesssaire a la creation d une optique',
+  })
+  public async findPrerequisitesOpticList(): Promise<ListOfPrerequisitesOpticDto> {
+    return await this.opticService.getListOfPrerequisitesOpticDto();
   }
 
   @Post('')

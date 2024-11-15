@@ -14,7 +14,7 @@ export class OpticTypeService {
     private readonly opticTypeRepository: Repository<OpticType>,
   ) {}
 
-  public async getAll(): Promise<OpticTypeDto[]> {
+  public async findAll(): Promise<OpticTypeDto[]> {
     return this.opticTypeRepository.find({
       select: {
         id: true,

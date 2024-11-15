@@ -2,16 +2,25 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
 import { Repository } from 'typeorm';
-import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
+import {
+  CreateOpticDto,
+  ListOfPrerequisitesOpticDto,
+  OpticDto,
+  UpdateOpticDto,
+} from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
+import { FactoryService } from '../common/factory/factory.service';
+import { OpticTypeService } from './optic-type/optic-type.service';
 
 @Injectable()
 export class OpticService {
   constructor(
     @InjectRepository(Optic)
     private readonly opticRepository: Repository<Optic>,
+    private readonly factoryService: FactoryService,
+    private readonly opticTypeService: OpticTypeService,
   ) {}
 
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
@@ -50,6 +59,15 @@ export class OpticService {
       },
     });
     return this.mapOpticToOpticDto(optic);
+  }
+
+  public async getListOfPrerequisitesOpticDto(): Promise<ListOfPrerequisitesOpticDto> {
+    const factories = await this.factoryService.findByType('optic');
+    const types = await this.opticTypeService.findAll();
+    return {
+      factories: factories,
+      types: types,
+    };
   }
 
   public async findAll(): Promise<OpticDto[]> {
