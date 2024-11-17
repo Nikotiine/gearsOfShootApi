@@ -1,8 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional } from 'class-validator';
 import { FactoryDto } from './factory.dto';
-import { FocalPlane, OpticUnit } from '../database/entity/optic.entity';
 
+export class FocalPlaneDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  label: string;
+}
+export class OpticUnitDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  label: string;
+}
 export class CreateOpticTypeDto {
   @ApiProperty()
   name: string;
@@ -23,6 +34,14 @@ export class ListOfPrerequisitesOpticDto {
     type: [FactoryDto],
   })
   factories: FactoryDto[];
+  @ApiProperty({
+    type: [OpticUnitDto],
+  })
+  units: OpticUnitDto[];
+  @ApiProperty({
+    type: [FocalPlaneDto],
+  })
+  focalPlanes: FocalPlaneDto[];
 }
 export class CreateOpticDto {
   @ApiProperty()
@@ -64,14 +83,12 @@ export class CreateOpticDto {
   maxParallax: number;
   @ApiProperty()
   isParallax: boolean;
-  @ApiProperty({
-    enum: OpticUnit,
-  })
-  opticUnit: OpticUnit;
-  @ApiProperty({
-    enum: FocalPlane,
-  })
-  focalPlane: FocalPlane;
+  @ApiProperty()
+  opticUnitId: number;
+  @ApiProperty()
+  focalPlaneId: number;
+  @ApiProperty()
+  opticTypeId: number;
 }
 
 export class UpdateOpticDto extends CreateOpticDto {
@@ -124,11 +141,15 @@ export class OpticDto {
   @ApiProperty()
   isParallax: boolean;
   @ApiProperty({
-    enum: OpticUnit,
+    type: OpticUnitDto,
   })
-  opticUnit: OpticUnit;
+  opticUnit: OpticUnitDto;
   @ApiProperty({
-    enum: FocalPlane,
+    type: FocalPlaneDto,
   })
-  focalPlane: FocalPlane;
+  focalPlane: FocalPlaneDto;
+  @ApiProperty({
+    type: OpticTypeDto,
+  })
+  type: OpticTypeDto;
 }

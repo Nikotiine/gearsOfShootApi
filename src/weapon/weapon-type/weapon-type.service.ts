@@ -2,7 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponType } from '../../database/entity/weapon-type.entity';
 import { Repository } from 'typeorm';
-import { CreateWeaponTypeDto, WeaponTypeDto } from '../../dto/weapon.dto';
+import {
+  CreateWeaponTypeDto,
+  UpdateWeaponTypeDto,
+  WeaponTypeDto,
+} from '../../dto/weapon.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
@@ -22,7 +26,10 @@ export class WeaponTypeService {
       select: {
         id: true,
         name: true,
-        mode: true,
+        mode: {
+          id: true,
+          label: true,
+        },
         ref: true,
       },
     });
@@ -48,7 +55,9 @@ export class WeaponTypeService {
     }
     const entity = this.weaponTypeRepository.create({
       name: weaponType.name,
-      mode: weaponType.mode,
+      mode: {
+        id: weaponType.modeId,
+      },
       ref: weaponType.ref,
     });
     const created = await this.weaponTypeRepository.save(entity);
@@ -73,11 +82,16 @@ export class WeaponTypeService {
     };
   }
 
-  public async edit(id: number, type: WeaponTypeDto): Promise<WeaponTypeDto> {
+  public async edit(
+    id: number,
+    type: UpdateWeaponTypeDto,
+  ): Promise<WeaponTypeDto> {
     const updateResult = await this.weaponTypeRepository.update(id, {
       ref: type.ref,
       name: type.name,
-      mode: type.mode,
+      mode: {
+        id: type.modeId,
+      },
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_TYPE_UPDATE_FAILED);
@@ -89,6 +103,9 @@ export class WeaponTypeService {
     const type = await this.weaponTypeRepository.findOne({
       where: {
         id: id,
+      },
+      relations: {
+        mode: true,
       },
     });
     return {

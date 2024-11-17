@@ -13,6 +13,8 @@ import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
 import { FactoryService } from '../common/factory/factory.service';
 import { OpticTypeService } from './optic-type/optic-type.service';
+import { OpticUnitService } from './optic-unit/optic-unit.service';
+import { OpticFocalPlaneService } from './optic-focal-plane/optic-focal-plane.service';
 
 @Injectable()
 export class OpticService {
@@ -21,6 +23,8 @@ export class OpticService {
     private readonly opticRepository: Repository<Optic>,
     private readonly factoryService: FactoryService,
     private readonly opticTypeService: OpticTypeService,
+    private readonly opticUnitService: OpticUnitService,
+    private readonly opticFocalPlaneService: OpticFocalPlaneService,
   ) {}
 
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
@@ -40,8 +44,15 @@ export class OpticService {
       lensDiameter: optic.lensDiameter,
       isParallax: optic.isParallax,
       bodyDiameter: optic.bodyDiameter,
-      focalPlane: optic.focalPlane,
-      opticUnit: optic.opticUnit,
+      focalPlane: {
+        id: optic.focalPlaneId,
+      },
+      opticUnit: {
+        id: optic.opticUnitId,
+      },
+      type: {
+        id: optic.opticTypeId,
+      },
     });
     const created = await this.opticRepository.save(entity);
     return await this.findById(created.id);
@@ -56,6 +67,9 @@ export class OpticService {
         factory: {
           type: true,
         },
+        focalPlane: true,
+        opticUnit: true,
+        type: true,
       },
     });
     return this.mapOpticToOpticDto(optic);
@@ -64,9 +78,13 @@ export class OpticService {
   public async getListOfPrerequisitesOpticDto(): Promise<ListOfPrerequisitesOpticDto> {
     const factories = await this.factoryService.findByType('optic');
     const types = await this.opticTypeService.findAll();
+    const units = await this.opticUnitService.findAll();
+    const focalPlanes = await this.opticFocalPlaneService.findAll();
     return {
       factories: factories,
       types: types,
+      units: units,
+      focalPlanes: focalPlanes,
     };
   }
 
@@ -76,6 +94,9 @@ export class OpticService {
         factory: {
           type: true,
         },
+        focalPlane: true,
+        opticUnit: true,
+        type: true,
       },
     });
     return this.mapOpticsArrayToOpticsDtoArray(optics);
@@ -98,8 +119,15 @@ export class OpticService {
       lensDiameter: optic.lensDiameter,
       isParallax: optic.isParallax,
       bodyDiameter: optic.bodyDiameter,
-      focalPlane: optic.focalPlane,
-      opticUnit: optic.opticUnit,
+      focalPlane: {
+        id: optic.focalPlaneId,
+      },
+      opticUnit: {
+        id: optic.opticUnitId,
+      },
+      type: {
+        id: optic.opticTypeId,
+      },
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
@@ -147,6 +175,7 @@ export class OpticService {
       opticUnit: optic.opticUnit,
       focalPlane: optic.focalPlane,
       isParallax: optic.isParallax,
+      type: optic.type,
     };
   }
 }

@@ -22,7 +22,6 @@ import {
   ListOfPrerequisitesAmmunitionDto,
   UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 
 @Controller('ammunition')
@@ -47,9 +46,9 @@ export class AmmunitionController {
     return this.ammunitionService.findByCaliber(caliberId);
   }
 
-  @Get('by/category/:category')
+  @Get('by/category/:categoryId')
   @ApiParam({
-    name: 'category',
+    name: 'categoryId',
   })
   @ApiOperation({
     summary: 'Filtre par calibre',
@@ -59,9 +58,9 @@ export class AmmunitionController {
     type: [AmmunitionDto],
   })
   public async findByCategory(
-    @Param('category') category: LegislationCategories,
+    @Param('categoryId') categoryId: number,
   ): Promise<AmmunitionDto[]> {
-    return this.ammunitionService.findByCategory(category);
+    return this.ammunitionService.findByCategory(categoryId);
   }
 
   @Get('prerequisites')

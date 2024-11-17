@@ -1,11 +1,12 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
-import { LegislationCategories } from '../../enum/legislation-categories.enum';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
 import { WeaponType } from './weapon-type.entity';
-import { BarrelTypes } from '../../enum/barrel-types.enum';
 import { ThreadedSize } from './threaded-size.entity';
+import { LegislationCategory } from './legislation-category.entity';
+import { PercussionType } from './percussion-type.entity';
+import { WeaponBarrelType } from './weapon-barrel-type.entity';
 @Entity()
 @Unique(['name', 'variation', 'caliber', 'factory'])
 export class Weapon extends BaseEntity {
@@ -15,8 +16,8 @@ export class Weapon extends BaseEntity {
   variation: string;
   @Column({ nullable: true })
   description: string;
-  @Column({ enum: LegislationCategories })
-  category: LegislationCategories;
+  @ManyToOne(() => LegislationCategory, (category) => category.weapons)
+  category: LegislationCategory;
   @ManyToOne(() => Caliber, (caliber) => caliber.weapons)
   caliber: Caliber;
   @ManyToOne(() => Factory, (factory) => factory.weapons)
@@ -31,8 +32,8 @@ export class Weapon extends BaseEntity {
   isAdjustableTrigger: boolean;
   @Column({ default: false })
   isThreadedBarrel: boolean;
-  @Column({ enum: BarrelTypes, default: BarrelTypes.NORMAL })
-  barrelType: BarrelTypes;
+  @ManyToOne(() => WeaponBarrelType, (barrel) => barrel.weapons)
+  barrelType: WeaponBarrelType;
   @ManyToOne(() => ThreadedSize, (threadedSize) => threadedSize.weapons, {
     nullable: true,
   })
@@ -42,4 +43,6 @@ export class Weapon extends BaseEntity {
   reference: string;
   @Column({ nullable: true })
   adjustableTriggerValue: string;
+  @ManyToOne(() => PercussionType, (type) => type.weapons)
+  percussionType: PercussionType;
 }

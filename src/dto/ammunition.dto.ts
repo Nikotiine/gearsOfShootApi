@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
-import { PercussionType } from '../enum/percussion-types.enum';
 import { FactoryDto } from './factory.dto';
 import { CaliberDto } from './caliber.dto';
+import { LegislationCategoryDto } from './legislation-category.dto';
+import { PercussionTypeDto } from './percussion-type.dto';
 
 export class CreateAmmunitionBodyTypeDto {
   @ApiProperty({
@@ -43,11 +43,8 @@ export class CreateAmmunitionDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty({
-    enum: LegislationCategories,
-    example: LegislationCategories.C,
-  })
-  category: LegislationCategories;
+  @ApiProperty()
+  categoryId: number;
 
   @ApiProperty({
     example: 320,
@@ -55,11 +52,8 @@ export class CreateAmmunitionDto {
   @IsNumber()
   initialSpeed: number;
 
-  @ApiProperty({
-    enum: PercussionType,
-    example: PercussionType.CENTRAL,
-  })
-  percussionType: PercussionType;
+  @ApiProperty()
+  percussionTypeId: number;
 
   @ApiProperty({
     example: 50,
@@ -104,10 +98,10 @@ export class AmmunitionDto {
   description: string;
 
   @ApiProperty({
-    enum: LegislationCategories,
-    example: LegislationCategories.C,
+    type: LegislationCategoryDto,
+    example: 'C',
   })
-  category: LegislationCategories;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     example: 320,
@@ -116,10 +110,9 @@ export class AmmunitionDto {
   initialSpeed: number;
 
   @ApiProperty({
-    enum: PercussionType,
-    example: PercussionType.CENTRAL,
+    type: PercussionTypeDto,
   })
-  percussionType: PercussionType;
+  percussionType: PercussionTypeDto;
 
   @ApiProperty({
     example: 50,
@@ -166,4 +159,12 @@ export class ListOfPrerequisitesAmmunitionDto {
     type: [AmmunitionBodyTypeDto],
   })
   bodyTypes: AmmunitionBodyTypeDto[];
+  @ApiProperty({
+    type: [LegislationCategoryDto],
+  })
+  categories: LegislationCategoryDto[];
+  @ApiProperty({
+    type: [PercussionTypeDto],
+  })
+  percussionTypes: PercussionTypeDto[];
 }

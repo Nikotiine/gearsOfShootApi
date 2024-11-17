@@ -1,29 +1,60 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
+
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
-import { BarrelTypes } from '../enum/barrel-types.enum';
+
 import { ThreadedSizeDto } from './threaded-size.dto';
-import { WeaponReloadMode } from '../enum/weapon-type-main-category.enum';
+
+import { LegislationCategoryDto } from './legislation-category.dto';
+import { PercussionTypeDto } from './percussion-type.dto';
+
+export class WeaponReloadModeDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  label: string;
+}
 
 export class CreateWeaponTypeDto {
   @ApiProperty({
     example: 'Fusil a verrou',
   })
   name: string;
-  @ApiProperty({
-    enum: WeaponReloadMode,
-  })
-  mode: WeaponReloadMode;
+  @ApiProperty()
+  modeId: number;
   @ApiProperty()
   @IsNotEmpty()
   ref: string;
 }
 
-export class WeaponTypeDto extends CreateWeaponTypeDto {
+export class UpdateWeaponTypeDto extends CreateWeaponTypeDto {
   @ApiProperty()
   id: number;
+}
+
+export class WeaponTypeDto {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty({
+    example: 'Fusil a verrou',
+  })
+  name: string;
+  @ApiProperty({
+    type: WeaponReloadModeDto,
+  })
+  mode: WeaponReloadModeDto;
+  @ApiProperty()
+  @IsNotEmpty()
+  ref: string;
+}
+
+export class WeaponBarrelTypeDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  label: string;
 }
 export class CreateWeaponDto {
   @ApiProperty({
@@ -45,11 +76,8 @@ export class CreateWeaponDto {
   @IsOptional()
   variation: string;
 
-  @ApiProperty({
-    enum: LegislationCategories,
-    example: LegislationCategories.C,
-  })
-  category: LegislationCategories;
+  @ApiProperty()
+  categoryId: number;
 
   @ApiProperty()
   caliberId: number;
@@ -84,11 +112,8 @@ export class CreateWeaponDto {
   @IsBoolean()
   isThreadedBarrel: boolean;
 
-  @ApiProperty({
-    enum: BarrelTypes,
-    example: BarrelTypes.HEAVY,
-  })
-  barrelType: BarrelTypes;
+  @ApiProperty()
+  barrelTypeId: number;
 
   @ApiProperty({
     nullable: true,
@@ -99,6 +124,9 @@ export class CreateWeaponDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   adjustableTriggerValue: string;
+
+  @ApiProperty()
+  percussionTypeId: number;
 }
 
 export class UpdateWeaponDto extends CreateWeaponDto {
@@ -131,10 +159,10 @@ export class WeaponDto {
   variation: string;
 
   @ApiProperty({
-    enum: LegislationCategories,
-    example: LegislationCategories.C,
+    type: LegislationCategoryDto,
+    example: 'C',
   })
-  category: LegislationCategories;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     type: CaliberDto,
@@ -175,10 +203,10 @@ export class WeaponDto {
   isThreadedBarrel: boolean;
 
   @ApiProperty({
-    enum: BarrelTypes,
-    example: BarrelTypes.HEAVY,
+    type: WeaponBarrelTypeDto,
+    example: 'Lourd',
   })
-  barrelType: BarrelTypes;
+  barrelType: WeaponBarrelTypeDto;
 
   @ApiProperty({
     type: ThreadedSizeDto,
@@ -186,6 +214,11 @@ export class WeaponDto {
   threadedSize: ThreadedSizeDto;
   @ApiProperty()
   adjustableTriggerValue: string;
+
+  @ApiProperty({
+    type: PercussionTypeDto,
+  })
+  percussionType: PercussionTypeDto;
 }
 export class ListOfPrerequisitesWeaponDto {
   @ApiProperty({
@@ -206,4 +239,19 @@ export class ListOfPrerequisitesWeaponDto {
     type: [ThreadedSizeDto],
   })
   threadedSizes: ThreadedSizeDto[];
+
+  @ApiProperty({
+    type: [PercussionTypeDto],
+  })
+  percussionTypes: PercussionTypeDto[];
+
+  @ApiProperty({
+    type: [LegislationCategoryDto],
+  })
+  categories: LegislationCategoryDto[];
+
+  @ApiProperty({
+    type: [WeaponBarrelTypeDto],
+  })
+  barreTypes: WeaponBarrelTypeDto[];
 }

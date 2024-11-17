@@ -1,11 +1,11 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne, Unique } from 'typeorm';
-import { LegislationCategories } from '../../enum/legislation-categories.enum';
 import { Factory } from './factory.entity';
 import { Caliber } from './caliber.entity';
 import { AmmunitionHeadType } from './ammunition-head-type.entity';
 import { AmmunitionBodyType } from './ammunition-body-type.entity';
-import { PercussionType } from '../../enum/percussion-types.enum';
+import { LegislationCategory } from './legislation-category.entity';
+import { PercussionType } from './percussion-type.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'packaging'])
@@ -14,8 +14,8 @@ export class Ammunition extends BaseEntity {
   name: string;
   @Column({ nullable: true })
   description: string;
-  @Column({ enum: LegislationCategories })
-  category: LegislationCategories;
+  @ManyToOne(() => LegislationCategory, (category) => category.ammuntions)
+  category: LegislationCategory;
   @ManyToOne(() => Factory, (factory) => factory.ammunitions)
   factory: Factory;
   @ManyToOne(() => Caliber, (caliber) => caliber.ammunitions)
@@ -26,7 +26,7 @@ export class Ammunition extends BaseEntity {
   headType: AmmunitionHeadType;
   @ManyToOne(() => AmmunitionBodyType, (bodyType) => bodyType.ammunitions)
   bodyType: AmmunitionBodyType;
-  @Column({ enum: PercussionType })
+  @ManyToOne(() => PercussionType, (category) => category.ammuntions)
   percussionType: PercussionType;
   @Column()
   packaging: number;

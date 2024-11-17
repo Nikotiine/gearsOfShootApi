@@ -11,6 +11,10 @@ import { ThreadedSize } from '../database/entity/threaded-size.entity';
 import { ThreadedSizeController } from './threaded-size/threaded-size.controller';
 import { FactoryType } from '../database/entity/factory-type.entity';
 import { FactoryTypeService } from './factory-type/factory-type.service';
+import { LegislationCategoryService } from './legislation-category/legislation-category.service';
+import { PercussionTypeService } from './percussion-type/percussion-type.service';
+import { PercussionType } from '../database/entity/percussion-type.entity';
+import { LegislationCategory } from '../database/entity/legislation-category.entity';
 
 @Module({
   controllers: [FactoryController, CaliberController, ThreadedSizeController],
@@ -19,10 +23,25 @@ import { FactoryTypeService } from './factory-type/factory-type.service';
     CaliberService,
     ThreadedSizeService,
     FactoryTypeService,
+    LegislationCategoryService,
+    PercussionTypeService,
   ],
   imports: [
-    TypeOrmModule.forFeature([Factory, Caliber, ThreadedSize, FactoryType]),
+    TypeOrmModule.forFeature([
+      Factory,
+      Caliber,
+      ThreadedSize,
+      FactoryType,
+      PercussionType,
+      LegislationCategory,
+    ]),
   ],
-  exports: [CaliberService, FactoryService, ThreadedSizeService],
+  exports: [
+    CaliberService,
+    FactoryService,
+    ThreadedSizeService,
+    LegislationCategoryService,
+    PercussionTypeService,
+  ],
 })
 export class CommonModule {}

@@ -22,7 +22,6 @@ import {
   UpdateWeaponDto,
   WeaponDto,
 } from '../dto/weapon.dto';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 
 @Controller('weapon')
@@ -42,9 +41,9 @@ export class WeaponController {
     return await this.weaponService.findAll();
   }
 
-  @Get('by/:category')
+  @Get('by/:categoryId')
   @ApiParam({
-    name: 'category',
+    name: 'categoryId',
   })
   @ApiOperation({
     summary: 'Armes par categorie',
@@ -54,9 +53,9 @@ export class WeaponController {
     type: [WeaponDto],
   })
   public async findAllByCategory(
-    @Param('category') category: LegislationCategories,
+    @Param('categoryId') categoryId: number,
   ): Promise<WeaponDto[]> {
-    return this.weaponService.findAllByCategory(category);
+    return this.weaponService.findAllByCategory(categoryId);
   }
 
   @Get('by/:id')

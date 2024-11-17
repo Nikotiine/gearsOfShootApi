@@ -13,9 +13,11 @@ import {
 } from '../dto/weapon.dto';
 import { CodeError } from '../enum/code-error.enum';
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
+import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
+import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
+import { BarrelTypeService } from './barrel-type/barrel-type.service';
 
 @Injectable()
 export class WeaponService {
@@ -26,6 +28,9 @@ export class WeaponService {
     private readonly caliberService: CaliberService,
     private readonly factoryService: FactoryService,
     private readonly threadSizeService: ThreadedSizeService,
+    private readonly percussionTypeService: PercussionTypeService,
+    private readonly legalisationCategoryService: LegislationCategoryService,
+    private readonly barrelTypeService: BarrelTypeService,
   ) {}
 
   /**
@@ -61,13 +66,20 @@ export class WeaponService {
       },
       description: weapon.description,
       barrelLength: weapon.barrelLength,
-      barrelType: weapon.barrelType,
-      category: weapon.category,
+      barrelType: {
+        id: weapon.barrelTypeId,
+      },
+      category: {
+        id: weapon.categoryId,
+      },
       threadedSize: {
         id: weapon.threadedSizeId,
       },
       adjustableTriggerValue: weapon.adjustableTriggerValue,
       reference: await this.createReference(weapon),
+      percussionType: {
+        id: weapon.percussionTypeId,
+      },
     });
     const created = await this.weaponRepository.save(entity);
     return this.findById(created.id);
@@ -82,26 +94,33 @@ export class WeaponService {
     const factories = await this.factoryService.findByType('weapon');
     const types = await this.weaponTypeService.findAll();
     const threadedSizes = await this.threadSizeService.findAll();
+    const categories = await this.legalisationCategoryService.findAll();
+    const percussionTypes = await this.percussionTypeService.findAll();
+    const barreTypes = await this.barrelTypeService.findAll();
     return {
       calibers: calibers,
       factories: factories,
       types: types,
       threadedSizes: threadedSizes,
+      categories: categories,
+      percussionTypes: percussionTypes,
+      barreTypes: barreTypes,
     };
   }
 
-  public async findAllByCategory(
-    category: LegislationCategories,
-  ): Promise<WeaponDto[]> {
+  public async findAllByCategory(categoryId: number): Promise<WeaponDto[]> {
     const weapons: Weapon[] = await this.weaponRepository.find({
       where: {
-        category: category,
+        category: {
+          id: categoryId,
+        },
       },
       relations: {
         factory: true,
         caliber: true,
         type: true,
         threadedSize: true,
+        barrelType: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
@@ -114,6 +133,7 @@ export class WeaponService {
         caliber: true,
         type: true,
         threadedSize: true,
+        barrelType: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
@@ -144,6 +164,7 @@ export class WeaponService {
         threadedSize: weapon.threadedSize,
         reference: weapon.reference,
         adjustableTriggerValue: weapon.adjustableTriggerValue,
+        percussionType: weapon.percussionType,
       };
     });
   }
@@ -158,6 +179,9 @@ export class WeaponService {
         type: true,
         caliber: true,
         threadedSize: true,
+        category: true,
+        percussionType: true,
+        barrelType: true,
       },
     });
     return this.mapEntityToDto(weapon);
@@ -181,13 +205,20 @@ export class WeaponService {
       },
       description: weapon.description,
       barrelLength: weapon.barrelLength,
-      barrelType: weapon.barrelType,
-      category: weapon.category,
+      barrelType: {
+        id: weapon.barrelTypeId,
+      },
+      category: {
+        id: weapon.categoryId,
+      },
       threadedSize: {
         id: weapon.threadedSizeId,
       },
       adjustableTriggerValue: weapon.adjustableTriggerValue,
       reference: await this.createReference(weapon),
+      percussionType: {
+        id: weapon.percussionTypeId,
+      },
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
@@ -213,6 +244,7 @@ export class WeaponService {
       factory: weapon.factory,
       variation: weapon.variation,
       isThreadedBarrel: weapon.isThreadedBarrel,
+      percussionType: weapon.percussionType,
     };
   }
 

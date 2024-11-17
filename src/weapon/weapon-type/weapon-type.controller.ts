@@ -16,7 +16,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { WeaponTypeService } from './weapon-type.service';
-import { CreateWeaponTypeDto, WeaponTypeDto } from '../../dto/weapon.dto';
+import {
+  CreateWeaponTypeDto,
+  UpdateWeaponTypeDto,
+  WeaponTypeDto,
+} from '../../dto/weapon.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Controller('weapon-type')
@@ -62,14 +66,14 @@ export class WeaponTypeController {
     description: 'Edition d un type d arme',
   })
   @ApiBody({
-    type: WeaponTypeDto,
+    type: UpdateWeaponTypeDto,
   })
   @ApiParam({
     name: 'id',
   })
   public async edit(
     @Param('id') id: number,
-    @Body() type: WeaponTypeDto,
+    @Body() type: UpdateWeaponTypeDto,
   ): Promise<WeaponTypeDto> {
     return await this.weaponTypeService.edit(id, type);
   }

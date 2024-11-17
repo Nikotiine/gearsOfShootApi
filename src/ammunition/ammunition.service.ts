@@ -13,9 +13,11 @@ import { FactoryService } from '../common/factory/factory.service';
 import { CaliberService } from '../common/caliber/caliber.service';
 import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
-import { LegislationCategories } from '../enum/legislation-categories.enum';
+
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
+import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
+import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
 
 @Injectable()
 export class AmmunitionService {
@@ -26,6 +28,8 @@ export class AmmunitionService {
     private readonly caliberService: CaliberService,
     private readonly ammunitionBodyTypeService: AmmunitionBodyTypeService,
     private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
+    private readonly legislationCategoryService: LegislationCategoryService,
+    private readonly percussionTypeService: PercussionTypeService,
   ) {}
 
   /**
@@ -53,11 +57,15 @@ export class AmmunitionService {
       caliber: {
         id: ammunition.caliberId,
       },
-      category: ammunition.category,
+      category: {
+        id: ammunition.categoryId,
+      },
       factory: {
         id: ammunition.factoryId,
       },
-      percussionType: ammunition.percussionType,
+      percussionType: {
+        id: ammunition.percussionTypeId,
+      },
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: await this.createReference(ammunition),
@@ -78,8 +86,14 @@ export class AmmunitionService {
         },
       },
       relations: {
-        factory: true,
+        factory: {
+          type: true,
+        },
         caliber: true,
+        bodyType: true,
+        headType: true,
+        category: true,
+        percussionType: true,
       },
     });
     return this.mapEntityArrayToDtoArray(ammunitions);
@@ -91,10 +105,14 @@ export class AmmunitionService {
         id: id,
       },
       relations: {
-        factory: true,
+        factory: {
+          type: true,
+        },
         caliber: true,
         bodyType: true,
         headType: true,
+        category: true,
+        percussionType: true,
       },
     });
     return this.mapEntityToDto(ammunition);
@@ -122,8 +140,12 @@ export class AmmunitionService {
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: await this.createReference(ammunition),
-      category: ammunition.category,
-      percussionType: ammunition.percussionType,
+      category: {
+        id: ammunition.categoryId,
+      },
+      percussionType: {
+        id: ammunition.percussionTypeId,
+      },
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
@@ -140,30 +162,38 @@ export class AmmunitionService {
     const headTypes = await this.ammunitionHeadTypeService.findAll();
     const bodyTypes = await this.ammunitionBodyTypeService.findAll();
     const factories = await this.factoryService.findByType('ammunition');
+    const categories = await this.legislationCategoryService.findAll();
+    const percussionTypes = await this.percussionTypeService.findAll();
     return {
       factories: factories,
       calibers: calibers,
       headTypes: headTypes,
       bodyTypes: bodyTypes,
+      categories: categories,
+      percussionTypes: percussionTypes,
     };
   }
 
   /**
    * Retourne les munition suivant leurs categorisation
-   * @param category {LegislationCategories}
+   * @param categoryId {number} id de la categorie
    */
-  public async findByCategory(
-    category: LegislationCategories,
-  ): Promise<AmmunitionDto[]> {
+  public async findByCategory(categoryId: number): Promise<AmmunitionDto[]> {
     const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
       where: {
-        category: category,
+        category: {
+          id: categoryId,
+        },
       },
       relations: {
         factory: {
           type: true,
         },
         caliber: true,
+        bodyType: true,
+        headType: true,
+        category: true,
+        percussionType: true,
       },
     });
     return this.mapEntityArrayToDtoArray(ammunitions);
