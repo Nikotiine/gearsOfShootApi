@@ -5,8 +5,10 @@ import { Optic } from './optic.entity';
 export class OpticType extends BaseEntity {
   @Column()
   name: string;
+
   @Column()
   ref: string;
+
   @OneToMany(() => Optic, (optic) => optic.type)
   optics: Optic[];
 }

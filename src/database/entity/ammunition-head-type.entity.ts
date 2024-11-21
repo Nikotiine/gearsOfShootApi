@@ -6,8 +6,10 @@ import { Ammunition } from './ammunition.entity';
 export class AmmunitionHeadType extends BaseEntity {
   @Column({ unique: true })
   name: string;
+
   @OneToMany(() => Ammunition, (ammunition) => ammunition.headType)
   ammunitions: Ammunition[];
+
   @Column()
   ref: string;
 }

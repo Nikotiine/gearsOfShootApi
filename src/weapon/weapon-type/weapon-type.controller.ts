@@ -18,6 +18,7 @@ import {
 import { WeaponTypeService } from './weapon-type.service';
 import {
   CreateWeaponTypeDto,
+  ListOfPrerequisitesWeaponTypeDto,
   UpdateWeaponTypeDto,
   WeaponTypeDto,
 } from '../../dto/weapon.dto';
@@ -28,16 +29,29 @@ import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 export class WeaponTypeController {
   constructor(private readonly weaponTypeService: WeaponTypeService) {}
 
-  @Get('')
+  @Get('all')
   @ApiOperation({
-    summary: 'Liste des types d arme',
-    description: 'Retourne la liste des diffents type d arme possible',
+    summary: 'Liste complete',
+    description: 'Retourne la liste des diffents type d armes possible',
   })
   @ApiOkResponse({
     type: [WeaponTypeDto],
   })
   public async findAllWeaponTypes(): Promise<WeaponTypeDto[]> {
     return await this.weaponTypeService.findAll();
+  }
+
+  @Get('prerequisites')
+  @ApiOperation({
+    summary: 'Liste des pre-requis',
+    description:
+      'Retourne la liste des pre-requis necesssaire a la creation d un type d arme',
+  })
+  @ApiOkResponse({
+    type: ListOfPrerequisitesWeaponTypeDto,
+  })
+  public async findPrerequisitesWeaponTypeList(): Promise<ListOfPrerequisitesWeaponTypeDto> {
+    return this.weaponTypeService.findPrerequisitesWeaponTypeDto();
   }
 
   @Post('')

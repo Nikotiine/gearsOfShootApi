@@ -15,6 +15,7 @@ export class ThreadedSize extends BaseEntity {
 
   @Column({ unique: true })
   size: string;
+
   @Column()
   ref: string;
 }

@@ -80,6 +80,7 @@ export class WeaponService {
       percussionType: {
         id: weapon.percussionTypeId,
       },
+      providedMagazineQuantity: weapon.providedMagazineQuantity,
     });
     const created = await this.weaponRepository.save(entity);
     return this.findById(created.id);
@@ -121,6 +122,7 @@ export class WeaponService {
         type: true,
         threadedSize: true,
         barrelType: true,
+        providedMagazine: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
@@ -134,6 +136,7 @@ export class WeaponService {
         type: true,
         threadedSize: true,
         barrelType: true,
+        providedMagazine: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
@@ -165,6 +168,8 @@ export class WeaponService {
         reference: weapon.reference,
         adjustableTriggerValue: weapon.adjustableTriggerValue,
         percussionType: weapon.percussionType,
+        providedMagazineQuantity: weapon.providedMagazineQuantity,
+        providedMagazine: weapon.providedMagazine,
       };
     });
   }
@@ -182,6 +187,7 @@ export class WeaponService {
         category: true,
         percussionType: true,
         barrelType: true,
+        providedMagazine: true,
       },
     });
     return this.mapEntityToDto(weapon);
@@ -245,6 +251,8 @@ export class WeaponService {
       variation: weapon.variation,
       isThreadedBarrel: weapon.isThreadedBarrel,
       percussionType: weapon.percussionType,
+      providedMagazineQuantity: weapon.providedMagazineQuantity,
+      providedMagazine: weapon.providedMagazine,
     };
   }
 

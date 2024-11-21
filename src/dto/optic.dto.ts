@@ -62,7 +62,7 @@ export class CreateOpticDto {
   minZoom: number;
   @ApiProperty()
   @IsNumber()
-  minElevation: number;
+  maxDrift: number;
   @ApiProperty()
   @IsNumber()
   maxElevation: number;
@@ -119,7 +119,7 @@ export class OpticDto {
   minZoom: number;
   @ApiProperty()
   @IsNumber()
-  minElevation: number;
+  maxDrift: number;
   @ApiProperty()
   @IsNumber()
   maxElevation: number;

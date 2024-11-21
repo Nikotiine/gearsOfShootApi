@@ -5,6 +5,7 @@ import { Weapon } from './weapon.entity';
 export class WeaponBarrelType extends BaseEntity {
   @Column()
   label: string;
+
   @OneToMany(() => Weapon, (weapon) => weapon.barrelType)
   weapons: Weapon[];
 }

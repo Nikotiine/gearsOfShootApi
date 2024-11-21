@@ -8,6 +8,7 @@ import { ThreadedSizeDto } from './threaded-size.dto';
 
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
+import { WeaponMagazineDto } from './weapon-magazine.dto';
 
 export class WeaponReloadModeDto {
   @ApiProperty()
@@ -49,7 +50,12 @@ export class WeaponTypeDto {
   @IsNotEmpty()
   ref: string;
 }
-
+export class ListOfPrerequisitesWeaponTypeDto {
+  @ApiProperty({
+    type: [WeaponReloadModeDto],
+  })
+  modes: WeaponReloadModeDto[];
+}
 export class WeaponBarrelTypeDto {
   @ApiProperty()
   id: number;
@@ -127,6 +133,9 @@ export class CreateWeaponDto {
 
   @ApiProperty()
   percussionTypeId: number;
+
+  @ApiProperty()
+  providedMagazineQuantity: number;
 }
 
 export class UpdateWeaponDto extends CreateWeaponDto {
@@ -219,6 +228,14 @@ export class WeaponDto {
     type: PercussionTypeDto,
   })
   percussionType: PercussionTypeDto;
+
+  @ApiProperty()
+  providedMagazineQuantity: number;
+
+  @ApiProperty({
+    type: WeaponMagazineDto,
+  })
+  providedMagazine: WeaponMagazineDto;
 }
 export class ListOfPrerequisitesWeaponDto {
   @ApiProperty({

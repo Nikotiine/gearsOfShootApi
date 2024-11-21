@@ -10,20 +10,28 @@ export class SoundNoiseReducer extends BaseEntity {
     (threadedSize) => threadedSize.soundNoiseReducers,
   )
   threadedSize: ThreadedSize;
+
   @ManyToOne(() => Caliber, (caliber) => caliber.soundNoiseReducers)
   caliber: Caliber;
+
   @Column()
   diameter: number;
+
   @Column()
   length: number;
+
   @Column()
   name: string;
+
   @Column()
   description: string;
+
   @ManyToOne(() => Factory, (factory) => factory.soundNoiseReducers)
   factory: Factory;
+
   @Column({ default: false })
   isCleanable: boolean;
+
   @Column()
   reference: string;
 }

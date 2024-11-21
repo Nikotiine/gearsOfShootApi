@@ -9,36 +9,53 @@ import { VerificationCode } from './verification-code.entity';
 export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
+
   @Column()
   password: string;
+
   @Column()
   firstName: string;
+
   @Column()
   lastName: string;
+
   @Column()
   address: string;
+
   @Column()
   phone: string;
+
   @Column()
   city: string;
+
   @Column()
   zipCode: string;
+
   @Column()
   state: string;
+
   @Column({ enum: UserRoles, default: UserRoles.USER })
   role: UserRoles;
+
   @Column({ enum: CostumerRoles, default: CostumerRoles.NO_LICENSE })
   costumerRole: CostumerRoles;
+
   @OneToMany(
     () => VerificationCode,
     (verificationCode) => verificationCode.user,
   )
   verificationCodes: VerificationCode[];
+
   @BeforeInsert()
   async setPassword() {
     this.password = await this.hashPassword(this.password);
   }
 
+  /**
+   * Hash le password avant chaque nouvelle insertion
+   * @param password
+   * @private
+   */
   private async hashPassword(password: string): Promise<string> {
     const pbkdf2 = promisify(_pbkdf2);
     const salt = randomBytes(16).toString('hex');

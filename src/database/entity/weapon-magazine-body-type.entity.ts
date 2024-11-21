@@ -5,6 +5,7 @@ import { WeaponMagazine } from './weapon-magazine.entity';
 export class WeaponMagazineBodyType extends BaseEntity {
   @Column()
   name: string;
+
   @OneToMany(() => WeaponMagazine, (magazine) => magazine.body)
   magazines: WeaponMagazine;
 }

@@ -4,6 +4,7 @@ import { WeaponType } from '../../database/entity/weapon-type.entity';
 import { Repository } from 'typeorm';
 import {
   CreateWeaponTypeDto,
+  ListOfPrerequisitesWeaponTypeDto,
   UpdateWeaponTypeDto,
   WeaponTypeDto,
 } from '../../dto/weapon.dto';
@@ -11,11 +12,14 @@ import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 
+import { ReloadModeService } from '../reload-mode/reload-mode.service';
+
 @Injectable()
 export class WeaponTypeService {
   constructor(
     @InjectRepository(WeaponType)
     private readonly weaponTypeRepository: Repository<WeaponType>,
+    private readonly reloadModeService: ReloadModeService,
   ) {}
 
   /**
@@ -127,5 +131,12 @@ export class WeaponTypeService {
         name: name,
       },
     });
+  }
+
+  public async findPrerequisitesWeaponTypeDto(): Promise<ListOfPrerequisitesWeaponTypeDto> {
+    const modes = await this.reloadModeService.findAll();
+    return {
+      modes: modes,
+    };
   }
 }

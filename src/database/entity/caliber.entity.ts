@@ -8,17 +8,22 @@ import { WeaponMagazine } from './weapon-magazine.entity';
 export class Caliber extends BaseEntity {
   @Column({ unique: true })
   name: string;
+
   @Column()
   ref: string;
+
   @OneToMany(() => Weapon, (weapon) => weapon.caliber)
   weapons: Weapon[];
+
   @OneToMany(() => Ammunition, (ammunition) => ammunition.caliber)
   ammunitions: Ammunition[];
+
   @OneToMany(
     () => SoundNoiseReducer,
     (soundNoiseReducer) => soundNoiseReducer.caliber,
   )
   soundNoiseReducers: SoundNoiseReducer[];
+
   @OneToMany(() => WeaponMagazine, (magazine) => magazine.caliber)
   magazines: WeaponMagazine[];
 }

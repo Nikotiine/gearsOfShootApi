@@ -6,8 +6,10 @@ import { Weapon } from './weapon.entity';
 export class PercussionType extends BaseEntity {
   @Column()
   label: string;
+
   @OneToMany(() => Ammunition, (ammunition) => ammunition.percussionType)
   ammuntions: Ammunition[];
+
   @OneToMany(() => Weapon, (weapon) => weapon.percussionType)
   weapons: Weapon[];
 }

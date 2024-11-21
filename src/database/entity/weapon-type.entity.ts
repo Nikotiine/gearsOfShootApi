@@ -7,10 +7,13 @@ import { WeaponReloadMode } from './weapon-reload-mode.entity';
 export class WeaponType extends BaseEntity {
   @Column({ unique: true })
   name: string;
+
   @ManyToOne(() => WeaponReloadMode, (mode) => mode.weaponTypes)
   mode: WeaponReloadMode;
+
   @Column()
   ref: string;
+
   @OneToMany(() => Weapon, (weapon) => weapon.type)
   weapons: Weapon[];
 }

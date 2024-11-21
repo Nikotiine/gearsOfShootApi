@@ -5,8 +5,10 @@ import { Ammunition } from './ammunition.entity';
 export class AmmunitionBodyType extends BaseEntity {
   @Column({ unique: true })
   name: string;
+
   @OneToMany(() => Ammunition, (ammunition) => ammunition.bodyType)
   ammunitions: Ammunition[];
+
   @Column()
   ref: string;
 }

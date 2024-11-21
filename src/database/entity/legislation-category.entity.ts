@@ -6,8 +6,10 @@ import { Weapon } from './weapon.entity';
 export class LegislationCategory extends BaseEntity {
   @Column()
   label: string;
+
   @OneToMany(() => Ammunition, (ammunition) => ammunition.category)
   ammuntions: Ammunition[];
+
   @OneToMany(() => Weapon, (weapon) => weapon.category)
   weapons: Weapon[];
 }
