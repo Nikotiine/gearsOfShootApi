@@ -12,20 +12,20 @@ export default class BarrelTypeSeeder implements Seeder {
   ): Promise<any> {
     const types: any = [
       {
-        label: 'Lourd',
+        name: 'Lourd',
       },
       {
-        label: 'Semi-Lourd',
+        name: 'Semi-Lourd',
       },
       {
-        label: 'Leger',
+        name: 'Leger',
       },
     ];
     const repository = dataSource.getRepository(WeaponBarrelType);
     for (const type of types) {
       await repository.insert([
         {
-          label: type.label,
+          name: type.name,
         },
       ]);
     }

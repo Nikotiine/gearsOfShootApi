@@ -4,7 +4,7 @@ import { Factory } from './factory.entity';
 
 @Entity()
 export class FactoryType extends BaseEntity {
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(() => Factory, (factory) => factory.type)

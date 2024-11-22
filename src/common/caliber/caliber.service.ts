@@ -24,7 +24,7 @@ export class CaliberService {
       return {
         name: caliber.name,
         id: caliber.id,
-        ref: caliber.ref,
+        reference: caliber.reference,
       };
     });
   }
@@ -40,7 +40,7 @@ export class CaliberService {
     }
     const entity = this.caliberRepository.create({
       name: caliber.name,
-      ref: caliber.ref,
+      reference: caliber.reference,
     });
     const created = await this.caliberRepository.save(entity);
     return this.mapEntityToDto(created);
@@ -75,7 +75,7 @@ export class CaliberService {
   public async edit(id: number, caliber: CaliberDto): Promise<CaliberDto> {
     const updatedResult = await this.caliberRepository.update(id, {
       name: caliber.name,
-      ref: caliber.ref,
+      reference: caliber.reference,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.CALIBER_UPDATE_FAILED);
@@ -99,7 +99,7 @@ export class CaliberService {
   private mapEntityToDto(caliber: Caliber): CaliberDto {
     return {
       id: caliber.id,
-      ref: caliber.ref,
+      reference: caliber.reference,
       name: caliber.name,
     };
   }

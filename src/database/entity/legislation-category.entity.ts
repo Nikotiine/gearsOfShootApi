@@ -4,8 +4,8 @@ import { Ammunition } from './ammunition.entity';
 import { Weapon } from './weapon.entity';
 @Entity()
 export class LegislationCategory extends BaseEntity {
-  @Column()
-  label: string;
+  @Column({ unique: true })
+  name: string;
 
   @OneToMany(() => Ammunition, (ammunition) => ammunition.category)
   ammuntions: Ammunition[];

@@ -19,27 +19,27 @@ export default class CaliberSeeder implements Seeder {
     const calibers: CreateCaliberDto[] = [
       {
         name: '22LR',
-        ref: '22LR',
+        reference: '22LR',
       },
       {
         name: '45 ACP',
-        ref: '.45',
+        reference: '.45',
       },
       {
         name: '9 MM',
-        ref: '9PARA',
+        reference: '9PARA',
       },
       {
         name: '338 LM',
-        ref: '338',
+        reference: '338',
       },
       {
         name: '308W',
-        ref: '308W',
+        reference: '308W',
       },
       {
         name: '17HMR',
-        ref: '17HMR',
+        reference: '17HMR',
       },
     ];
     const repository = dataSource.getRepository(Caliber);
@@ -47,7 +47,7 @@ export default class CaliberSeeder implements Seeder {
       await repository.insert([
         {
           name: caliber.name,
-          ref: caliber.ref,
+          reference: caliber.reference,
         },
       ]);
     }

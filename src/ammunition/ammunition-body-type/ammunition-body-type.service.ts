@@ -26,14 +26,14 @@ export class AmmunitionBodyTypeService {
         select: {
           id: true,
           name: true,
-          ref: true,
+          reference: true,
         },
       });
     return bodyTypes.map((body) => {
       return {
         id: body.id,
         name: body.name,
-        ref: body.ref,
+        reference: body.reference,
       };
     });
   }
@@ -52,13 +52,13 @@ export class AmmunitionBodyTypeService {
 
     const entity = this.ammunitionBodyTypeRepository.create({
       name: body.name,
-      ref: body.ref,
+      reference: body.reference,
     });
     const created = await this.ammunitionBodyTypeRepository.save(entity);
     return {
       id: created.id,
       name: created.name,
-      ref: created.ref,
+      reference: created.reference,
     };
   }
 
@@ -68,7 +68,7 @@ export class AmmunitionBodyTypeService {
   ): Promise<AmmunitionBodyTypeDto> {
     const updatedResult = await this.ammunitionBodyTypeRepository.update(id, {
       name: body.name,
-      ref: body.ref,
+      reference: body.reference,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(
@@ -86,7 +86,7 @@ export class AmmunitionBodyTypeService {
     });
     return {
       id: body.id,
-      ref: body.ref,
+      reference: body.reference,
       name: body.name,
     };
   }

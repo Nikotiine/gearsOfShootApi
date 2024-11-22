@@ -18,19 +18,19 @@ export default class AmmunitionHeadTypeSeeder implements Seeder {
     const heads: CreateAmmunitionHeadTypeDto[] = [
       {
         name: 'Plomb',
-        ref: 'PLB',
+        reference: 'PLB',
       },
       {
         name: 'FMJ',
-        ref: 'FMJ',
+        reference: 'FMJ',
       },
       {
         name: 'Cuivre',
-        ref: 'CUI',
+        reference: 'CUI',
       },
       {
         name: 'Polymere',
-        ref: 'PLY',
+        reference: 'PLY',
       },
     ];
     const repository = dataSource.getRepository(AmmunitionHeadType);
@@ -38,7 +38,7 @@ export default class AmmunitionHeadTypeSeeder implements Seeder {
       await repository.insert([
         {
           name: head.name,
-          ref: head.name,
+          reference: head.name,
         },
       ]);
     }

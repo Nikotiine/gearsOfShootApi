@@ -13,19 +13,19 @@ export default class OpticTypeSeeder implements Seeder {
     const types: any = [
       {
         name: 'Lunette de tir',
-        ref: 'TIR',
+        reference: 'TIR',
       },
       {
         name: 'Lunette de chasse',
-        ref: 'CHA',
+        reference: 'CHA',
       },
       {
         name: 'Lunette de battue',
-        ref: 'BAT',
+        reference: 'BAT',
       },
       {
         name: 'Point rouge',
-        ref: 'REDDOT',
+        reference: 'REDDOT',
       },
     ];
     const repository = dataSource.getRepository(OpticType);
@@ -33,7 +33,7 @@ export default class OpticTypeSeeder implements Seeder {
       await repository.insert([
         {
           name: type.name,
-          ref: type.ref,
+          reference: type.reference,
         },
       ]);
     }

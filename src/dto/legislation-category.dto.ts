@@ -4,5 +4,5 @@ export class LegislationCategoryDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  label: string;
+  name: string;
 }

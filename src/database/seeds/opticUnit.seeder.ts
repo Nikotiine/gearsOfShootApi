@@ -11,17 +11,17 @@ export default class OpticUnitSeeder implements Seeder {
   ): Promise<any> {
     const units: any = [
       {
-        label: 'MOA',
+        name: 'MOA',
       },
       {
-        label: 'MRAD',
+        name: 'MRAD',
       },
     ];
     const repository = dataSource.getRepository(OpticUnit);
     for (const unit of units) {
       await repository.insert([
         {
-          label: unit.label,
+          name: unit.name,
         },
       ]);
     }

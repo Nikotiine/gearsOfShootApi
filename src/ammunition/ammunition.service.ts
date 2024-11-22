@@ -227,7 +227,7 @@ export class AmmunitionService {
     const headType = await this.ammunitionHeadTypeService.findById(
       ammunition.headTypeId,
     );
-    return `${factoryRef.toUpperCase()}-${caliber.ref.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${headType.ref.toUpperCase()}`;
+    return `${factoryRef.toUpperCase()}-${caliber.reference.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${headType.reference.toUpperCase()}`;
   }
 
   /**
@@ -286,7 +286,7 @@ export class AmmunitionService {
           type: ammunition.factory.type,
           name: ammunition.factory.name,
           description: ammunition.factory.description,
-          ref: ammunition.factory.ref,
+          reference: ammunition.factory.reference,
         },
         percussionType: ammunition.percussionType,
         packaging: ammunition.packaging,

@@ -25,7 +25,7 @@ export class CreateFactoryDto {
   description: string;
   @ApiProperty()
   @IsNotEmpty()
-  ref: string;
+  reference: string;
 }
 export class EditFactoryDto extends CreateFactoryDto {
   @ApiProperty()
@@ -40,7 +40,7 @@ export class FactoryDto {
   description: string;
   @ApiProperty()
   @IsNotEmpty()
-  ref: string;
+  reference: string;
   @ApiProperty()
   type: FactoryTypeDto;
   @ApiProperty({

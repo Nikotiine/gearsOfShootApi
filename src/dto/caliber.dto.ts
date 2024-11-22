@@ -8,7 +8,7 @@ export class CreateCaliberDto {
   name: string;
   @ApiProperty()
   @IsNotEmpty()
-  ref: string;
+  reference: string;
 }
 export class CaliberDto extends CreateCaliberDto {
   @ApiProperty()

@@ -27,14 +27,14 @@ export class AmmunitionHeadTypeService {
         select: {
           id: true,
           name: true,
-          ref: true,
+          reference: true,
         },
       });
     return headTypes.map((head) => {
       return {
         id: head.id,
         name: head.name,
-        ref: head.ref,
+        reference: head.reference,
       };
     });
   }
@@ -45,7 +45,7 @@ export class AmmunitionHeadTypeService {
   ): Promise<AmmunitionHeadTypeDto> {
     const updatedResult = await this.ammunitionHeadTypeRepository.update(id, {
       name: body.name,
-      ref: body.ref,
+      reference: body.reference,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(
@@ -72,12 +72,12 @@ export class AmmunitionHeadTypeService {
     }
     const entity = this.ammunitionHeadTypeRepository.create({
       name: ammunitionHeadType.name,
-      ref: ammunitionHeadType.ref,
+      reference: ammunitionHeadType.reference,
     });
     const created = await this.ammunitionHeadTypeRepository.save(entity);
-    return { id: created.id, name: created.name, ref: created.ref };
+    return { id: created.id, name: created.name, reference: created.reference };
   }
-
+  //TODO:Faire un mapper d'entité
   /**
    * Retourne la douille en focntion de son id
    * @param headTypeId {number} id de la douille
@@ -91,7 +91,7 @@ export class AmmunitionHeadTypeService {
     return {
       id: headType.id,
       name: headType.name,
-      ref: headType.ref,
+      reference: headType.reference,
     };
   }
 

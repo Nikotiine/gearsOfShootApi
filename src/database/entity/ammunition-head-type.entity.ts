@@ -4,6 +4,7 @@ import { Ammunition } from './ammunition.entity';
 
 @Entity()
 export class AmmunitionHeadType extends BaseEntity {
+  // Nom du type d'ogive
   @Column({ unique: true })
   name: string;
 
@@ -11,5 +12,5 @@ export class AmmunitionHeadType extends BaseEntity {
   ammunitions: Ammunition[];
 
   @Column()
-  ref: string;
+  reference: string;
 }

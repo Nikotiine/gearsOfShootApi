@@ -18,15 +18,15 @@ export default class AmmunitionBodyTypeSeeder implements Seeder {
     const bodys: CreateAmmunitionBodyTypeDto[] = [
       {
         name: 'Laiton',
-        ref: 'LTN',
+        reference: 'LTN',
       },
       {
         name: 'Cuivre',
-        ref: 'CUI',
+        reference: 'CUI',
       },
       {
         name: 'Inox',
-        ref: 'INX',
+        reference: 'INX',
       },
     ];
     const repository = dataSource.getRepository(AmmunitionBodyType);
@@ -34,7 +34,7 @@ export default class AmmunitionBodyTypeSeeder implements Seeder {
       await repository.insert([
         {
           name: body.name,
-          ref: body.ref,
+          reference: body.reference,
         },
       ]);
     }

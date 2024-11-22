@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { FactoryDto } from './factory.dto';
 import { CaliberDto } from './caliber.dto';
+import { IsOptional } from 'class-validator';
 
 export class WeaponMagazineBodyDto {
   @ApiProperty()
@@ -26,6 +27,9 @@ export class CreateWeaponMagazineDto {
   factoryId: number;
   @ApiProperty()
   caliberId: number;
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  description: string;
 }
 export class UpdateWeaponMagazineDto extends CreateWeaponMagazineDto {
   @ApiProperty()

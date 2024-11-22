@@ -17,5 +17,5 @@ export class ThreadedSize extends BaseEntity {
   size: string;
 
   @Column()
-  ref: string;
+  reference: string;
 }

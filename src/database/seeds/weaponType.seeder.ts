@@ -18,20 +18,20 @@ export default class WeaponTypeSeeder implements Seeder {
   ): Promise<any> {
     const reloadTypes: any = [
       {
-        label: 'Coup par coup',
+        name: 'Coup par coup',
       },
       {
-        label: 'Semi-Auto',
+        name: 'Semi-Auto',
       },
       {
-        label: 'Automatique',
+        name: 'Automatique',
       },
     ];
     const reloadRepository = dataSource.getRepository(WeaponReloadMode);
     for (const type of reloadTypes) {
       await reloadRepository.insert([
         {
-          label: type.label,
+          name: type.name,
         },
       ]);
     }
@@ -39,32 +39,32 @@ export default class WeaponTypeSeeder implements Seeder {
       {
         name: 'Pistolet',
         modeId: 2,
-        ref: 'PIST',
+        reference: 'PIST',
       },
       {
         name: 'Revolver',
         modeId: 1,
-        ref: 'REVO',
+        reference: 'REVO',
       },
       {
         name: 'fusil a verrou',
         modeId: 1,
-        ref: 'FUVE',
+        reference: 'FUVE',
       },
       {
         name: 'Carabine PCP',
         modeId: 1,
-        ref: 'CPCP',
+        reference: 'CPCP',
       },
       {
         name: 'Carabine C02',
         modeId: 1,
-        ref: 'CCO2',
+        reference: 'CCO2',
       },
       {
         name: 'AR 15',
         modeId: 2,
-        ref: 'AR15',
+        reference: 'AR15',
       },
     ];
     const repository = dataSource.getRepository(WeaponType);
@@ -75,7 +75,7 @@ export default class WeaponTypeSeeder implements Seeder {
           mode: {
             id: type.modeId,
           },
-          ref: type.ref,
+          reference: type.reference,
         },
       ]);
     }

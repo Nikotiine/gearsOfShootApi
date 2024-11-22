@@ -16,7 +16,7 @@ export class LegislationCategoryService {
     return categories.map((category) => {
       return {
         id: category.id,
-        label: category.label,
+        name: category.name,
       };
     });
   }

@@ -6,7 +6,7 @@ export class CreateThreadedSizeDto {
   })
   size: string;
   @ApiProperty()
-  ref: string;
+  reference: string;
 }
 export class ThreadedSizeDto extends CreateThreadedSizeDto {
   @ApiProperty()

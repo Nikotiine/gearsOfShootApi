@@ -15,7 +15,7 @@ export class Factory extends BaseEntity {
   name: string;
 
   @Column()
-  ref: string;
+  reference: string;
 
   @Column({ nullable: true })
   description: string;

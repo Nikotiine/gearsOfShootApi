@@ -25,14 +25,14 @@ export class ThreadedSizeService {
       select: {
         id: true,
         size: true,
-        ref: true,
+        reference: true,
       },
     });
     return sizes.map((size) => {
       return {
         id: size.id,
         size: size.size,
-        ref: size.ref,
+        reference: size.reference,
       };
     });
   }
@@ -48,13 +48,13 @@ export class ThreadedSizeService {
     }
     const entity = this.threadedSizeRepository.create({
       size: size.size,
-      ref: size.ref,
+      reference: size.reference,
     });
     const created = await this.threadedSizeRepository.save(entity);
     return {
       id: created.id,
       size: created.size,
-      ref: created.ref,
+      reference: created.reference,
     };
   }
 
@@ -77,7 +77,7 @@ export class ThreadedSizeService {
   ): Promise<ThreadedSizeDto> {
     const updatedResult = await this.threadedSizeRepository.update(id, {
       size: size.size,
-      ref: size.ref,
+      reference: size.reference,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.THREAD_UPDATE_FAILED);
@@ -110,8 +110,8 @@ export class ThreadedSizeService {
   private mapEntityToDto(threadedSize: ThreadedSize): ThreadedSizeDto {
     return {
       id: threadedSize.id,
-      ref: threadedSize.ref,
-      size: threadedSize.ref,
+      reference: threadedSize.reference,
+      size: threadedSize.reference,
     };
   }
 }

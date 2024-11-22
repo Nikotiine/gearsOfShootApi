@@ -12,17 +12,17 @@ export default class OpticFocalPlaneSeeder implements Seeder {
   ): Promise<any> {
     const units: any = [
       {
-        label: 'FFP',
+        name: 'FFP',
       },
       {
-        label: 'SFP',
+        name: 'SFP',
       },
     ];
     const repository = dataSource.getRepository(OpticFocalPlane);
     for (const unit of units) {
       await repository.insert([
         {
-          label: unit.label,
+          name: unit.name,
         },
       ]);
     }

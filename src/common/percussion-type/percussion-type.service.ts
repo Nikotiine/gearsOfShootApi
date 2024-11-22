@@ -16,7 +16,7 @@ export class PercussionTypeService {
     return types.map((type) => {
       return {
         id: type.id,
-        label: type.label,
+        name: type.name,
       };
     });
   }
