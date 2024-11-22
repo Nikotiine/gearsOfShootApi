@@ -7,7 +7,7 @@ export class OpticType extends BaseEntity {
   name: string;
 
   @Column()
-  ref: string;
+  reference: string;
 
   @OneToMany(() => Optic, (optic) => optic.type)
   optics: Optic[];

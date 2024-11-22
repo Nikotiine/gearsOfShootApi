@@ -11,7 +11,7 @@ export class CreateAmmunitionBodyTypeDto {
   })
   name: string;
   @ApiProperty()
-  ref: string;
+  reference: string;
 }
 export class AmmunitionBodyTypeDto extends CreateAmmunitionBodyTypeDto {
   @ApiProperty()
@@ -23,7 +23,7 @@ export class CreateAmmunitionHeadTypeDto {
   })
   name: string;
   @ApiProperty()
-  ref: string;
+  reference: string;
 }
 export class AmmunitionHeadTypeDto extends CreateAmmunitionHeadTypeDto {
   @ApiProperty()

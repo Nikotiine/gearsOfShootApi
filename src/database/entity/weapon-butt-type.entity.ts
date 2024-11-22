@@ -2,10 +2,11 @@ import { BaseEntity } from './base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Weapon } from './weapon.entity';
 @Entity()
-export class WeaponBarrelType extends BaseEntity {
+export class WeaponButtType extends BaseEntity {
   @Column({ unique: true })
   name: string;
-
-  @OneToMany(() => Weapon, (weapon) => weapon.barrelType)
+  @Column()
+  reference: string;
+  @OneToMany(() => Weapon, (weapon) => weapon.butt)
   weapons: Weapon[];
 }

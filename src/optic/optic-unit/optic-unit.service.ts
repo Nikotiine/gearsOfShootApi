@@ -15,7 +15,7 @@ export class OpticUnitService {
     const units = await this.opticUnitRepository.find();
     return units.map((unit) => {
       return {
-        label: unit.label,
+        name: unit.name,
         id: unit.id,
       };
     });

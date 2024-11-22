@@ -4,7 +4,7 @@ import { Optic } from './optic.entity';
 @Entity()
 export class OpticFocalPlane extends BaseEntity {
   @Column()
-  label: string;
+  name: string;
 
   @OneToMany(() => Optic, (optic) => optic.focalPlane)
   optics: Optic[];

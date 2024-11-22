@@ -5,7 +5,7 @@ import { OpticType } from './optic-type.entity';
 import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
 import { OpticCollar } from './optic-collar.entity';
-
+//TODO:Mettre l unicite en place
 @Entity()
 export class Optic extends BaseEntity {
   @Column()

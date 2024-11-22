@@ -11,23 +11,23 @@ export default class LegalisationCategorySeeder implements Seeder {
   ): Promise<any> {
     const categories: any = [
       {
-        label: 'A',
+        name: 'A',
       },
       {
-        label: 'B',
+        name: 'B',
       },
       {
-        label: 'C',
+        name: 'C',
       },
       {
-        label: 'D',
+        name: 'D',
       },
     ];
     const repository = dataSource.getRepository(LegislationCategory);
     for (const category of categories) {
       await repository.insert([
         {
-          label: category.label,
+          name: category.name,
         },
       ]);
     }

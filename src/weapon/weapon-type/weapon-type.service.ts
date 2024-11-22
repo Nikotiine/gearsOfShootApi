@@ -32,9 +32,9 @@ export class WeaponTypeService {
         name: true,
         mode: {
           id: true,
-          label: true,
+          name: true,
         },
-        ref: true,
+        reference: true,
       },
     });
     return weaponTypes.map((type) => {
@@ -42,7 +42,7 @@ export class WeaponTypeService {
         id: type.id,
         name: type.name,
         mode: type.mode,
-        ref: type.ref,
+        reference: type.reference,
       };
     });
   }
@@ -62,14 +62,14 @@ export class WeaponTypeService {
       mode: {
         id: weaponType.modeId,
       },
-      ref: weaponType.ref,
+      reference: weaponType.reference,
     });
     const created = await this.weaponTypeRepository.save(entity);
     return {
       id: created.id,
       name: created.name,
       mode: created.mode,
-      ref: created.ref,
+      reference: created.reference,
     };
   }
 
@@ -91,7 +91,7 @@ export class WeaponTypeService {
     type: UpdateWeaponTypeDto,
   ): Promise<WeaponTypeDto> {
     const updateResult = await this.weaponTypeRepository.update(id, {
-      ref: type.ref,
+      reference: type.reference,
       name: type.name,
       mode: {
         id: type.modeId,
@@ -115,7 +115,7 @@ export class WeaponTypeService {
     return {
       id: type.id,
       name: type.name,
-      ref: type.ref,
+      reference: type.reference,
       mode: type.mode,
     };
   }

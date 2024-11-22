@@ -12,17 +12,17 @@ export default class PercussionTypeSeeder implements Seeder {
   ): Promise<any> {
     const types: any = [
       {
-        label: 'Centrale',
+        name: 'Centrale',
       },
       {
-        label: 'Annulaire',
+        name: 'Annulaire',
       },
     ];
     const repository = dataSource.getRepository(PercussionType);
     for (const type of types) {
       await repository.insert([
         {
-          label: type.label,
+          name: type.name,
         },
       ]);
     }

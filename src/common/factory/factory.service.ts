@@ -38,7 +38,7 @@ export class FactoryService {
           name: true,
         },
         description: true,
-        ref: true,
+        reference: true,
       },
     });
 
@@ -67,7 +67,7 @@ export class FactoryService {
           name: true,
         },
         description: true,
-        ref: true,
+        reference: true,
       },
     });
     return this.mapArrayEntityToArrayDto(factories);
@@ -92,7 +92,7 @@ export class FactoryService {
       type: {
         id: factory.typeId,
       },
-      ref: factory.ref,
+      reference: factory.reference,
     });
     const created = await this.factoryRepository.save(entity);
 
@@ -128,10 +128,10 @@ export class FactoryService {
     const factory = await this.factoryRepository.findOne({
       where: { id: id },
       select: {
-        ref: true,
+        reference: true,
       },
     });
-    return factory.ref;
+    return factory.reference;
   }
 
   /**
@@ -152,7 +152,7 @@ export class FactoryService {
     const updateResult = await this.factoryRepository.update(id, {
       id: id,
       name: factory.name,
-      ref: factory.ref,
+      reference: factory.reference,
       description: factory.description,
     });
     if (updateResult.affected === 0) {
@@ -191,7 +191,7 @@ export class FactoryService {
         id: true,
         name: true,
         description: true,
-        ref: true,
+        reference: true,
         type: {
           id: true,
           name: true,
@@ -214,7 +214,7 @@ export class FactoryService {
       name: factory.name,
       type: factory.type,
       description: factory.description,
-      ref: factory.ref,
+      reference: factory.reference,
     };
   }
 }

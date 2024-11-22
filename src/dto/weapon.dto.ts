@@ -9,12 +9,20 @@ import { ThreadedSizeDto } from './threaded-size.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
 import { WeaponMagazineDto } from './weapon-magazine.dto';
+import { RailSizeDto } from './rail-size.dto';
+
+export class WeaponButtTypeDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  name: string;
+}
 
 export class WeaponReloadModeDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  label: string;
+  name: string;
 }
 
 export class CreateWeaponTypeDto {
@@ -26,7 +34,7 @@ export class CreateWeaponTypeDto {
   modeId: number;
   @ApiProperty()
   @IsNotEmpty()
-  ref: string;
+  reference: string;
 }
 
 export class UpdateWeaponTypeDto extends CreateWeaponTypeDto {
@@ -48,7 +56,7 @@ export class WeaponTypeDto {
   mode: WeaponReloadModeDto;
   @ApiProperty()
   @IsNotEmpty()
-  ref: string;
+  reference: string;
 }
 export class ListOfPrerequisitesWeaponTypeDto {
   @ApiProperty({
@@ -60,7 +68,7 @@ export class WeaponBarrelTypeDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  label: string;
+  name: string;
 }
 export class CreateWeaponDto {
   @ApiProperty({
@@ -136,6 +144,48 @@ export class CreateWeaponDto {
 
   @ApiProperty()
   providedMagazineQuantity: number;
+
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  providedMagazineId: number;
+
+  @ApiProperty()
+  barrelSize: number;
+
+  @ApiProperty({ description: 'Crosse ajustable en profondeur' })
+  isAdjustableButt: boolean;
+
+  @ApiProperty({ description: 'Busc adjutable' })
+  isAdjustableBusk: boolean;
+
+  @ApiProperty()
+  buttId: number;
+
+  @ApiProperty()
+  railSizeId: number;
+
+  @ApiProperty({ description: 'Grenadiere' })
+  grenadierSlot: number;
+
+  @ApiProperty({ description: 'Port QC' })
+  qcSlot: number;
+
+  @ApiProperty({ description: 'Rail Mlock' })
+  isMlockCompatibility: boolean;
+
+  @ApiProperty({ description: 'Rail picatiny' })
+  isPicatinyRailSlop: boolean;
+
+  @ApiProperty({ description: 'Visee ouverte ?' })
+  isOpenAim: boolean;
+
+  @ApiProperty({ description: 'Guidon reglable' })
+  isAdjustableFrontSight: boolean;
+
+  @ApiProperty({ description: 'Hausse reglable' })
+  isAdjustableBackSight: boolean;
 }
 
 export class UpdateWeaponDto extends CreateWeaponDto {
@@ -236,6 +286,46 @@ export class WeaponDto {
     type: WeaponMagazineDto,
   })
   providedMagazine: WeaponMagazineDto;
+
+  @ApiProperty()
+  barrelSize: number;
+
+  @ApiProperty({ description: 'Crosse ajustable en profondeur' })
+  isAdjustableButt: boolean;
+
+  @ApiProperty({ description: 'Busc adjutable' })
+  isAdjustableBusk: boolean;
+
+  @ApiProperty({
+    type: WeaponButtTypeDto,
+  })
+  butt: WeaponButtTypeDto;
+
+  @ApiProperty({
+    type: RailSizeDto,
+  })
+  railSize: RailSizeDto;
+
+  @ApiProperty({ description: 'Grenadiere' })
+  grenadierSlot: number;
+
+  @ApiProperty({ description: 'Port QC' })
+  qcSlot: number;
+
+  @ApiProperty({ description: 'Rail Mlock' })
+  isMlockCompatibility: boolean;
+
+  @ApiProperty({ description: 'Rail picatiny' })
+  isPicatinyRailSlop: boolean;
+
+  @ApiProperty({ description: 'Visee ouverte ?' })
+  isOpenAim: boolean;
+
+  @ApiProperty({ description: 'Guidon reglable' })
+  isAdjustableFrontSight: boolean;
+
+  @ApiProperty({ description: 'Hausse reglable' })
+  isAdjustableBackSight: boolean;
 }
 export class ListOfPrerequisitesWeaponDto {
   @ApiProperty({
@@ -271,4 +361,14 @@ export class ListOfPrerequisitesWeaponDto {
     type: [WeaponBarrelTypeDto],
   })
   barreTypes: WeaponBarrelTypeDto[];
+
+  @ApiProperty({
+    type: [WeaponButtTypeDto],
+  })
+  buttTypes: WeaponButtTypeDto[];
+
+  @ApiProperty({
+    type: [RailSizeDto],
+  })
+  railSizes: RailSizeDto[];
 }

@@ -18,6 +18,8 @@ import { CodeSuccess } from '../enum/code-success.enum';
 import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
 import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
 import { BarrelTypeService } from './barrel-type/barrel-type.service';
+import { ButtTypeService } from './butt-type/butt-type.service';
+import { RailSizeService } from '../common/rail-size/rail-size.service';
 
 @Injectable()
 export class WeaponService {
@@ -31,6 +33,8 @@ export class WeaponService {
     private readonly percussionTypeService: PercussionTypeService,
     private readonly legalisationCategoryService: LegislationCategoryService,
     private readonly barrelTypeService: BarrelTypeService,
+    private readonly buttTypeService: ButtTypeService,
+    private readonly railSizeService: RailSizeService,
   ) {}
 
   /**
@@ -81,6 +85,22 @@ export class WeaponService {
         id: weapon.percussionTypeId,
       },
       providedMagazineQuantity: weapon.providedMagazineQuantity,
+      barrelSize: weapon.barrelSize,
+      isAdjustableButt: weapon.isAdjustableButt,
+      isAdjustableBusk: weapon.isAdjustableBusk,
+      butt: {
+        id: weapon.buttId,
+      },
+      railSize: {
+        id: weapon.railSizeId,
+      },
+      isPicatinyRailSlop: weapon.isPicatinyRailSlop,
+      grenadierSlot: weapon.grenadierSlot,
+      qcSlot: weapon.qcSlot,
+      isMlockCompatibility: weapon.isMlockCompatibility,
+      isOpenAim: weapon.isOpenAim,
+      isAdjustableFrontSight: weapon.isAdjustableFrontSight,
+      isAdjustableBackSight: weapon.isAdjustableBackSight,
     });
     const created = await this.weaponRepository.save(entity);
     return this.findById(created.id);
@@ -98,6 +118,8 @@ export class WeaponService {
     const categories = await this.legalisationCategoryService.findAll();
     const percussionTypes = await this.percussionTypeService.findAll();
     const barreTypes = await this.barrelTypeService.findAll();
+    const buttTypes = await this.buttTypeService.findAll();
+    const railSizes = await this.railSizeService.findAll();
     return {
       calibers: calibers,
       factories: factories,
@@ -106,6 +128,8 @@ export class WeaponService {
       categories: categories,
       percussionTypes: percussionTypes,
       barreTypes: barreTypes,
+      buttTypes: buttTypes,
+      railSizes: railSizes,
     };
   }
 
@@ -153,7 +177,7 @@ export class WeaponService {
           name: weapon.factory.name,
           type: weapon.factory.type,
           description: weapon.factory.description,
-          ref: weapon.factory.ref,
+          reference: weapon.factory.reference,
         },
         isThreadedBarrel: weapon.isThreadedBarrel,
         isAdjustableTrigger: weapon.isAdjustableTrigger,
@@ -170,6 +194,18 @@ export class WeaponService {
         percussionType: weapon.percussionType,
         providedMagazineQuantity: weapon.providedMagazineQuantity,
         providedMagazine: weapon.providedMagazine,
+        barrelSize: weapon.barrelSize,
+        isAdjustableButt: weapon.isAdjustableButt,
+        isAdjustableBusk: weapon.isAdjustableBusk,
+        butt: weapon.butt,
+        railSize: weapon.railSize,
+        grenadierSlot: weapon.grenadierSlot,
+        qcSlot: weapon.qcSlot,
+        isMlockCompatibility: weapon.isMlockCompatibility,
+        isOpenAim: weapon.isOpenAim,
+        isAdjustableFrontSight: weapon.isAdjustableFrontSight,
+        isAdjustableBackSight: weapon.isAdjustableBackSight,
+        isPicatinyRailSlop: weapon.isPicatinyRailSlop,
       };
     });
   }
@@ -188,8 +224,11 @@ export class WeaponService {
         percussionType: true,
         barrelType: true,
         providedMagazine: true,
+        railSize: true,
+        butt: true,
       },
     });
+
     return this.mapEntityToDto(weapon);
   }
 
@@ -225,6 +264,22 @@ export class WeaponService {
       percussionType: {
         id: weapon.percussionTypeId,
       },
+      barrelSize: weapon.barrelSize,
+      isAdjustableButt: weapon.isAdjustableButt,
+      isAdjustableBusk: weapon.isAdjustableBusk,
+      butt: {
+        id: weapon.buttId,
+      },
+      railSize: {
+        id: weapon.railSizeId,
+      },
+      isPicatinyRailSlop: weapon.isPicatinyRailSlop,
+      grenadierSlot: weapon.grenadierSlot,
+      qcSlot: weapon.qcSlot,
+      isMlockCompatibility: weapon.isMlockCompatibility,
+      isOpenAim: weapon.isOpenAim,
+      isAdjustableFrontSight: weapon.isAdjustableFrontSight,
+      isAdjustableBackSight: weapon.isAdjustableBackSight,
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
@@ -253,6 +308,18 @@ export class WeaponService {
       percussionType: weapon.percussionType,
       providedMagazineQuantity: weapon.providedMagazineQuantity,
       providedMagazine: weapon.providedMagazine,
+      barrelSize: weapon.barrelSize,
+      isAdjustableButt: weapon.isAdjustableButt,
+      isAdjustableBusk: weapon.isAdjustableBusk,
+      butt: weapon.butt,
+      railSize: weapon.railSize,
+      grenadierSlot: weapon.grenadierSlot,
+      qcSlot: weapon.qcSlot,
+      isMlockCompatibility: weapon.isMlockCompatibility,
+      isOpenAim: weapon.isOpenAim,
+      isAdjustableFrontSight: weapon.isAdjustableFrontSight,
+      isAdjustableBackSight: weapon.isAdjustableBackSight,
+      isPicatinyRailSlop: weapon.isPicatinyRailSlop,
     };
   }
 
@@ -308,6 +375,6 @@ export class WeaponService {
       weapon.factoryId,
     );
     const caliber = await this.caliberService.findById(weapon.caliberId);
-    return `${factoryRef.toUpperCase()}-${caliber.ref.toUpperCase()}-${weapon.name.toUpperCase()}${weapon.variation ? '-' + weapon.variation.substring(0, 3).toUpperCase() : ''}`;
+    return `${factoryRef.toUpperCase()}-${caliber.reference.toUpperCase()}-${weapon.name.toUpperCase()}${weapon.variation ? '-' + weapon.variation.substring(0, 3).toUpperCase() : ''}`;
   }
 }

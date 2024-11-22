@@ -5,6 +5,7 @@ import { WeaponReloadMode } from './weapon-reload-mode.entity';
 
 @Entity()
 export class WeaponType extends BaseEntity {
+  // Type d'arme
   @Column({ unique: true })
   name: string;
 
@@ -12,7 +13,7 @@ export class WeaponType extends BaseEntity {
   mode: WeaponReloadMode;
 
   @Column()
-  ref: string;
+  reference: string;
 
   @OneToMany(() => Weapon, (weapon) => weapon.type)
   weapons: Weapon[];

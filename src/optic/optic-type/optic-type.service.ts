@@ -19,7 +19,7 @@ export class OpticTypeService {
       select: {
         id: true,
         name: true,
-        ref: true,
+        reference: true,
       },
     });
   }
@@ -27,7 +27,7 @@ export class OpticTypeService {
   public async insert(type: CreateOpticTypeDto): Promise<OpticTypeDto> {
     const entity = this.opticTypeRepository.create({
       name: type.name,
-      ref: type.ref,
+      reference: type.reference,
     });
     return await this.opticTypeRepository.save(entity);
   }
@@ -35,7 +35,7 @@ export class OpticTypeService {
   public async edit(id: number, type: OpticTypeDto): Promise<OpticTypeDto> {
     const updatedResult = await this.opticTypeRepository.update(id, {
       name: type.name,
-      ref: type.ref,
+      reference: type.reference,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_TYPE_UPDATE_FAILED);
@@ -60,7 +60,7 @@ export class OpticTypeService {
     });
     return {
       id: type.id,
-      ref: type.ref,
+      reference: type.reference,
       name: type.name,
     };
   }

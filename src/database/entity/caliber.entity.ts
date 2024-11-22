@@ -10,7 +10,7 @@ export class Caliber extends BaseEntity {
   name: string;
 
   @Column()
-  ref: string;
+  reference: string;
 
   @OneToMany(() => Weapon, (weapon) => weapon.caliber)
   weapons: Weapon[];

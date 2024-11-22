@@ -18,6 +18,8 @@ import { BarrelTypeService } from './barrel-type/barrel-type.service';
 import { WeaponBarrelType } from '../database/entity/weapon-barrel-type.entity';
 import { ReloadModeService } from './reload-mode/reload-mode.service';
 import { WeaponReloadMode } from '../database/entity/weapon-reload-mode.entity';
+import { ButtTypeService } from './butt-type/butt-type.service';
+import { WeaponButtType } from '../database/entity/weapon-butt-type.entity';
 
 @Module({
   controllers: [
@@ -33,6 +35,7 @@ import { WeaponReloadMode } from '../database/entity/weapon-reload-mode.entity';
     SoundReducerService,
     BarrelTypeService,
     ReloadModeService,
+    ButtTypeService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -43,6 +46,7 @@ import { WeaponReloadMode } from '../database/entity/weapon-reload-mode.entity';
       WeaponMagazineBodyType,
       WeaponBarrelType,
       WeaponReloadMode,
+      WeaponButtType,
     ]),
     CommonModule,
   ],

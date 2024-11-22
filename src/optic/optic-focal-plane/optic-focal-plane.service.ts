@@ -16,7 +16,7 @@ export class OpticFocalPlaneService {
     return opticFocalPlanes.map((focal) => {
       return {
         id: focal.id,
-        label: focal.label,
+        name: focal.name,
       };
     });
   }

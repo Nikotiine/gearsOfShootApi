@@ -41,7 +41,7 @@ export class WeaponController {
     return await this.weaponService.findAll();
   }
 
-  @Get('by/:categoryId')
+  @Get('by/category/:categoryId')
   @ApiParam({
     name: 'categoryId',
   })
@@ -58,7 +58,7 @@ export class WeaponController {
     return this.weaponService.findAllByCategory(categoryId);
   }
 
-  @Get('by/:id')
+  @Get('by/id/:id')
   @ApiParam({
     name: 'id',
   })

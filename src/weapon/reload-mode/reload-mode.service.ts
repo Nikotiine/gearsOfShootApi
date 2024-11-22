@@ -18,7 +18,7 @@ export class ReloadModeService {
     return types.map((type) => {
       return {
         id: type.id,
-        label: type.label,
+        name: type.name,
       };
     });
   }

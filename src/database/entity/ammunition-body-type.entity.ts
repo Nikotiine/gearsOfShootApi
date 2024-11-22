@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { Ammunition } from './ammunition.entity';
 @Entity()
 export class AmmunitionBodyType extends BaseEntity {
+  // Nom du type de douille
   @Column({ unique: true })
   name: string;
 
@@ -10,5 +11,5 @@ export class AmmunitionBodyType extends BaseEntity {
   ammunitions: Ammunition[];
 
   @Column()
-  ref: string;
+  reference: string;
 }

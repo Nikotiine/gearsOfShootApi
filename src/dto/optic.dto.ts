@@ -6,19 +6,19 @@ export class FocalPlaneDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  label: string;
+  name: string;
 }
 export class OpticUnitDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  label: string;
+  name: string;
 }
 export class CreateOpticTypeDto {
   @ApiProperty()
   name: string;
   @ApiProperty()
-  ref: string;
+  reference: string;
 }
 
 export class OpticTypeDto extends CreateOpticTypeDto {
