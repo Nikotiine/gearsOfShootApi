@@ -15,8 +15,8 @@ import { LegislationCategory } from './legislation-category.entity';
 import { PercussionType } from './percussion-type.entity';
 import { WeaponBarrelType } from './weapon-barrel-type.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
-import { WeaponButtType } from './weapon-butt-type.entity';
 import { RailSize } from './rail-size.entity';
+import { Material } from './material.entity';
 @Entity()
 @Unique(['name', 'variation', 'caliber', 'factory'])
 export class Weapon extends BaseEntity {
@@ -107,9 +107,9 @@ export class Weapon extends BaseEntity {
   @Column()
   isAdjustableBusk: boolean;
 
-  // Matiere de la crosse
-  @ManyToOne(() => WeaponButtType, (butt) => butt.weapons)
-  butt: WeaponButtType;
+  // Matiere de la crosse ou caracasse
+  @ManyToOne(() => Material, (butt) => butt.weapons)
+  butt: Material;
 
   // Rail d'optique
   @ManyToOne(() => RailSize, (rail) => rail.weapons, { nullable: true })
@@ -142,4 +142,7 @@ export class Weapon extends BaseEntity {
   // Hausse reglable
   @Column({ default: false })
   isAdjustableBackSight: boolean;
+
+  @Column({ nullable: true, default: null })
+  mLockOptions: string;
 }

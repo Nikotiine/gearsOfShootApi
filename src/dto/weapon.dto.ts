@@ -10,13 +10,7 @@ import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
 import { WeaponMagazineDto } from './weapon-magazine.dto';
 import { RailSizeDto } from './rail-size.dto';
-
-export class WeaponButtTypeDto {
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  name: string;
-}
+import { MaterialDto } from './material.dto';
 
 export class WeaponReloadModeDto {
   @ApiProperty()
@@ -300,9 +294,9 @@ export class WeaponDto {
   isAdjustableBusk: boolean;
 
   @ApiProperty({
-    type: WeaponButtTypeDto,
+    type: MaterialDto,
   })
-  butt: WeaponButtTypeDto;
+  butt: MaterialDto;
 
   @ApiProperty({
     type: RailSizeDto,
@@ -366,9 +360,9 @@ export class ListOfPrerequisitesWeaponDto {
   barreTypes: WeaponBarrelTypeDto[];
 
   @ApiProperty({
-    type: [WeaponButtTypeDto],
+    type: [MaterialDto],
   })
-  buttTypes: WeaponButtTypeDto[];
+  buttTypes: MaterialDto[];
 
   @ApiProperty({
     type: [RailSizeDto],

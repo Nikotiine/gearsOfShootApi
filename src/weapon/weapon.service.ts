@@ -18,8 +18,8 @@ import { CodeSuccess } from '../enum/code-success.enum';
 import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
 import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
 import { BarrelTypeService } from './barrel-type/barrel-type.service';
-import { ButtTypeService } from './butt-type/butt-type.service';
 import { RailSizeService } from '../common/rail-size/rail-size.service';
+import { MaterialService } from '../common/material/material.service';
 
 @Injectable()
 export class WeaponService {
@@ -33,7 +33,7 @@ export class WeaponService {
     private readonly percussionTypeService: PercussionTypeService,
     private readonly legalisationCategoryService: LegislationCategoryService,
     private readonly barrelTypeService: BarrelTypeService,
-    private readonly buttTypeService: ButtTypeService,
+    private readonly materialService: MaterialService,
     private readonly railSizeService: RailSizeService,
   ) {}
 
@@ -118,7 +118,7 @@ export class WeaponService {
     const categories = await this.legalisationCategoryService.findAll();
     const percussionTypes = await this.percussionTypeService.findAll();
     const barreTypes = await this.barrelTypeService.findAll();
-    const buttTypes = await this.buttTypeService.findAll();
+    const buttTypes = await this.materialService.findAll();
     const railSizes = await this.railSizeService.findAll();
     return {
       calibers: calibers,

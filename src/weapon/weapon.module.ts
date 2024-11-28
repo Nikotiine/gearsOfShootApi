@@ -13,13 +13,10 @@ import { MagazineController } from './magazine/magazine.controller';
 import { SoundReducerController } from './sound-reducer/sound-reducer.controller';
 import { SoundNoiseReducer } from '../database/entity/sound-noise-reducer.entity';
 import { SoundReducerService } from './sound-reducer/sound-reducer.service';
-import { WeaponMagazineBodyType } from '../database/entity/weapon-magazine-body-type.entity';
 import { BarrelTypeService } from './barrel-type/barrel-type.service';
 import { WeaponBarrelType } from '../database/entity/weapon-barrel-type.entity';
 import { ReloadModeService } from './reload-mode/reload-mode.service';
 import { WeaponReloadMode } from '../database/entity/weapon-reload-mode.entity';
-import { ButtTypeService } from './butt-type/butt-type.service';
-import { WeaponButtType } from '../database/entity/weapon-butt-type.entity';
 
 @Module({
   controllers: [
@@ -35,7 +32,6 @@ import { WeaponButtType } from '../database/entity/weapon-butt-type.entity';
     SoundReducerService,
     BarrelTypeService,
     ReloadModeService,
-    ButtTypeService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -43,10 +39,8 @@ import { WeaponButtType } from '../database/entity/weapon-butt-type.entity';
       WeaponType,
       WeaponMagazine,
       SoundNoiseReducer,
-      WeaponMagazineBodyType,
       WeaponBarrelType,
       WeaponReloadMode,
-      WeaponButtType,
     ]),
     CommonModule,
   ],

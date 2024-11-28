@@ -1,8 +1,9 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { WeaponMagazineBodyType } from '../entity/weapon-magazine-body-type.entity';
 
-export default class MagazineBodySeeder implements Seeder {
+import { Material } from '../entity/material.entity';
+
+export default class MaterialSeeder implements Seeder {
   track = false;
   public async run(
     dataSource: DataSource,
@@ -11,23 +12,29 @@ export default class MagazineBodySeeder implements Seeder {
     const bodies: any = [
       {
         name: 'Polymere',
+        reference: 'POL',
       },
       {
         name: 'Acier',
+        reference: 'ACR',
+      },
+      {
+        name: 'Bois',
+        reference: 'BOI',
       },
       {
         name: 'Aluminium',
+        reference: 'ALU',
       },
     ];
-    const repository = dataSource.getRepository(WeaponMagazineBodyType);
+    const repository = dataSource.getRepository(Material);
     for (const body of bodies) {
       await repository.insert([
         {
           name: body.name,
+          reference: body.reference,
         },
       ]);
     }
-
-    // ---------------------------------------------------
   }
 }

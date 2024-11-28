@@ -10,15 +10,15 @@ import {
 
 import { Factory } from './factory.entity';
 import { Caliber } from './caliber.entity';
-import { WeaponMagazineBodyType } from './weapon-magazine-body-type.entity';
 import { Weapon } from './weapon.entity';
+import { Material } from './material.entity';
 @Entity()
 export class WeaponMagazine extends BaseEntity {
   @Column()
   capacity: number;
 
-  @ManyToOne(() => WeaponMagazineBodyType, (body) => body.magazines)
-  body: WeaponMagazineBodyType;
+  @ManyToOne(() => Material, (body) => body.magazines)
+  body: Material;
 
   @ManyToOne(() => Factory, (factory) => factory.magazines)
   factory: Factory;

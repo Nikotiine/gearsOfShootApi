@@ -17,6 +17,8 @@ import { PercussionType } from '../database/entity/percussion-type.entity';
 import { LegislationCategory } from '../database/entity/legislation-category.entity';
 import { RailSizeService } from './rail-size/rail-size.service';
 import { RailSize } from '../database/entity/rail-size.entity';
+import { MaterialService } from './material/material.service';
+import { Material } from '../database/entity/material.entity';
 
 @Module({
   controllers: [FactoryController, CaliberController, ThreadedSizeController],
@@ -28,6 +30,7 @@ import { RailSize } from '../database/entity/rail-size.entity';
     LegislationCategoryService,
     PercussionTypeService,
     RailSizeService,
+    MaterialService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -38,6 +41,7 @@ import { RailSize } from '../database/entity/rail-size.entity';
       PercussionType,
       LegislationCategory,
       RailSize,
+      Material,
     ]),
   ],
   exports: [
@@ -47,6 +51,7 @@ import { RailSize } from '../database/entity/rail-size.entity';
     LegislationCategoryService,
     PercussionTypeService,
     RailSizeService,
+    MaterialService,
   ],
 })
 export class CommonModule {}

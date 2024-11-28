@@ -12,16 +12,15 @@ import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { FactoryService } from '../../common/factory/factory.service';
 import { CaliberService } from '../../common/caliber/caliber.service';
-import { WeaponMagazineBodyType } from '../../database/entity/weapon-magazine-body-type.entity';
 import { CodeError } from '../../enum/code-error.enum';
+import { MaterialService } from '../../common/material/material.service';
 
 @Injectable()
 export class MagazineService {
   constructor(
     @InjectRepository(WeaponMagazine)
     private readonly weaponMagazineRepository: Repository<WeaponMagazine>,
-    @InjectRepository(WeaponMagazineBodyType)
-    private readonly weaponMagazineBodyTypeRepository: Repository<WeaponMagazineBodyType>,
+    private readonly materialService: MaterialService,
     private readonly factoryService: FactoryService,
     private readonly caliberService: CaliberService,
   ) {}
@@ -78,7 +77,7 @@ export class MagazineService {
   public async getListOfPrerequisitesWeaponMagazineList(): Promise<ListOfPrerequisitesWeaponMagazineDto> {
     const factories = await this.factoryService.findByType('magazine');
     const calibers = await this.caliberService.findAll();
-    const bodies = await this.weaponMagazineBodyTypeRepository.find();
+    const bodies = await this.materialService.findAll();
     return {
       calibers: calibers,
       bodies: bodies,

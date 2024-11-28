@@ -2,13 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { FactoryDto } from './factory.dto';
 import { CaliberDto } from './caliber.dto';
 import { IsOptional } from 'class-validator';
-
-export class WeaponMagazineBodyDto {
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  name: string;
-}
+import { MaterialDto } from './material.dto';
 
 export class CreateWeaponMagazineDto {
   @ApiProperty()
@@ -49,9 +43,9 @@ export class WeaponMagazineDto {
   @ApiProperty()
   reference: string;
   @ApiProperty({
-    type: WeaponMagazineBodyDto,
+    type: MaterialDto,
   })
-  body: WeaponMagazineBodyDto;
+  body: MaterialDto;
   @ApiProperty({
     type: FactoryDto,
   })
@@ -71,7 +65,7 @@ export class ListOfPrerequisitesWeaponMagazineDto {
   })
   factories: FactoryDto[];
   @ApiProperty({
-    type: [WeaponMagazineBodyDto],
+    type: [MaterialDto],
   })
-  bodies: WeaponMagazineBodyDto[];
+  bodies: MaterialDto[];
 }
