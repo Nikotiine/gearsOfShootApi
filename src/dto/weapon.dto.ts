@@ -1,22 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
-
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
-
 import { ThreadedSizeDto } from './threaded-size.dto';
-
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
 import { WeaponMagazineDto } from './weapon-magazine.dto';
 import { RailSizeDto } from './rail-size.dto';
 import { MaterialDto } from './material.dto';
+import { ColorDto } from './color.dto';
+import { OpticReadyPlateDto } from './optic-ready-plate.dto';
 
 export class WeaponReloadModeDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
   name: string;
+}
+
+export class WeaponTriggerTypeDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  reference: string;
 }
 
 export class CreateWeaponTypeDto {
@@ -64,9 +72,10 @@ export class WeaponBarrelTypeDto {
   @ApiProperty()
   name: string;
 }
-export class CreateWeaponDto {
+export abstract class CreateWeaponDto {
   @ApiProperty({
     example: 'CZ 457',
+    description: 'Nom du model de l arme',
   })
   name: string;
 
@@ -80,116 +89,126 @@ export class CreateWeaponDto {
   @ApiProperty({
     example: 'Varmint ou Luxe',
     nullable: true,
+    description: 'Variante du modele',
   })
   @IsOptional()
   variation: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'La categorie de l arme en france',
+  })
   categoryId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Le calibre de l arme',
+  })
   caliberId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'la marque',
+  })
   factoryId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Type d arme',
+    example: 'Fusil a verrou',
+  })
   typeId: number;
 
   @ApiProperty({
     example: 51,
+    description: 'La longueur du canon en cm',
   })
   @IsOptional()
   barrelLength: number;
 
   @ApiProperty({
-    example: true,
-  })
-  @IsBoolean()
-  isOpticReady: boolean;
-
-  @ApiProperty({
     example: false,
+    description: 'Si le poid de depart de la detente est reglable',
   })
   @IsBoolean()
   isAdjustableTrigger: boolean;
 
   @ApiProperty({
     example: false,
+    description: 'Si le canon est fillete',
   })
   @IsBoolean()
   isThreadedBarrel: boolean;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Le type de canon (lourd/leger...)',
+  })
   barrelTypeId: number;
 
   @ApiProperty({
     nullable: true,
+    description: 'Les dimmension du filletage',
   })
   @IsOptional()
   threadedSizeId: number;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
   @IsOptional()
   adjustableTriggerValue: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Le type de percussion ( annulaire ou centrale )',
+  })
   percussionTypeId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 1,
+    description: 'Le nombre de chargeur fournis',
+  })
   providedMagazineQuantity: number;
 
   @ApiProperty({
     nullable: true,
+    description: 'Le modele de chargeur fournis',
   })
   @IsOptional()
   providedMagazineId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 18,
+    description: "L'epaisseur exterieur du canon",
+  })
   barrelSize: number;
 
-  @ApiProperty({ description: 'Crosse ajustable en profondeur' })
-  isAdjustableButt: boolean;
-
-  @ApiProperty({ description: 'Busc adjutable' })
-  isAdjustableBusk: boolean;
-
-  @ApiProperty()
-  buttId: number;
+  @ApiProperty({
+    description: 'La matiere de la crosse ou caracasse',
+  })
+  buttMaterialId: number;
 
   @ApiProperty({
-    nullable: true,
+    description: 'Guidon reglable',
   })
-  @IsOptional()
-  railSizeId: number;
-
-  @ApiProperty({ description: 'Grenadiere' })
-  grenadierSlot: number;
-
-  @ApiProperty({ description: 'Port QC' })
-  qcSlot: number;
-
-  @ApiProperty({ description: 'Rail Mlock' })
-  isMlockCompatibility: boolean;
-
-  @ApiProperty({ description: 'Rail picatiny' })
-  isPicatinyRailSlop: boolean;
-
-  @ApiProperty({ description: 'Visee ouverte ?' })
-  isOpenAim: boolean;
-
-  @ApiProperty({ description: 'Guidon reglable' })
+  @IsBoolean()
   isAdjustableFrontSight: boolean;
 
-  @ApiProperty({ description: 'Hausse reglable' })
+  @ApiProperty({
+    description: 'Hausse reglable',
+  })
+  @IsBoolean()
   isAdjustableBackSight: boolean;
+
+  @ApiProperty({
+    description: 'la couleur de la crosse',
+  })
+  buttColorId: number;
+
+  @ApiProperty({
+    description: 'la couleur du canon ',
+  })
+  barrelColorId: number;
 }
 
-export class UpdateWeaponDto extends CreateWeaponDto {
-  @ApiProperty()
-  id: number;
-}
-export class WeaponDto {
+export abstract class WeaponDto {
   @ApiProperty()
   id: number;
   @ApiProperty({
@@ -241,12 +260,6 @@ export class WeaponDto {
   barrelLength: number;
 
   @ApiProperty({
-    example: true,
-  })
-  @IsBoolean()
-  isOpticReady: boolean;
-
-  @ApiProperty({
     example: false,
   })
   @IsBoolean()
@@ -268,6 +281,7 @@ export class WeaponDto {
     type: ThreadedSizeDto,
   })
   threadedSize: ThreadedSizeDto;
+
   @ApiProperty()
   adjustableTriggerValue: string;
 
@@ -287,42 +301,26 @@ export class WeaponDto {
   @ApiProperty()
   barrelSize: number;
 
-  @ApiProperty({ description: 'Crosse ajustable en profondeur' })
-  isAdjustableButt: boolean;
-
-  @ApiProperty({ description: 'Busc adjutable' })
-  isAdjustableBusk: boolean;
-
   @ApiProperty({
     type: MaterialDto,
   })
-  butt: MaterialDto;
-
-  @ApiProperty({
-    type: RailSizeDto,
-  })
-  railSize: RailSizeDto;
-
-  @ApiProperty({ description: 'Grenadiere' })
-  grenadierSlot: number;
-
-  @ApiProperty({ description: 'Port QC' })
-  qcSlot: number;
-
-  @ApiProperty({ description: 'Rail Mlock' })
-  isMlockCompatibility: boolean;
-
-  @ApiProperty({ description: 'Rail picatiny' })
-  isPicatinyRailSlop: boolean;
-
-  @ApiProperty({ description: 'Visee ouverte ?' })
-  isOpenAim: boolean;
+  buttMaterial: MaterialDto;
 
   @ApiProperty({ description: 'Guidon reglable' })
   isAdjustableFrontSight: boolean;
 
   @ApiProperty({ description: 'Hausse reglable' })
   isAdjustableBackSight: boolean;
+
+  @ApiProperty({
+    type: ColorDto,
+  })
+  buttColor: ColorDto;
+
+  @ApiProperty({
+    type: ColorDto,
+  })
+  barrelColor: ColorDto;
 }
 export class ListOfPrerequisitesWeaponDto {
   @ApiProperty({
@@ -368,4 +366,19 @@ export class ListOfPrerequisitesWeaponDto {
     type: [RailSizeDto],
   })
   railSizes: RailSizeDto[];
+
+  @ApiProperty({
+    type: [WeaponTriggerTypeDto],
+  })
+  triggerTypes: WeaponTriggerTypeDto[];
+
+  @ApiProperty({
+    type: [ColorDto],
+  })
+  colors: ColorDto[];
+
+  @ApiProperty({
+    type: [OpticReadyPlateDto],
+  })
+  opticReadyPlates: OpticReadyPlateDto[];
 }
