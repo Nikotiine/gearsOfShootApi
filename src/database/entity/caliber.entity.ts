@@ -1,9 +1,11 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { Weapon } from './weapon.entity';
+
 import { Ammunition } from './ammunition.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
+import { Riffle } from './riffle.entity';
+import { HandGun } from './hand-gun.entity';
 @Entity()
 export class Caliber extends BaseEntity {
   @Column({ unique: true })
@@ -12,8 +14,11 @@ export class Caliber extends BaseEntity {
   @Column()
   reference: string;
 
-  @OneToMany(() => Weapon, (weapon) => weapon.caliber)
-  weapons: Weapon[];
+  @OneToMany(() => Riffle, (riffle) => riffle.caliber)
+  riffles: Riffle[];
+
+  @OneToMany(() => HandGun, (handgun) => handgun.caliber)
+  handguns: HandGun[];
 
   @OneToMany(() => Ammunition, (ammunition) => ammunition.caliber)
   ammunitions: Ammunition[];

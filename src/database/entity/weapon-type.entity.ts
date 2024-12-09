@@ -1,7 +1,9 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Weapon } from './weapon.entity';
+
 import { WeaponReloadMode } from './weapon-reload-mode.entity';
+import { Riffle } from './riffle.entity';
+import { HandGun } from './hand-gun.entity';
 
 @Entity()
 export class WeaponType extends BaseEntity {
@@ -15,6 +17,9 @@ export class WeaponType extends BaseEntity {
   @Column()
   reference: string;
 
-  @OneToMany(() => Weapon, (weapon) => weapon.type)
-  weapons: Weapon[];
+  @OneToMany(() => Riffle, (riffle) => riffle.type)
+  riffles: Riffle[];
+
+  @OneToMany(() => HandGun, (handgun) => handgun.type)
+  handguns: HandGun[];
 }

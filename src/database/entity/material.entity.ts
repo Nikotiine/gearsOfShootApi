@@ -1,7 +1,9 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { BaseEntity } from './base.entity';
-import { Weapon } from './weapon.entity';
+import { HandGun } from './hand-gun.entity';
+import { Riffle } from './riffle.entity';
+
 @Entity()
 export class Material extends BaseEntity {
   @Column()
@@ -11,8 +13,13 @@ export class Material extends BaseEntity {
   reference: string;
 
   @OneToMany(() => WeaponMagazine, (magazine) => magazine.body)
-  magazines: WeaponMagazine;
+  magazines: WeaponMagazine[];
 
-  @OneToMany(() => Weapon, (weapon) => weapon.butt)
-  weapons: Weapon[];
+  @OneToMany(() => HandGun, (handgun) => handgun.buttMaterial)
+  handgunsButts: HandGun[];
+  @OneToMany(() => Riffle, (riffle) => riffle.buttMaterial)
+  riffles: Riffle[];
+
+  @OneToMany(() => HandGun, (handgun) => handgun.slideMaterial)
+  handgunsSides: HandGun[];
 }

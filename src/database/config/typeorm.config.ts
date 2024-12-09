@@ -27,7 +27,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   },
 };
 export const typeOrmConfig: TypeOrmModuleOptions = {
-  type: 'mariadb',
+  type: 'postgres',
   host: process.env.DATABASE_HOST,
   port: parseInt(process.env.DATABASE_PORT),
   username: process.env.DATABASE_USER,

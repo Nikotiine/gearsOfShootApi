@@ -1,31 +1,26 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Weapon } from '../database/entity/weapon.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { WeaponTypeService } from './weapon-type/weapon-type.service';
 import { CaliberService } from '../common/caliber/caliber.service';
 import { FactoryService } from '../common/factory/factory.service';
 import {
   CreateWeaponDto,
   ListOfPrerequisitesWeaponDto,
-  UpdateWeaponDto,
-  WeaponDto,
 } from '../dto/weapon.dto';
-import { CodeError } from '../enum/code-error.enum';
+
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
-import { ApiDeleteResponseDto } from '../dto/api-response.dto';
-import { CodeSuccess } from '../enum/code-success.enum';
+
 import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
 import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
 import { BarrelTypeService } from './barrel-type/barrel-type.service';
 import { RailSizeService } from '../common/rail-size/rail-size.service';
 import { MaterialService } from '../common/material/material.service';
+import { TriggerTypeService } from './trigger-type/trigger-type.service';
+import { ColorService } from '../common/color/color.service';
+import { OpticReadyPlateService } from '../common/optic-ready-plate/optic-ready-plate.service';
 
 @Injectable()
 export class WeaponService {
   constructor(
-    @InjectRepository(Weapon)
-    private readonly weaponRepository: Repository<Weapon>,
     private readonly weaponTypeService: WeaponTypeService,
     private readonly caliberService: CaliberService,
     private readonly factoryService: FactoryService,
@@ -35,6 +30,9 @@ export class WeaponService {
     private readonly barrelTypeService: BarrelTypeService,
     private readonly materialService: MaterialService,
     private readonly railSizeService: RailSizeService,
+    private readonly triggerTypeService: TriggerTypeService,
+    private readonly colorService: ColorService,
+    private readonly opticReadyPlateService: OpticReadyPlateService,
   ) {}
 
   /**
@@ -42,7 +40,7 @@ export class WeaponService {
    * On verifie avant
    * @param weapon {CreateWeaponDto}
    */
-  public async insert(weapon: CreateWeaponDto): Promise<WeaponDto> {
+  /*public async insert(weapon: CreateWeaponDto): Promise<WeaponDto> {
     const isExist = await this.verifyIfIsExist(
       weapon.name,
       weapon.variation,
@@ -88,8 +86,8 @@ export class WeaponService {
       barrelSize: weapon.barrelSize,
       isAdjustableButt: weapon.isAdjustableButt,
       isAdjustableBusk: weapon.isAdjustableBusk,
-      butt: {
-        id: weapon.buttId,
+      buttMaterial: {
+        id: weapon.buttMaterialId,
       },
       railSize: {
         id: weapon.railSizeId,
@@ -101,10 +99,29 @@ export class WeaponService {
       isOpenAim: weapon.isOpenAim,
       isAdjustableFrontSight: weapon.isAdjustableFrontSight,
       isAdjustableBackSight: weapon.isAdjustableBackSight,
+      mLockOptions: weapon.mLockOptions,
+      triggerType: {
+        id: weapon.triggerTypeId,
+      },
+      decocking: weapon.decocking,
+      slideMaterial: {
+        id: weapon.slideMaterialId,
+      },
+      slideColor: {
+        id: weapon.slideColorId,
+      },
+      barrelColor: {
+        id: weapon.barrelColorId,
+      },
+      buttColor: {
+        id: weapon.buttColorId,
+      },
+      isExternalHammer: weapon.isExternalHammer,
+      providedOpticReadyPlate: weapon.providedOpticReadyPlates,
     });
     const created = await this.weaponRepository.save(entity);
     return this.findById(created.id);
-  }
+  }*/
 
   /**
    * Retourne la liste des prerequis de creation d'arme
@@ -120,6 +137,9 @@ export class WeaponService {
     const barreTypes = await this.barrelTypeService.findAll();
     const buttTypes = await this.materialService.findAll();
     const railSizes = await this.railSizeService.findAll();
+    const triggerTypes = await this.triggerTypeService.findAll();
+    const colors = await this.colorService.findAll();
+    const plates = await this.opticReadyPlateService.findAll();
     return {
       calibers: calibers,
       factories: factories,
@@ -130,10 +150,13 @@ export class WeaponService {
       barreTypes: barreTypes,
       buttTypes: buttTypes,
       railSizes: railSizes,
+      triggerTypes: triggerTypes,
+      colors: colors,
+      opticReadyPlates: plates,
     };
   }
 
-  public async findAllByCategory(categoryId: number): Promise<WeaponDto[]> {
+  /*public async findAllByCategory(categoryId: number): Promise<WeaponDto[]> {
     const weapons: Weapon[] = await this.weaponRepository.find({
       where: {
         category: {
@@ -147,26 +170,37 @@ export class WeaponService {
         threadedSize: true,
         barrelType: true,
         providedMagazine: true,
+        triggerType: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
-  }
+  }*/
 
-  public async findAll(): Promise<WeaponDto[]> {
+  /*  public async findAll(): Promise<WeaponDto[]> {
     const weapons = await this.weaponRepository.find({
       relations: {
         factory: true,
-        caliber: true,
         type: true,
+        caliber: true,
         threadedSize: true,
+        category: true,
+        percussionType: true,
         barrelType: true,
         providedMagazine: true,
+        railSize: true,
+        buttMaterial: true,
+        buttColor: true,
+        slideColor: true,
+        slideMaterial: true,
+        barrelColor: true,
+        triggerType: true,
+        providedOpticReadyPlate: true,
       },
     });
     return this.mapArrayEntityToArrayDto(weapons);
-  }
+  }*/
 
-  private mapArrayEntityToArrayDto(weapons: Weapon[]): WeaponDto[] {
+  /* private mapArrayEntityToArrayDto(weapons: Weapon[]): WeaponDto[] {
     return weapons.map((weapon) => {
       return {
         id: weapon.id,
@@ -197,7 +231,7 @@ export class WeaponService {
         barrelSize: weapon.barrelSize,
         isAdjustableButt: weapon.isAdjustableButt,
         isAdjustableBusk: weapon.isAdjustableBusk,
-        butt: weapon.butt,
+        buttMaterial: weapon.buttMaterial,
         railSize: weapon.railSize,
         grenadierSlot: weapon.grenadierSlot,
         qcSlot: weapon.qcSlot,
@@ -206,11 +240,20 @@ export class WeaponService {
         isAdjustableFrontSight: weapon.isAdjustableFrontSight,
         isAdjustableBackSight: weapon.isAdjustableBackSight,
         isPicatinyRailSlop: weapon.isPicatinyRailSlop,
+        mLockOptions: weapon.mLockOptions,
+        decocking: weapon.decocking,
+        triggerType: weapon.triggerType,
+        buttColor: weapon.buttColor,
+        barrelColor: weapon.barrelColor,
+        slideMaterial: weapon.slideMaterial,
+        slideColor: weapon.slideColor,
+        isExternalHammer: weapon.isExternalHammer,
+        opticReadyPlates: weapon.providedOpticReadyPlate,
       };
     });
-  }
+  }*/
 
-  public async findById(id: number): Promise<WeaponDto> {
+  /*  public async findById(id: number): Promise<WeaponDto> {
     const weapon = await this.weaponRepository.findOne({
       where: {
         id: id,
@@ -225,14 +268,20 @@ export class WeaponService {
         barrelType: true,
         providedMagazine: true,
         railSize: true,
-        butt: true,
+        buttMaterial: true,
+        buttColor: true,
+        slideColor: true,
+        slideMaterial: true,
+        barrelColor: true,
+        triggerType: true,
+        providedOpticReadyPlate: true,
       },
     });
 
     return this.mapEntityToDto(weapon);
-  }
+  }*/
 
-  public async edit(id: number, weapon: UpdateWeaponDto): Promise<WeaponDto> {
+  /*  public async edit(id: number, weapon: UpdateWeaponDto): Promise<WeaponDto> {
     const updateResult = await this.weaponRepository.update(id, {
       name: weapon.name,
       variation: weapon.variation,
@@ -267,8 +316,8 @@ export class WeaponService {
       barrelSize: weapon.barrelSize,
       isAdjustableButt: weapon.isAdjustableButt,
       isAdjustableBusk: weapon.isAdjustableBusk,
-      butt: {
-        id: weapon.buttId,
+      buttMaterial: {
+        id: weapon.buttMaterialId,
       },
       railSize: {
         id: weapon.railSizeId,
@@ -280,14 +329,31 @@ export class WeaponService {
       isOpenAim: weapon.isOpenAim,
       isAdjustableFrontSight: weapon.isAdjustableFrontSight,
       isAdjustableBackSight: weapon.isAdjustableBackSight,
+      decocking: weapon.decocking,
+      triggerType: {
+        id: weapon.triggerTypeId,
+      },
+      slideMaterial: {
+        id: weapon.slideMaterialId,
+      },
+      slideColor: {
+        id: weapon.slideColorId,
+      },
+      barrelColor: {
+        id: weapon.barrelColorId,
+      },
+      buttColor: {
+        id: weapon.buttColorId,
+      },
+      isExternalHammer: weapon.isExternalHammer,
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
     }
     return this.findById(id);
-  }
+  }*/
 
-  private mapEntityToDto(weapon: Weapon): WeaponDto {
+  /* private mapEntityToDto(weapon: Weapon): WeaponDto {
     return {
       id: weapon.id,
       barrelLength: weapon.barrelLength,
@@ -311,7 +377,7 @@ export class WeaponService {
       barrelSize: weapon.barrelSize,
       isAdjustableButt: weapon.isAdjustableButt,
       isAdjustableBusk: weapon.isAdjustableBusk,
-      butt: weapon.butt,
+      buttMaterial: weapon.buttMaterial,
       railSize: weapon.railSize,
       grenadierSlot: weapon.grenadierSlot,
       qcSlot: weapon.qcSlot,
@@ -320,21 +386,30 @@ export class WeaponService {
       isAdjustableFrontSight: weapon.isAdjustableFrontSight,
       isAdjustableBackSight: weapon.isAdjustableBackSight,
       isPicatinyRailSlop: weapon.isPicatinyRailSlop,
+      mLockOptions: weapon.mLockOptions,
+      decocking: weapon.decocking,
+      triggerType: weapon.triggerType,
+      buttColor: weapon.buttColor,
+      slideColor: weapon.slideColor,
+      slideMaterial: weapon.slideMaterial,
+      barrelColor: weapon.barrelColor,
+      isExternalHammer: weapon.isExternalHammer,
+      opticReadyPlates: weapon.providedOpticReadyPlate,
     };
-  }
+  }*/
 
   /**
    * Soft delete de l arme
    * @param id {number} id de l arme
    */
-  public async delete(id: number): Promise<ApiDeleteResponseDto> {
+  /*  public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.weaponRepository.softDelete(id);
     return {
       id: id,
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.WEAPON_DELETE,
     };
-  }
+  }*/
 
   /**
    * Verifie si l'arme est pas deja presente en base
@@ -344,7 +419,7 @@ export class WeaponService {
    * @param caliberId {number} l id du calibre
    * @private
    */
-  private async verifyIfIsExist(
+  /*  private async verifyIfIsExist(
     name: string,
     variation: string,
     factoryId: number,
@@ -363,14 +438,14 @@ export class WeaponService {
       },
     });
     return !!weapon;
-  }
+  }*/
 
   /**
    * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
    * @param weapon
    * @private
    */
-  private async createReference(weapon: CreateWeaponDto): Promise<string> {
+  public async createReference(weapon: CreateWeaponDto): Promise<string> {
     const factoryRef = await this.factoryService.findFactoryReferenceById(
       weapon.factoryId,
     );

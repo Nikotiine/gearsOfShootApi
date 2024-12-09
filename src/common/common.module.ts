@@ -19,6 +19,10 @@ import { RailSizeService } from './rail-size/rail-size.service';
 import { RailSize } from '../database/entity/rail-size.entity';
 import { MaterialService } from './material/material.service';
 import { Material } from '../database/entity/material.entity';
+import { ColorService } from './color/color.service';
+import { Color } from '../database/entity/color.entity';
+import { OpticReadyPlateService } from './optic-ready-plate/optic-ready-plate.service';
+import { OpticReadyPlate } from '../database/entity/optic-ready-plate.entity';
 
 @Module({
   controllers: [FactoryController, CaliberController, ThreadedSizeController],
@@ -31,6 +35,8 @@ import { Material } from '../database/entity/material.entity';
     PercussionTypeService,
     RailSizeService,
     MaterialService,
+    ColorService,
+    OpticReadyPlateService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -42,6 +48,8 @@ import { Material } from '../database/entity/material.entity';
       LegislationCategory,
       RailSize,
       Material,
+      Color,
+      OpticReadyPlate,
     ]),
   ],
   exports: [
@@ -52,6 +60,8 @@ import { Material } from '../database/entity/material.entity';
     PercussionTypeService,
     RailSizeService,
     MaterialService,
+    ColorService,
+    OpticReadyPlateService,
   ],
 })
 export class CommonModule {}

@@ -1,35 +1,14 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WeaponService } from './weapon.service';
-import {
-  CreateWeaponDto,
-  ListOfPrerequisitesWeaponDto,
-  UpdateWeaponDto,
-  WeaponDto,
-} from '../dto/weapon.dto';
-import { ApiDeleteResponseDto } from '../dto/api-response.dto';
+import { ListOfPrerequisitesWeaponDto } from '../dto/weapon.dto';
 
 @Controller('weapon')
 @ApiTags('Weapon')
 export class WeaponController {
   constructor(private readonly weaponService: WeaponService) {}
 
-  @Get('all')
+  /* @Get('all')
   @ApiOperation({
     summary: 'Liste complete',
     description: 'Retourne la liste des references d arme enregister en bdd',
@@ -71,7 +50,7 @@ export class WeaponController {
   })
   public async findById(@Param('id') id: number): Promise<WeaponDto> {
     return this.weaponService.findById(id);
-  }
+  }*/
 
   @Get('prerequisites')
   @ApiOkResponse({
@@ -86,7 +65,7 @@ export class WeaponController {
     return this.weaponService.getListOfPrerequisitesWeaponList();
   }
 
-  @Post('')
+  /*  @Post('')
   @ApiOperation({
     summary: 'Ajour d une arme',
     description: 'Ajoute une nouvelle arme en base de donnee',
@@ -136,5 +115,5 @@ export class WeaponController {
   })
   public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
     return await this.weaponService.delete(id);
-  }
+  }*/
 }
