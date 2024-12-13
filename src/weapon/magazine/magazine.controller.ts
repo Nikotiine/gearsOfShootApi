@@ -23,30 +23,31 @@ import {
   WeaponMagazineDto,
 } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('magazine')
 @ApiTags('Magazine')
 export class MagazineController {
   constructor(private readonly magzineService: MagazineService) {}
 
-  @Get('all')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
     type: [WeaponMagazineDto],
   })
   @ApiOperation({
-    summary: 'Liste des chargeurs',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de tous les chargeurs disponible',
   })
   public async findAll(): Promise<WeaponMagazineDto[]> {
     return await this.magzineService.findAll();
   }
 
-  @Get('by/:id')
+  @Get(SwaggerDescription.FIND_BY_ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
-    summary: 'Par id',
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
     description: 'Retourne le detail du chargeur',
   })
   @ApiOkResponse({
@@ -54,6 +55,23 @@ export class MagazineController {
   })
   public async findById(@Param('id') id: number): Promise<WeaponMagazineDto> {
     return await this.magzineService.findById(id);
+  }
+
+  @Get(SwaggerDescription.FIND_BY_FACTORY)
+  @ApiParam({
+    name: SwaggerDescription.FIND_BY_FACTORY_PARAM,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_FACTORY_SUMMARY,
+    description: 'Retourne les chargeurs filtres par marque',
+  })
+  @ApiOkResponse({
+    type: [WeaponMagazineDto],
+  })
+  public async findByFactory(
+    @Param(SwaggerDescription.FIND_BY_FACTORY_PARAM) factoryId: number,
+  ): Promise<WeaponMagazineDto[]> {
+    return this.magzineService.findByFactory(factoryId);
   }
 
   @Get('prerequisites')

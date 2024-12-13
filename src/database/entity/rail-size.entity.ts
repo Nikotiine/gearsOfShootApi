@@ -6,10 +6,13 @@ import { Riffle } from './riffle.entity';
 export class RailSize extends BaseEntity {
   @Column({ unique: true })
   name: string;
+
   @Column()
   reference: string;
+
   @OneToMany(() => Riffle, (riffle) => riffle.railSize)
-  weapons: Riffle[];
+  riffles?: Riffle[];
+
   @OneToMany(() => OpticCollar, (collar) => collar.railSize)
   opticCollars: OpticCollar[];
 }

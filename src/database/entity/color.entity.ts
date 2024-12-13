@@ -17,10 +17,10 @@ export class Color extends BaseEntity {
   @OneToMany(() => HandGun, (weapon) => weapon.barrelColor)
   barrelHandguns: HandGun[];
   @OneToMany(() => Riffle, (weapon) => weapon.buttColor)
-  buttRiffle: Riffle[];
+  buttRiffle?: Riffle[];
 
   @OneToMany(() => Riffle, (weapon) => weapon.barrelColor)
-  barrelRiffle: Riffle[];
+  barrelRiffle?: Riffle[];
 
   @OneToMany(() => HandGun, (handgun) => handgun.slideColor)
   slides: HandGun[];

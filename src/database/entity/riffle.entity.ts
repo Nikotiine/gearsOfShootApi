@@ -22,8 +22,9 @@ export class Riffle extends BaseEntity {
   isAdjustableBusk: boolean;
 
   // Rail d'optique
-  @ManyToOne(() => RailSize, (rail) => rail.weapons, { nullable: true })
-  railSize: RailSize;
+  @ManyToOne(() => RailSize, (rail) => rail.riffles, { nullable: true })
+  @JoinColumn({ name: 'railSizeId' })
+  railSize?: RailSize;
 
   // Grenadiere
   @Column()
@@ -45,12 +46,14 @@ export class Riffle extends BaseEntity {
   mLockOptions: string;
 
   // Couleur de la crosse / caracasse
-  @ManyToOne(() => Color, (color) => color.buttRiffle)
-  buttColor: Color;
+  @ManyToOne(() => Color, (color) => color.buttRiffle, { nullable: true })
+  @JoinColumn({ name: 'buttColorId' })
+  buttColor?: Color;
 
   // Couleur du canon
-  @ManyToOne(() => Color, (color) => color.barrelRiffle)
-  barrelColor: Color;
+  @ManyToOne(() => Color, (color) => color.barrelRiffle, { nullable: true })
+  @JoinColumn({ name: 'barrelColorId' })
+  barrelColor?: Color;
 
   // ************************************************************
   @Column()

@@ -13,9 +13,7 @@ export class CreateRiffleDto extends CreateWeaponDto {
   @IsBoolean()
   isAdjustableBusk: boolean;
 
-  @ApiProperty({
-    nullable: true,
-  })
+  @ApiProperty({ nullable: true })
   @IsOptional()
   railSizeId: number;
 

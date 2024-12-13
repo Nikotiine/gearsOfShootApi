@@ -17,6 +17,10 @@ export default class RailSizeSeeder implements Seeder {
         size: '11mm',
         reference: 'Weaver',
       },
+      {
+        size: 'AUCUN',
+        reference: 'NONE',
+      },
     ];
     const repository = dataSource.getRepository(RailSize);
     for (const size of sizes) {

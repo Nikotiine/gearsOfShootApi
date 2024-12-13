@@ -189,7 +189,8 @@ export class RiffleService {
         railSize: true,
       },
     });
-    return this.mapEntityArrayToDtoArray(riffles);
+    return riffles.length === 0 ? [] : this.mapEntityArrayToDtoArray(riffles);
+    // return this.mapEntityArrayToDtoArray(riffles);
   }
 
   public async findAllByCategory(categoryId: number): Promise<RiffleDto[]> {

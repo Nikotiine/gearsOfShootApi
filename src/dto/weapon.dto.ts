@@ -182,7 +182,9 @@ export abstract class CreateWeaponDto {
 
   @ApiProperty({
     description: 'La matiere de la crosse ou caracasse',
+    nullable: true,
   })
+  @IsOptional()
   buttMaterialId: number;
 
   @ApiProperty({
@@ -199,12 +201,16 @@ export abstract class CreateWeaponDto {
 
   @ApiProperty({
     description: 'la couleur de la crosse',
+    nullable: true,
   })
+  @IsOptional()
   buttColorId: number;
 
   @ApiProperty({
     description: 'la couleur du canon ',
+    nullable: true,
   })
+  @IsOptional()
   barrelColorId: number;
 }
 

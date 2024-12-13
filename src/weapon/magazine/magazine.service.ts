@@ -152,4 +152,20 @@ export class MagazineService {
       capacity: magazine.capacity,
     };
   }
+
+  public async findByFactory(factoryId: number): Promise<WeaponMagazineDto[]> {
+    const magazines = await this.weaponMagazineRepository.find({
+      where: {
+        factory: {
+          id: factoryId,
+        },
+      },
+      relations: {
+        body: true,
+        caliber: true,
+        factory: true,
+      },
+    });
+    return this.mapEntityArrayToDtoArray(magazines);
+  }
 }
