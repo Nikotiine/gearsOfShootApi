@@ -8,6 +8,7 @@ import { Optic } from './optic.entity';
 import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
+import { OpticCollar } from './optic-collar.entity';
 
 @Entity()
 @Unique(['name', 'type'])
@@ -35,6 +36,9 @@ export class Factory extends BaseEntity {
 
   @OneToMany(() => Optic, (optic) => optic.factory)
   optics: Optic[];
+
+  @OneToMany(() => OpticCollar, (collar) => collar.factory)
+  opticsCollar: Optic[];
 
   @OneToMany(() => WeaponMagazine, (magazine) => magazine.factory)
   magazines: WeaponMagazine[];

@@ -18,10 +18,10 @@ export class Optic extends BaseEntity {
   minZoom: number;
 
   @Column()
-  description: string;
+  maxZoom: number;
 
   @Column()
-  maxZoom: number;
+  description: string;
 
   @Column()
   bodyDiameter: number;

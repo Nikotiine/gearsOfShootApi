@@ -11,12 +11,27 @@ import { OpticFocalPlane } from '../database/entity/optic-focal-plane.entity';
 import { OpticUnit } from '../database/entity/optic-unit.entity';
 import { OpticFocalPlaneService } from './optic-focal-plane/optic-focal-plane.service';
 import { OpticUnitService } from './optic-unit/optic-unit.service';
+import { OpticCollarService } from './optic-collar/optic-collar.service';
+import { OpticCollarController } from './optic-collar/optic-collar.controller';
+import { OpticCollar } from '../database/entity/optic-collar.entity';
 
 @Module({
-  controllers: [OpticController, OpticTypeController],
-  providers: [OpticService, OpticTypeService, OpticFocalPlaneService, OpticUnitService],
+  controllers: [OpticController, OpticTypeController, OpticCollarController],
+  providers: [
+    OpticService,
+    OpticTypeService,
+    OpticFocalPlaneService,
+    OpticUnitService,
+    OpticCollarService,
+  ],
   imports: [
-    TypeOrmModule.forFeature([Optic, OpticType, OpticFocalPlane, OpticUnit]),
+    TypeOrmModule.forFeature([
+      Optic,
+      OpticType,
+      OpticFocalPlane,
+      OpticUnit,
+      OpticCollar,
+    ]),
     CommonModule,
   ],
 })

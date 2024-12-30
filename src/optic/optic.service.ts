@@ -15,6 +15,7 @@ import { FactoryService } from '../common/factory/factory.service';
 import { OpticTypeService } from './optic-type/optic-type.service';
 import { OpticUnitService } from './optic-unit/optic-unit.service';
 import { OpticFocalPlaneService } from './optic-focal-plane/optic-focal-plane.service';
+import { OpticCollarService } from './optic-collar/optic-collar.service';
 
 @Injectable()
 export class OpticService {
@@ -25,6 +26,7 @@ export class OpticService {
     private readonly opticTypeService: OpticTypeService,
     private readonly opticUnitService: OpticUnitService,
     private readonly opticFocalPlaneService: OpticFocalPlaneService,
+    private readonly opticCollarService: OpticCollarService,
   ) {}
 
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
@@ -53,6 +55,12 @@ export class OpticService {
       type: {
         id: optic.opticTypeId,
       },
+      providedCollar: {
+        id: optic.providedCollarId,
+      },
+      length: optic.length,
+      eyeRelief: optic.eyeRelief,
+      isCollarsProvided: optic.isCollarsProvided,
     });
     const created = await this.opticRepository.save(entity);
     return await this.findById(created.id);
@@ -80,11 +88,13 @@ export class OpticService {
     const types = await this.opticTypeService.findAll();
     const units = await this.opticUnitService.findAll();
     const focalPlanes = await this.opticFocalPlaneService.findAll();
+    const opticCollars = await this.opticCollarService.findAll();
     return {
       factories: factories,
       types: types,
       units: units,
       focalPlanes: focalPlanes,
+      opticCollars: opticCollars,
     };
   }
 
@@ -128,6 +138,12 @@ export class OpticService {
       type: {
         id: optic.opticTypeId,
       },
+      providedCollar: {
+        id: optic.providedCollarId,
+      },
+      length: optic.length,
+      eyeRelief: optic.eyeRelief,
+      isCollarsProvided: optic.isCollarsProvided,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);

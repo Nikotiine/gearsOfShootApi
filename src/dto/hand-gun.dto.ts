@@ -16,13 +16,22 @@ export class CreateHandGunDto extends CreateWeaponDto {
   @IsBoolean()
   decocking: boolean;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
   triggerTypeId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
   slideColorId: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
   slideMaterialId: number;
 
   @ApiProperty()
