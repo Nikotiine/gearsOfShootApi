@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
@@ -10,6 +10,7 @@ import { RailSizeDto } from './rail-size.dto';
 import { MaterialDto } from './material.dto';
 import { ColorDto } from './color.dto';
 import { OpticReadyPlateDto } from './optic-ready-plate.dto';
+import { MLockOptionDto } from './m-lock-option.dto';
 
 export class WeaponReloadModeDto {
   @ApiProperty()
@@ -387,4 +388,9 @@ export class ListOfPrerequisitesWeaponDto {
     type: [OpticReadyPlateDto],
   })
   opticReadyPlates: OpticReadyPlateDto[];
+
+  @ApiProperty({
+    type: [MLockOptionDto],
+  })
+  mLockOptions: MLockOptionDto[];
 }

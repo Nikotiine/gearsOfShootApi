@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { CreateWeaponDto, WeaponDto } from './weapon.dto';
 
 import { RailSizeDto } from './rail-size.dto';
+import { MLockOptionDto } from './m-lock-option.dto';
 
 export class CreateRiffleDto extends CreateWeaponDto {
   @ApiProperty({ description: 'Crosse ajustable en profondeur' })
@@ -31,10 +32,9 @@ export class CreateRiffleDto extends CreateWeaponDto {
   @IsBoolean()
   isOpenAim: boolean;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: [MLockOptionDto] })
   @IsOptional()
-  @IsString()
-  mLockOptions: string;
+  mLockOptions: MLockOptionDto[];
 }
 export class UpdateRiffleDto extends CreateRiffleDto {
   @ApiProperty()
@@ -64,8 +64,7 @@ export class RiffleDto extends WeaponDto {
   @ApiProperty({ description: 'Visee ouverte ?' })
   isOpenAim: boolean;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: [MLockOptionDto] })
   @IsOptional()
-  @IsString()
-  mLockOptions: string;
+  mLockOptions: MLockOptionDto[];
 }

@@ -11,9 +11,6 @@ export default class LegalisationCategorySeeder implements Seeder {
   ): Promise<any> {
     const categories: any = [
       {
-        name: 'A',
-      },
-      {
         name: 'B',
       },
       {

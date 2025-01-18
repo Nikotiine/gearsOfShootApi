@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+} from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Color } from './color.entity';
 import { LegislationCategory } from './legislation-category.entity';
@@ -11,6 +18,7 @@ import { PercussionType } from './percussion-type.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { BaseEntity } from './base.entity';
 import { Material } from './material.entity';
+import { MLockOption } from './m-lock-option.entity';
 @Entity()
 export class Riffle extends BaseEntity {
   // Crosse reglable
@@ -42,8 +50,15 @@ export class Riffle extends BaseEntity {
   @Column({ default: true })
   isOpenAim: boolean;
 
-  @Column({ nullable: true, default: null })
-  mLockOptions: string;
+  @ManyToMany(() => MLockOption, {
+    nullable: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+  })
+  @JoinTable()
+  mLockOptions: MLockOption[];
 
   // Couleur de la crosse / caracasse
   @ManyToOne(() => Color, (color) => color.buttRiffle, { nullable: true })

@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { Ammunition } from './ammunition.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
+import { WeaponMagazine } from './weapon-magazine.entity';
 @Entity()
 export class LegislationCategory extends BaseEntity {
   @Column({ unique: true })
@@ -16,4 +17,7 @@ export class LegislationCategory extends BaseEntity {
 
   @OneToMany(() => HandGun, (handgun) => handgun.category)
   handguns: HandGun[];
+
+  @OneToMany(() => WeaponMagazine, (magazine) => magazine.category)
+  magazines: WeaponMagazine[];
 }

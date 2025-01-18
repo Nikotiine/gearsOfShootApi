@@ -59,16 +59,18 @@ export class HandGun extends BaseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @ManyToOne(() => LegislationCategory, (category) => category.handguns)
+  @ManyToOne(() => LegislationCategory, (category) => category.handguns, {
+    nullable: false,
+  })
   category: LegislationCategory;
 
-  @ManyToOne(() => Caliber, (caliber) => caliber.handguns)
+  @ManyToOne(() => Caliber, (caliber) => caliber.handguns, { nullable: false })
   caliber: Caliber;
 
-  @ManyToOne(() => Factory, (factory) => factory.handguns)
+  @ManyToOne(() => Factory, (factory) => factory.handguns, { nullable: false })
   factory: Factory;
 
-  @ManyToOne(() => WeaponType, (type) => type.handguns)
+  @ManyToOne(() => WeaponType, (type) => type.handguns, { nullable: false })
   type: WeaponType;
 
   // Longueur du canon

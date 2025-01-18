@@ -13,8 +13,12 @@ import { Caliber } from './caliber.entity';
 import { Material } from './material.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
+import { LegislationCategory } from './legislation-category.entity';
 @Entity()
 export class WeaponMagazine extends BaseEntity {
+  @ManyToOne(() => LegislationCategory, (category) => category.magazines)
+  category: LegislationCategory;
+
   @Column()
   capacity: number;
 

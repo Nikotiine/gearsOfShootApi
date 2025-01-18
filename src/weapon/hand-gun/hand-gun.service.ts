@@ -94,6 +94,7 @@ export class HandGunService {
     id: number,
     handgun: UpdateHandGunDto,
   ): Promise<HandGunDto> {
+    console.log(handgun);
     const updateResult = await this.handGunRepository.update(id, {
       adjustableTriggerValue: handgun.adjustableTriggerValue,
       barrelColor: {
@@ -132,7 +133,7 @@ export class HandGunService {
         id: handgun.percussionTypeId,
       },
       providedMagazineQuantity: handgun.providedMagazineQuantity,
-      providedOpticReadyPlate: handgun.providedOpticReadyPlates,
+      // providedOpticReadyPlate: handgun.providedOpticReadyPlates,
       reference: await this.weaponService.createReference(handgun),
       slideColor: {
         id: handgun.slideColorId,
@@ -175,6 +176,8 @@ export class HandGunService {
         caliber: true,
         type: true,
         barrelType: true,
+        providedOpticReadyPlate: true,
+        barrelColor: true,
       },
     });
     if (!handGunEntity) {

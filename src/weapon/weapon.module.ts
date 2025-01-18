@@ -24,6 +24,8 @@ import { HandGun } from '../database/entity/hand-gun.entity';
 import { Riffle } from '../database/entity/riffle.entity';
 import { RiffleController } from './riffle/riffle.controller';
 import { RiffleService } from './riffle/riffle.service';
+import { MLockOptionService } from './m-lock-option/m-lock-option.service';
+import { MLockOption } from '../database/entity/m-lock-option.entity';
 
 @Module({
   controllers: [
@@ -44,6 +46,7 @@ import { RiffleService } from './riffle/riffle.service';
     TriggerTypeService,
     HandGunService,
     RiffleService,
+    MLockOptionService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -55,6 +58,7 @@ import { RiffleService } from './riffle/riffle.service';
       TriggerType,
       HandGun,
       Riffle,
+      MLockOption,
     ]),
     CommonModule,
   ],

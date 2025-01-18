@@ -37,7 +37,6 @@ export class RiffleService {
       },
       isThreadedBarrel: riffle.isThreadedBarrel,
       isAdjustableTrigger: riffle.isAdjustableTrigger,
-
       caliber: {
         id: riffle.caliberId,
       },
@@ -89,7 +88,40 @@ export class RiffleService {
   }
 
   public async update(id: number, riffle: UpdateRiffleDto): Promise<RiffleDto> {
-    const updateResult = await this.riffleRepository.update(id, {
+    const entity = await this.riffleRepository.preload({
+      id: id,
+      ...riffle,
+      factory: {
+        id: riffle.factoryId,
+      },
+      caliber: {
+        id: riffle.caliberId,
+      },
+      barrelColor: {
+        id: riffle.barrelColorId,
+      },
+      buttColor: {
+        id: riffle.buttColorId,
+      },
+      buttMaterial: {
+        id: riffle.buttMaterialId,
+      },
+      railSize: {
+        id: riffle.railSizeId,
+      },
+      percussionType: {
+        id: riffle.percussionTypeId,
+      },
+      barrelType: {
+        id: riffle.barrelTypeId,
+      },
+      threadedSize: {
+        id: riffle.threadedSizeId,
+      },
+      reference: await this.weaponService.createReference(riffle),
+    });
+
+    /* const updateResult = await this.riffleRepository.update(id, {
       name: riffle.name,
       variation: riffle.variation,
       factory: {
@@ -146,7 +178,8 @@ export class RiffleService {
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
-    }
+    }*/
+    await this.riffleRepository.save(entity);
     return this.findById(id);
   }
 
@@ -166,6 +199,8 @@ export class RiffleService {
         type: true,
         barrelType: true,
         railSize: true,
+        mLockOptions: true,
+        barrelColor: true,
       },
     });
     if (!riffleEntity) {
@@ -281,7 +316,14 @@ export class RiffleService {
       isOpenAim: riffle.isOpenAim,
       isAdjustableFrontSight: riffle.isAdjustableFrontSight,
       isAdjustableBackSight: riffle.isAdjustableBackSight,
-      mLockOptions: riffle.mLockOptions,
+      mLockOptions: riffle.mLockOptions
+        ? riffle.mLockOptions.map((option) => {
+            return {
+              id: option.id,
+              name: option.name,
+            };
+          })
+        : [],
       buttColor: riffle.buttColor,
       barrelColor: riffle.barrelColor,
     };

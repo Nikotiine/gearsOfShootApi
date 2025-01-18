@@ -17,6 +17,7 @@ import { MaterialService } from '../common/material/material.service';
 import { TriggerTypeService } from './trigger-type/trigger-type.service';
 import { ColorService } from '../common/color/color.service';
 import { OpticReadyPlateService } from '../common/optic-ready-plate/optic-ready-plate.service';
+import { MLockOptionService } from './m-lock-option/m-lock-option.service';
 
 @Injectable()
 export class WeaponService {
@@ -33,6 +34,7 @@ export class WeaponService {
     private readonly triggerTypeService: TriggerTypeService,
     private readonly colorService: ColorService,
     private readonly opticReadyPlateService: OpticReadyPlateService,
+    private readonly mLockOptionService: MLockOptionService,
   ) {}
 
   /**
@@ -52,6 +54,7 @@ export class WeaponService {
     const triggerTypes = await this.triggerTypeService.findAll();
     const colors = await this.colorService.findAll();
     const plates = await this.opticReadyPlateService.findAll();
+    const mlockOptions = await this.mLockOptionService.findAll();
     return {
       calibers: calibers,
       factories: factories,
@@ -65,6 +68,7 @@ export class WeaponService {
       triggerTypes: triggerTypes,
       colors: colors,
       opticReadyPlates: plates,
+      mLockOptions: mlockOptions,
     };
   }
 

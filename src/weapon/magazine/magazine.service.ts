@@ -14,6 +14,7 @@ import { FactoryService } from '../../common/factory/factory.service';
 import { CaliberService } from '../../common/caliber/caliber.service';
 import { CodeError } from '../../enum/code-error.enum';
 import { MaterialService } from '../../common/material/material.service';
+import { LegislationCategoryService } from '../../common/legislation-category/legislation-category.service';
 
 @Injectable()
 export class MagazineService {
@@ -23,6 +24,7 @@ export class MagazineService {
     private readonly materialService: MaterialService,
     private readonly factoryService: FactoryService,
     private readonly caliberService: CaliberService,
+    private readonly legalisationCategoryService: LegislationCategoryService,
   ) {}
 
   /**
@@ -55,6 +57,10 @@ export class MagazineService {
       },
       length: magazine.length,
       reference: magazine.reference,
+      category: {
+        id: magazine.categoryId,
+      },
+      // riffles: magazine.compatibleRiffle,
     });
     const created = await this.weaponMagazineRepository.save(entity);
     return this.findById(created.id);
@@ -69,6 +75,7 @@ export class MagazineService {
         body: true,
         caliber: true,
         factory: true,
+        category: true,
       },
     });
     return this.mapEntityToDto(magazine);
@@ -78,10 +85,12 @@ export class MagazineService {
     const factories = await this.factoryService.findByType('magazine');
     const calibers = await this.caliberService.findAll();
     const bodies = await this.materialService.findAll();
+    const categories = await this.legalisationCategoryService.findAll();
     return {
       calibers: calibers,
       bodies: bodies,
       factories: factories,
+      categories: categories,
     };
   }
 
@@ -117,6 +126,9 @@ export class MagazineService {
       height: magazine.height,
       capacity: magazine.capacity,
       width: magazine.width,
+      category: {
+        id: magazine.categoryId,
+      },
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
@@ -150,6 +162,7 @@ export class MagazineService {
       length: magazine.length,
       width: magazine.width,
       capacity: magazine.capacity,
+      category: magazine.category,
     };
   }
 
@@ -164,6 +177,7 @@ export class MagazineService {
         body: true,
         caliber: true,
         factory: true,
+        category: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
