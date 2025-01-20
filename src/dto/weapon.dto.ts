@@ -215,7 +215,7 @@ export abstract class CreateWeaponDto {
   barrelColorId: number;
 }
 
-export abstract class WeaponDto {
+/*export abstract class WeaponDto {
   @ApiProperty()
   id: number;
   @ApiProperty({
@@ -328,7 +328,7 @@ export abstract class WeaponDto {
     type: ColorDto,
   })
   barrelColor: ColorDto;
-}
+}*/
 export class ListOfPrerequisitesWeaponDto {
   @ApiProperty({
     type: [CaliberDto],

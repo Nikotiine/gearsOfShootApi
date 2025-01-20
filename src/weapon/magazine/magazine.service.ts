@@ -2,12 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponMagazine } from '../../database/entity/weapon-magazine.entity';
 import { Repository } from 'typeorm';
-import {
-  CreateWeaponMagazineDto,
-  ListOfPrerequisitesWeaponMagazineDto,
-  UpdateWeaponMagazineDto,
-  WeaponMagazineDto,
-} from '../../dto/weapon-magazine.dto';
+import { WeaponMagazineDto } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { FactoryService } from '../../common/factory/factory.service';
@@ -15,6 +10,12 @@ import { CaliberService } from '../../common/caliber/caliber.service';
 import { CodeError } from '../../enum/code-error.enum';
 import { MaterialService } from '../../common/material/material.service';
 import { LegislationCategoryService } from '../../common/legislation-category/legislation-category.service';
+import {
+  CreateWeaponMagazineDto,
+  ListOfPrerequisitesWeaponMagazineDto,
+  UpdateWeaponMagazineDto,
+} from '../../dto/create-magazine.dto';
+import { RiffleService } from '../riffle/riffle.service';
 
 @Injectable()
 export class MagazineService {
@@ -25,6 +26,7 @@ export class MagazineService {
     private readonly factoryService: FactoryService,
     private readonly caliberService: CaliberService,
     private readonly legalisationCategoryService: LegislationCategoryService,
+    private readonly riffleService: RiffleService,
   ) {}
 
   /**
@@ -86,6 +88,7 @@ export class MagazineService {
     const calibers = await this.caliberService.findAll();
     const bodies = await this.materialService.findAll();
     const categories = await this.legalisationCategoryService.findAll();
+    // const riffles = await this.riffleService.findAll();
     return {
       calibers: calibers,
       bodies: bodies,
