@@ -143,6 +143,18 @@ export default class FactorySeeder implements Seeder {
         reference: 'CZ',
         typeId: mf.id,
       },
+      {
+        name: 'Taurus',
+        description: 'Description',
+        reference: 'TAU',
+        typeId: mf.id,
+      },
+      {
+        name: 'Winchester',
+        description: 'Description',
+        reference: 'WIN',
+        typeId: mf.id,
+      },
     ];
     const repository = dataSource.getRepository(Factory);
     for (const factory of factoriesW) {

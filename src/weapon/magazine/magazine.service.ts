@@ -62,7 +62,7 @@ export class MagazineService {
       category: {
         id: magazine.categoryId,
       },
-      // riffles: magazine.compatibleRiffle,
+      riffles: magazine.compatibleRiffle,
     });
     const created = await this.weaponMagazineRepository.save(entity);
     return this.findById(created.id);
@@ -169,11 +169,32 @@ export class MagazineService {
     };
   }
 
-  public async findByFactory(factoryId: number): Promise<WeaponMagazineDto[]> {
+  public async findByFactory(
+    factoryName: string,
+  ): Promise<WeaponMagazineDto[]> {
     const magazines = await this.weaponMagazineRepository.find({
       where: {
         factory: {
-          id: factoryId,
+          name: factoryName,
+        },
+      },
+      relations: {
+        body: true,
+        caliber: true,
+        factory: true,
+        category: true,
+      },
+    });
+    return this.mapEntityArrayToDtoArray(magazines);
+  }
+
+  public async findByRiffleCompatibility(
+    riffleId: number,
+  ): Promise<WeaponMagazineDto[]> {
+    const magazines = await this.weaponMagazineRepository.find({
+      where: {
+        riffles: {
+          id: riffleId,
         },
       },
       relations: {

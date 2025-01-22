@@ -69,9 +69,9 @@ export class MagazineController {
     type: [WeaponMagazineDto],
   })
   public async findByFactory(
-    @Param(SwaggerDescription.FIND_BY_FACTORY_PARAM) factoryId: number,
+    @Param(SwaggerDescription.FIND_BY_FACTORY_PARAM) factoryName: string,
   ): Promise<WeaponMagazineDto[]> {
-    return this.magzineService.findByFactory(factoryId);
+    return this.magzineService.findByFactory(factoryName);
   }
 
   @Get('prerequisites')
