@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MaterialDto {
-  @ApiProperty()
-  id: number;
+export class CreateMaterialDto {
   @ApiProperty()
   name: string;
+  @ApiProperty()
+  reference: string;
+}
+
+export class MaterialDto extends CreateMaterialDto {
+  @ApiProperty()
+  id: number;
 }

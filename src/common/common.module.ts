@@ -24,9 +24,18 @@ import { Color } from '../database/entity/color.entity';
 import { OpticReadyPlateService } from './optic-ready-plate/optic-ready-plate.service';
 import { OpticReadyPlate } from '../database/entity/optic-ready-plate.entity';
 import { LegislationCategoryController } from './legislation-category/legislation-category.controller';
+import { ColorController } from './color/color.controller';
+import { MaterialController } from './material/material.controller';
 
 @Module({
-  controllers: [FactoryController, CaliberController, ThreadedSizeController, LegislationCategoryController],
+  controllers: [
+    FactoryController,
+    CaliberController,
+    ThreadedSizeController,
+    LegislationCategoryController,
+    ColorController,
+    MaterialController,
+  ],
   providers: [
     FactoryService,
     CaliberService,

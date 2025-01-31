@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Color } from '../../database/entity/color.entity';
 import { Repository } from 'typeorm';
-import { ColorDto } from '../../dto/color.dto';
+import { ColorDto, CreateColorDto } from '../../dto/color.dto';
 
 @Injectable()
 export class ColorService {
@@ -26,5 +26,15 @@ export class ColorService {
         reference: color.reference,
       };
     });
+  }
+
+  public async insert(color: CreateColorDto): Promise<ColorDto> {
+    const entity = this.colorRepository.create(color);
+    const created = await this.colorRepository.save(entity);
+    return {
+      id: created.id,
+      name: created.name,
+      reference: created.reference,
+    };
   }
 }
