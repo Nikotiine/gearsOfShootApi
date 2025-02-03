@@ -17,6 +17,9 @@ export default class PercussionTypeSeeder implements Seeder {
       {
         name: 'Annulaire',
       },
+      {
+        name: 'Air comprimé',
+      },
     ];
     const repository = dataSource.getRepository(PercussionType);
     for (const type of types) {

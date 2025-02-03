@@ -46,9 +46,9 @@ export class AmmunitionController {
     return this.ammunitionService.findByCaliber(caliberId);
   }
 
-  @Get('by/category/:categoryId')
+  @Get('by/category/:category')
   @ApiParam({
-    name: 'categoryId',
+    name: 'category',
   })
   @ApiOperation({
     summary: 'Filtre par calibre',
@@ -58,9 +58,9 @@ export class AmmunitionController {
     type: [AmmunitionDto],
   })
   public async findByCategory(
-    @Param('categoryId') categoryId: number,
+    @Param('category') category: string,
   ): Promise<AmmunitionDto[]> {
-    return this.ammunitionService.findByCategory(categoryId);
+    return this.ammunitionService.findByCategory(category);
   }
 
   @Get('prerequisites')

@@ -11,9 +11,7 @@ import {
 import { CodeError } from '../enum/code-error.enum';
 import { FactoryService } from '../common/factory/factory.service';
 import { CaliberService } from '../common/caliber/caliber.service';
-import { AmmunitionBodyTypeService } from './ammunition-body-type/ammunition-body-type.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
-
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
@@ -26,7 +24,6 @@ export class AmmunitionService {
     private readonly ammunitionRepository: Repository<Ammunition>,
     private readonly factoryService: FactoryService,
     private readonly caliberService: CaliberService,
-    private readonly ammunitionBodyTypeService: AmmunitionBodyTypeService,
     private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
     private readonly legislationCategoryService: LegislationCategoryService,
     private readonly percussionTypeService: PercussionTypeService,
@@ -158,31 +155,21 @@ export class AmmunitionService {
    * Calibre / marque / type d'ogive / type d'etui
    */
   public async getListOfPrerequisitesAmmunitionDto(): Promise<ListOfPrerequisitesAmmunitionDto> {
-    const calibers = await this.caliberService.findAll();
-    const headTypes = await this.ammunitionHeadTypeService.findAll();
-    const bodyTypes = await this.ammunitionBodyTypeService.findAll();
-    const factories = await this.factoryService.findByType('ammunition');
-    const categories = await this.legislationCategoryService.findAll();
     const percussionTypes = await this.percussionTypeService.findAll();
     return {
-      factories: factories,
-      calibers: calibers,
-      headTypes: headTypes,
-      bodyTypes: bodyTypes,
-      categories: categories,
       percussionTypes: percussionTypes,
     };
   }
 
   /**
    * Retourne les munition suivant leurs categorisation
-   * @param categoryId {number} id de la categorie
+   * @param category
    */
-  public async findByCategory(categoryId: number): Promise<AmmunitionDto[]> {
+  public async findByCategory(category: string): Promise<AmmunitionDto[]> {
     const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
       where: {
         category: {
-          id: categoryId,
+          name: category,
         },
       },
       relations: {

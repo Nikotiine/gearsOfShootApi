@@ -144,26 +144,6 @@ export class AmmunitionDto {
 
 export class ListOfPrerequisitesAmmunitionDto {
   @ApiProperty({
-    type: [CaliberDto],
-  })
-  calibers: CaliberDto[];
-  @ApiProperty({
-    type: [FactoryDto],
-  })
-  factories: FactoryDto[];
-  @ApiProperty({
-    type: [AmmunitionHeadTypeDto],
-  })
-  headTypes: AmmunitionHeadTypeDto[];
-  @ApiProperty({
-    type: [AmmunitionBodyTypeDto],
-  })
-  bodyTypes: AmmunitionBodyTypeDto[];
-  @ApiProperty({
-    type: [LegislationCategoryDto],
-  })
-  categories: LegislationCategoryDto[];
-  @ApiProperty({
     type: [PercussionTypeDto],
   })
   percussionTypes: PercussionTypeDto[];
