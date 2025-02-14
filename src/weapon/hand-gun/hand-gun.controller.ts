@@ -70,9 +70,9 @@ export class HandGunController {
     name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   public async findAllByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) categoryId: number,
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
   ): Promise<HandGunDto[]> {
-    return this.handGunService.findAllByCategory(categoryId);
+    return this.handGunService.findAllByCategory(category);
   }
 
   @Post()

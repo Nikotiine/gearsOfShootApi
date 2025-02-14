@@ -228,11 +228,11 @@ export class RiffleService {
     // return this.mapEntityArrayToDtoArray(riffles);
   }
 
-  public async findAllByCategory(categoryId: number): Promise<RiffleDto[]> {
+  public async findAllByCategory(category: string): Promise<RiffleDto[]> {
     const riffles = await this.riffleRepository.find({
       where: {
         category: {
-          id: categoryId,
+          name: category,
         },
       },
       relations: {
@@ -304,7 +304,6 @@ export class RiffleService {
       isThreadedBarrel: riffle.isThreadedBarrel,
       percussionType: riffle.percussionType,
       providedMagazineQuantity: riffle.providedMagazineQuantity,
-      providedMagazine: riffle.providedMagazine,
       barrelSize: riffle.barrelSize,
       isAdjustableButt: riffle.isAdjustableButt,
       isAdjustableBusk: riffle.isAdjustableBusk,

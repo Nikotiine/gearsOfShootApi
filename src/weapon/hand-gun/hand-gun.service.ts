@@ -95,7 +95,57 @@ export class HandGunService {
     handgun: UpdateHandGunDto,
   ): Promise<HandGunDto> {
     console.log(handgun);
-    const updateResult = await this.handGunRepository.update(id, {
+    const updateResult = await this.handGunRepository.preload({
+      id: id,
+      ...handgun,
+      providedOpticReadyPlate: handgun.providedOpticReadyPlates,
+      barrelColor: {
+        id: handgun.barrelColorId,
+      },
+      barrelType: {
+        id: handgun.barrelTypeId,
+      },
+      buttColor: {
+        id: handgun.buttColorId,
+      },
+      buttMaterial: {
+        id: handgun.buttMaterialId,
+      },
+      caliber: {
+        id: handgun.caliberId,
+      },
+      category: {
+        id: handgun.categoryId,
+      },
+
+      factory: {
+        id: handgun.factoryId,
+      },
+
+      percussionType: {
+        id: handgun.percussionTypeId,
+      },
+
+      reference: await this.weaponService.createReference(handgun),
+      slideColor: {
+        id: handgun.slideColorId,
+      },
+      slideMaterial: {
+        id: handgun.slideMaterialId,
+      },
+      threadedSize: {
+        id: handgun.threadedSizeId,
+      },
+      triggerType: {
+        id: handgun.triggerTypeId,
+      },
+      type: {
+        id: handgun.typeId,
+      },
+    });
+
+    /*  const updated = await this.handGunRepository.preload({
+      id: id,
       adjustableTriggerValue: handgun.adjustableTriggerValue,
       barrelColor: {
         id: handgun.barrelColorId,
@@ -133,7 +183,7 @@ export class HandGunService {
         id: handgun.percussionTypeId,
       },
       providedMagazineQuantity: handgun.providedMagazineQuantity,
-      // providedOpticReadyPlate: handgun.providedOpticReadyPlates,
+      providedOpticReadyPlate: handgun.providedOpticReadyPlates,
       reference: await this.weaponService.createReference(handgun),
       slideColor: {
         id: handgun.slideColorId,
@@ -152,9 +202,8 @@ export class HandGunService {
       },
       variation: handgun.variation,
     });
-    if (updateResult.affected === 0) {
-      throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
-    }
+    await this.handGunRepository.save(updated);*/
+    await this.handGunRepository.save(updateResult);
     return this.findById(id);
   }
 
@@ -206,11 +255,11 @@ export class HandGunService {
     return this.mapEntityArrayToDtoArray(handGuns);
   }
 
-  public async findAllByCategory(categoryId: number): Promise<HandGunDto[]> {
+  public async findAllByCategory(category: string): Promise<HandGunDto[]> {
     const handGuns = await this.handGunRepository.find({
       where: {
         category: {
-          id: categoryId,
+          name: category,
         },
       },
       relations: {
@@ -285,7 +334,6 @@ export class HandGunService {
       isThreadedBarrel: handGun.isThreadedBarrel,
       percussionType: handGun.percussionType,
       providedMagazineQuantity: handGun.providedMagazineQuantity,
-      providedMagazine: handGun.providedMagazine,
       barrelSize: handGun.barrelSize,
       buttMaterial: handGun.buttMaterial,
       isAdjustableFrontSight: handGun.isAdjustableFrontSight,

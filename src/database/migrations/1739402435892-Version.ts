@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Version1737219924966 implements MigrationInterface {
-    name = 'Version1737219924966'
+export class Version1739402435892 implements MigrationInterface {
+    name = 'Version1739402435892'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "weapon_reload_mode" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_ad28ddaa125ecf736bd0fece8c6" UNIQUE ("name"), CONSTRAINT "PK_13e4b263480ba86ce6401cb2708" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "optic_ready_plate" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, "description" character varying, "factoryId" integer, CONSTRAINT "PK_1b97130486dd3f9058c62675c49" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "legislation_category" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_da190f512ee9b869a96dc58d78a" UNIQUE ("name"), CONSTRAINT "PK_d765af78ed0066afbc3d2e89f82" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "weapon_magazine" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "capacity" integer NOT NULL, "length" integer NOT NULL, "height" integer NOT NULL, "width" integer NOT NULL, "reference" character varying NOT NULL, "description" character varying, "categoryId" integer, "bodyId" integer, "factoryId" integer, "caliberId" integer, CONSTRAINT "PK_4b3911fc7c13e3633b47419f14f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "material" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "PK_0343d0d577f3effc2054cbaca7f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "color" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "PK_d15e531d60a550fbf23e1832343" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "trigger_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "PK_6f1b93fa59675f91d4746efa0b6" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "weapon_barrel_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_76fec1fbdd6eb369ab3973505a1" UNIQUE ("name"), CONSTRAINT "PK_6f478763e0e4e1d120838c63c7f" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "weapon_reload_mode" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_ad28ddaa125ecf736bd0fece8c6" UNIQUE ("name"), CONSTRAINT "PK_13e4b263480ba86ce6401cb2708" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "weapon_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, "modeId" integer, CONSTRAINT "UQ_d157be3fda9adaaec6c30e7042a" UNIQUE ("name"), CONSTRAINT "PK_41a9c64ef5dfc5c5c24107a0d1a" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "percussion_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "PK_fd1801d7e7779e2e1dd98c8d073" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "hand_gun" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "isOpticReady" boolean NOT NULL DEFAULT false, "isPicatinyRailSlop" boolean NOT NULL DEFAULT false, "decocking" boolean NOT NULL DEFAULT false, "isExternalHammer" boolean NOT NULL DEFAULT true, "name" character varying NOT NULL, "variation" character varying, "description" character varying, "barrelLength" integer, "isAdjustableTrigger" boolean NOT NULL DEFAULT false, "isThreadedBarrel" boolean NOT NULL DEFAULT false, "reference" character varying NOT NULL, "adjustableTriggerValue" character varying, "providedMagazineQuantity" integer NOT NULL DEFAULT '1', "barrelSize" integer NOT NULL, "isAdjustableFrontSight" boolean NOT NULL DEFAULT false, "isAdjustableBackSight" boolean NOT NULL DEFAULT false, "slideMaterialId" integer, "slideColorId" integer, "triggerTypeId" integer, "categoryId" integer NOT NULL, "caliberId" integer NOT NULL, "factoryId" integer NOT NULL, "typeId" integer NOT NULL, "barrelTypeId" integer, "threadedSizeId" integer, "percussionTypeId" integer, "providedMagazineId" integer, "buttMaterialId" integer, "buttColorId" integer, "barrelColorId" integer, CONSTRAINT "PK_2d1ee46cef1360781b27e138e4f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "threaded_size" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "size" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "UQ_45a48101ce6314eef5e97453b73" UNIQUE ("size"), CONSTRAINT "PK_5936350d9bd21d57bc65a11daa3" PRIMARY KEY ("id"))`);
@@ -30,18 +30,18 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "rail_size" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "UQ_bce89e2575426a88cbb2a263dfb" UNIQUE ("name"), CONSTRAINT "PK_fc59d35b98a48879707bc467ecd" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "m_lock_option" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "PK_13cb3b2e72e8092f9494556a085" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "riffle" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "isAdjustableButt" boolean NOT NULL, "isAdjustableBusk" boolean NOT NULL, "grenadierSlot" integer NOT NULL, "qcSlot" integer NOT NULL DEFAULT '0', "isMlockCompatibility" boolean NOT NULL DEFAULT false, "isOpenAim" boolean NOT NULL DEFAULT true, "name" character varying NOT NULL, "variation" character varying, "description" character varying, "barrelLength" integer, "isAdjustableTrigger" boolean NOT NULL DEFAULT false, "isThreadedBarrel" boolean NOT NULL DEFAULT false, "reference" character varying NOT NULL, "adjustableTriggerValue" character varying, "providedMagazineQuantity" integer NOT NULL DEFAULT '1', "barrelSize" integer NOT NULL, "isAdjustableFrontSight" boolean NOT NULL DEFAULT false, "isAdjustableBackSight" boolean NOT NULL DEFAULT false, "railSizeId" integer, "buttColorId" integer, "barrelColorId" integer, "categoryId" integer, "caliberId" integer, "factoryId" integer, "typeId" integer, "barrelTypeId" integer, "threadedSizeId" integer, "percussionTypeId" integer, "providedMagazineId" integer, "buttMaterialId" integer, CONSTRAINT "PK_d7352a218cdba0a91f278eda09e" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "weapon_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, "modeId" integer, CONSTRAINT "UQ_d157be3fda9adaaec6c30e7042a" UNIQUE ("name"), CONSTRAINT "PK_41a9c64ef5dfc5c5c24107a0d1a" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "email" character varying NOT NULL, "password" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "address" character varying NOT NULL, "phone" character varying NOT NULL, "city" character varying NOT NULL, "zipCode" character varying NOT NULL, "state" character varying NOT NULL, "role" character varying NOT NULL DEFAULT 'USER', "costumerRole" character varying NOT NULL DEFAULT 'Sans licence', CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "weapon_barrel_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_76fec1fbdd6eb369ab3973505a1" UNIQUE ("name"), CONSTRAINT "PK_6f478763e0e4e1d120838c63c7f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "verification_code" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "code" integer NOT NULL, "expireAt" TIMESTAMP NOT NULL, "userId" integer, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "handguns_optic_ready_plate" ("opticReadyPlateId" integer NOT NULL, "handGunId" integer NOT NULL, CONSTRAINT "PK_bbf96aa5c6c75b8637feca1d36c" PRIMARY KEY ("opticReadyPlateId", "handGunId"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_69b9a66110b70762f28d6d481f" ON "handguns_optic_ready_plate" ("opticReadyPlateId") `);
-        await queryRunner.query(`CREATE INDEX "IDX_387bb5a1ff091c808c051a43fd" ON "handguns_optic_ready_plate" ("handGunId") `);
+        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "email" character varying NOT NULL, "password" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "address" character varying NOT NULL, "phone" character varying NOT NULL, "city" character varying NOT NULL, "zipCode" character varying NOT NULL, "state" character varying NOT NULL, "role" character varying NOT NULL DEFAULT 'USER', "costumerRole" character varying NOT NULL DEFAULT 'Sans licence', CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "riffle_magazines" ("weaponMagazineId" integer NOT NULL, "riffleId" integer NOT NULL, CONSTRAINT "PK_ab77b22e469811b7029dbfe17ea" PRIMARY KEY ("weaponMagazineId", "riffleId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_c1ab8bccc4add0d3e7b1f47978" ON "riffle_magazines" ("weaponMagazineId") `);
         await queryRunner.query(`CREATE INDEX "IDX_9160dcb0a545387d4da30286ab" ON "riffle_magazines" ("riffleId") `);
         await queryRunner.query(`CREATE TABLE "handgun_magazines" ("weaponMagazineId" integer NOT NULL, "handGunId" integer NOT NULL, CONSTRAINT "PK_116fb38ebcc1eb881a8a1ad2a3b" PRIMARY KEY ("weaponMagazineId", "handGunId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_461668d4a5887fbbbf16f7c991" ON "handgun_magazines" ("weaponMagazineId") `);
         await queryRunner.query(`CREATE INDEX "IDX_f8e2f8c82f36b8fffdc7124d7f" ON "handgun_magazines" ("handGunId") `);
+        await queryRunner.query(`CREATE TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate" ("handGunId" integer NOT NULL, "opticReadyPlateId" integer NOT NULL, CONSTRAINT "PK_7782b3005c6fbdc8eaf8350bce6" PRIMARY KEY ("handGunId", "opticReadyPlateId"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_1561f9c947429a0179177c2f22" ON "hand_gun_provided_optic_ready_plate_optic_ready_plate" ("handGunId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_73ebfc9cb50447e3ef49cad393" ON "hand_gun_provided_optic_ready_plate_optic_ready_plate" ("opticReadyPlateId") `);
         await queryRunner.query(`CREATE TABLE "riffle_m_lock_options_m_lock_option" ("riffleId" integer NOT NULL, "mLockOptionId" integer NOT NULL, CONSTRAINT "PK_c890f21cc0805f610f94c5fb287" PRIMARY KEY ("riffleId", "mLockOptionId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_a80d357704c3cf298dce095d9a" ON "riffle_m_lock_options_m_lock_option" ("riffleId") `);
         await queryRunner.query(`CREATE INDEX "IDX_0dd64d7b733a3ddb4b4f68e642" ON "riffle_m_lock_options_m_lock_option" ("mLockOptionId") `);
@@ -50,6 +50,7 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_81277ee9ef231b877adaf24810b" FOREIGN KEY ("bodyId") REFERENCES "material"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_03cae4529ccc1aa2ba60cdc303f" FOREIGN KEY ("factoryId") REFERENCES "factory"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_4f00b7cb8d83de63d469b9f3226" FOREIGN KEY ("caliberId") REFERENCES "caliber"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "weapon_type" ADD CONSTRAINT "FK_069fd876fa82df582506fda4468" FOREIGN KEY ("modeId") REFERENCES "weapon_reload_mode"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "hand_gun" ADD CONSTRAINT "FK_4fe0b6c5d66b969021b1e76b77a" FOREIGN KEY ("slideMaterialId") REFERENCES "material"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "hand_gun" ADD CONSTRAINT "FK_0de2df7e0856d81046ed3f2e332" FOREIGN KEY ("slideColorId") REFERENCES "color"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "hand_gun" ADD CONSTRAINT "FK_10c42e4e26cdb9487cc872ee198" FOREIGN KEY ("triggerTypeId") REFERENCES "trigger_type"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -93,14 +94,13 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "riffle" ADD CONSTRAINT "FK_17a7e58df5f094cd2b63c6416d9" FOREIGN KEY ("percussionTypeId") REFERENCES "percussion_type"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "riffle" ADD CONSTRAINT "FK_5d11ecd2455fc5d637acde8e9e4" FOREIGN KEY ("providedMagazineId") REFERENCES "weapon_magazine"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "riffle" ADD CONSTRAINT "FK_1a4bf5c469f7ff480320b31a179" FOREIGN KEY ("buttMaterialId") REFERENCES "material"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "weapon_type" ADD CONSTRAINT "FK_069fd876fa82df582506fda4468" FOREIGN KEY ("modeId") REFERENCES "weapon_reload_mode"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "verification_code" ADD CONSTRAINT "FK_9d714363703b95d7bb9a9be0248" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "handguns_optic_ready_plate" ADD CONSTRAINT "FK_69b9a66110b70762f28d6d481f3" FOREIGN KEY ("opticReadyPlateId") REFERENCES "optic_ready_plate"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
-        await queryRunner.query(`ALTER TABLE "handguns_optic_ready_plate" ADD CONSTRAINT "FK_387bb5a1ff091c808c051a43fdc" FOREIGN KEY ("handGunId") REFERENCES "hand_gun"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" ADD CONSTRAINT "FK_c1ab8bccc4add0d3e7b1f479786" FOREIGN KEY ("weaponMagazineId") REFERENCES "weapon_magazine"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" ADD CONSTRAINT "FK_9160dcb0a545387d4da30286abc" FOREIGN KEY ("riffleId") REFERENCES "riffle"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "handgun_magazines" ADD CONSTRAINT "FK_461668d4a5887fbbbf16f7c991e" FOREIGN KEY ("weaponMagazineId") REFERENCES "weapon_magazine"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "handgun_magazines" ADD CONSTRAINT "FK_f8e2f8c82f36b8fffdc7124d7fd" FOREIGN KEY ("handGunId") REFERENCES "hand_gun"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate" ADD CONSTRAINT "FK_1561f9c947429a0179177c2f225" FOREIGN KEY ("handGunId") REFERENCES "hand_gun"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate" ADD CONSTRAINT "FK_73ebfc9cb50447e3ef49cad3938" FOREIGN KEY ("opticReadyPlateId") REFERENCES "optic_ready_plate"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "riffle_m_lock_options_m_lock_option" ADD CONSTRAINT "FK_a80d357704c3cf298dce095d9a9" FOREIGN KEY ("riffleId") REFERENCES "riffle"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "riffle_m_lock_options_m_lock_option" ADD CONSTRAINT "FK_0dd64d7b733a3ddb4b4f68e6425" FOREIGN KEY ("mLockOptionId") REFERENCES "m_lock_option"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
     }
@@ -108,14 +108,13 @@ export class Version1737219924966 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "riffle_m_lock_options_m_lock_option" DROP CONSTRAINT "FK_0dd64d7b733a3ddb4b4f68e6425"`);
         await queryRunner.query(`ALTER TABLE "riffle_m_lock_options_m_lock_option" DROP CONSTRAINT "FK_a80d357704c3cf298dce095d9a9"`);
+        await queryRunner.query(`ALTER TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate" DROP CONSTRAINT "FK_73ebfc9cb50447e3ef49cad3938"`);
+        await queryRunner.query(`ALTER TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate" DROP CONSTRAINT "FK_1561f9c947429a0179177c2f225"`);
         await queryRunner.query(`ALTER TABLE "handgun_magazines" DROP CONSTRAINT "FK_f8e2f8c82f36b8fffdc7124d7fd"`);
         await queryRunner.query(`ALTER TABLE "handgun_magazines" DROP CONSTRAINT "FK_461668d4a5887fbbbf16f7c991e"`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" DROP CONSTRAINT "FK_9160dcb0a545387d4da30286abc"`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" DROP CONSTRAINT "FK_c1ab8bccc4add0d3e7b1f479786"`);
-        await queryRunner.query(`ALTER TABLE "handguns_optic_ready_plate" DROP CONSTRAINT "FK_387bb5a1ff091c808c051a43fdc"`);
-        await queryRunner.query(`ALTER TABLE "handguns_optic_ready_plate" DROP CONSTRAINT "FK_69b9a66110b70762f28d6d481f3"`);
         await queryRunner.query(`ALTER TABLE "verification_code" DROP CONSTRAINT "FK_9d714363703b95d7bb9a9be0248"`);
-        await queryRunner.query(`ALTER TABLE "weapon_type" DROP CONSTRAINT "FK_069fd876fa82df582506fda4468"`);
         await queryRunner.query(`ALTER TABLE "riffle" DROP CONSTRAINT "FK_1a4bf5c469f7ff480320b31a179"`);
         await queryRunner.query(`ALTER TABLE "riffle" DROP CONSTRAINT "FK_5d11ecd2455fc5d637acde8e9e4"`);
         await queryRunner.query(`ALTER TABLE "riffle" DROP CONSTRAINT "FK_17a7e58df5f094cd2b63c6416d9"`);
@@ -159,6 +158,7 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "hand_gun" DROP CONSTRAINT "FK_10c42e4e26cdb9487cc872ee198"`);
         await queryRunner.query(`ALTER TABLE "hand_gun" DROP CONSTRAINT "FK_0de2df7e0856d81046ed3f2e332"`);
         await queryRunner.query(`ALTER TABLE "hand_gun" DROP CONSTRAINT "FK_4fe0b6c5d66b969021b1e76b77a"`);
+        await queryRunner.query(`ALTER TABLE "weapon_type" DROP CONSTRAINT "FK_069fd876fa82df582506fda4468"`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_4f00b7cb8d83de63d469b9f3226"`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_03cae4529ccc1aa2ba60cdc303f"`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_81277ee9ef231b877adaf24810b"`);
@@ -167,18 +167,18 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."IDX_0dd64d7b733a3ddb4b4f68e642"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_a80d357704c3cf298dce095d9a"`);
         await queryRunner.query(`DROP TABLE "riffle_m_lock_options_m_lock_option"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_73ebfc9cb50447e3ef49cad393"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_1561f9c947429a0179177c2f22"`);
+        await queryRunner.query(`DROP TABLE "hand_gun_provided_optic_ready_plate_optic_ready_plate"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_f8e2f8c82f36b8fffdc7124d7f"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_461668d4a5887fbbbf16f7c991"`);
         await queryRunner.query(`DROP TABLE "handgun_magazines"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_9160dcb0a545387d4da30286ab"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_c1ab8bccc4add0d3e7b1f47978"`);
         await queryRunner.query(`DROP TABLE "riffle_magazines"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_387bb5a1ff091c808c051a43fd"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_69b9a66110b70762f28d6d481f"`);
-        await queryRunner.query(`DROP TABLE "handguns_optic_ready_plate"`);
-        await queryRunner.query(`DROP TABLE "verification_code"`);
         await queryRunner.query(`DROP TABLE "users"`);
-        await queryRunner.query(`DROP TABLE "weapon_type"`);
+        await queryRunner.query(`DROP TABLE "verification_code"`);
+        await queryRunner.query(`DROP TABLE "weapon_barrel_type"`);
         await queryRunner.query(`DROP TABLE "riffle"`);
         await queryRunner.query(`DROP TABLE "m_lock_option"`);
         await queryRunner.query(`DROP TABLE "rail_size"`);
@@ -197,14 +197,14 @@ export class Version1737219924966 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "threaded_size"`);
         await queryRunner.query(`DROP TABLE "hand_gun"`);
         await queryRunner.query(`DROP TABLE "percussion_type"`);
-        await queryRunner.query(`DROP TABLE "weapon_barrel_type"`);
+        await queryRunner.query(`DROP TABLE "weapon_type"`);
+        await queryRunner.query(`DROP TABLE "weapon_reload_mode"`);
         await queryRunner.query(`DROP TABLE "trigger_type"`);
         await queryRunner.query(`DROP TABLE "color"`);
         await queryRunner.query(`DROP TABLE "material"`);
         await queryRunner.query(`DROP TABLE "weapon_magazine"`);
         await queryRunner.query(`DROP TABLE "legislation_category"`);
         await queryRunner.query(`DROP TABLE "optic_ready_plate"`);
-        await queryRunner.query(`DROP TABLE "weapon_reload_mode"`);
     }
 
 }

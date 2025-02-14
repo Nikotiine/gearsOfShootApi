@@ -70,9 +70,9 @@ export class RiffleController {
     name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   public async findAllByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) categoryId: number,
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
   ): Promise<RiffleDto[]> {
-    return this.riffleService.findAllByCategory(categoryId);
+    return this.riffleService.findAllByCategory(category);
   }
 
   @Post()

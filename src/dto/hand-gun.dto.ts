@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { OpticReadyPlateDto } from './optic-ready-plate.dto';
 import {
-  CreateWeaponDto,
   WeaponBarrelTypeDto,
   WeaponTriggerTypeDto,
   WeaponTypeDto,
@@ -110,13 +109,6 @@ export class CreateHandGunDto {
     description: 'Le nombre de chargeur fournis',
   })
   providedMagazineQuantity: number;
-
-  @ApiProperty({
-    nullable: true,
-    description: 'Le modele de chargeur fournis',
-  })
-  @IsOptional()
-  providedMagazineId: number;
 
   @ApiProperty({
     example: 18,
@@ -286,11 +278,6 @@ export class HandGunDto {
 
   @ApiProperty()
   providedMagazineQuantity: number;
-
-  @ApiProperty({
-    type: WeaponMagazineDto,
-  })
-  providedMagazine: WeaponMagazineDto;
 
   @ApiProperty()
   barrelSize: number;

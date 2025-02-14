@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, ManyToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
+} from 'typeorm';
 import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Material } from './material.entity';
 import { Color } from './color.entity';
@@ -20,7 +27,14 @@ export class HandGun extends BaseEntity {
   isOpticReady: boolean;
 
   // Plaques optiques ready fournies
-  @ManyToMany(() => OpticReadyPlate, (plate) => plate.weapons)
+  @ManyToMany(() => OpticReadyPlate, {
+    nullable: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    eager: true,
+  })
+  @JoinTable()
   providedOpticReadyPlate: OpticReadyPlate[];
 
   // Matiere de la glissiere

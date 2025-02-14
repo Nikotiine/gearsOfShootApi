@@ -169,13 +169,6 @@ export abstract class CreateWeaponDto {
   providedMagazineQuantity: number;
 
   @ApiProperty({
-    nullable: true,
-    description: 'Le modele de chargeur fournis',
-  })
-  @IsOptional()
-  providedMagazineId: number;
-
-  @ApiProperty({
     example: 18,
     description: "L'epaisseur exterieur du canon",
   })
