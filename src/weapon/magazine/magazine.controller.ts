@@ -21,7 +21,6 @@ import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import {
   CreateWeaponMagazineDto,
-  ListOfPrerequisitesWeaponMagazineDto,
   UpdateWeaponMagazineDto,
 } from '../../dto/create-magazine.dto';
 
@@ -74,17 +73,21 @@ export class MagazineController {
     return this.magzineService.findByFactory(factoryName);
   }
 
-  @Get('prerequisites')
-  @ApiOkResponse({
-    type: ListOfPrerequisitesWeaponMagazineDto,
-  })
+  @Get(SwaggerDescription.FIND_BY_CATEGORY)
   @ApiOperation({
-    summary: 'Liste des prerequis',
-    description:
-      'Retourne la liste des pre requis de creation d un nouveau chargeur',
+    summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
+    description: 'Retourne les chargeurs filtres par categories',
   })
-  public async findPrerequisitesWeaponMagazineList(): Promise<ListOfPrerequisitesWeaponMagazineDto> {
-    return await this.magzineService.getListOfPrerequisitesWeaponMagazineList();
+  @ApiOkResponse({
+    type: [WeaponMagazineDto],
+  })
+  @ApiParam({
+    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
+  })
+  public async findByCategory(
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
+  ): Promise<WeaponMagazineDto[]> {
+    return await this.magzineService.findByCategory(category);
   }
 
   @Post('')

@@ -5,28 +5,21 @@ import { Repository } from 'typeorm';
 import { WeaponMagazineDto } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
-import { FactoryService } from '../../common/factory/factory.service';
-import { CaliberService } from '../../common/caliber/caliber.service';
 import { CodeError } from '../../enum/code-error.enum';
-import { MaterialService } from '../../common/material/material.service';
-import { LegislationCategoryService } from '../../common/legislation-category/legislation-category.service';
 import {
   CreateWeaponMagazineDto,
-  ListOfPrerequisitesWeaponMagazineDto,
   UpdateWeaponMagazineDto,
 } from '../../dto/create-magazine.dto';
 import { RiffleService } from '../riffle/riffle.service';
+import { HandGunService } from '../hand-gun/hand-gun.service';
 
 @Injectable()
 export class MagazineService {
   constructor(
     @InjectRepository(WeaponMagazine)
     private readonly weaponMagazineRepository: Repository<WeaponMagazine>,
-    private readonly materialService: MaterialService,
-    private readonly factoryService: FactoryService,
-    private readonly caliberService: CaliberService,
-    private readonly legalisationCategoryService: LegislationCategoryService,
     private readonly riffleService: RiffleService,
+    private readonly handGunService: HandGunService,
   ) {}
 
   /**
@@ -63,6 +56,10 @@ export class MagazineService {
         id: magazine.categoryId,
       },
       riffles: magazine.compatibleRiffle,
+      handguns: magazine.compatibleHandGun,
+      forWeaponType: {
+        id: magazine.weaponTypeId,
+      },
     });
     const created = await this.weaponMagazineRepository.save(entity);
     return this.findById(created.id);
@@ -78,23 +75,12 @@ export class MagazineService {
         caliber: true,
         factory: true,
         category: true,
+        handguns: true,
+        riffles: true,
+        forWeaponType: true,
       },
     });
     return this.mapEntityToDto(magazine);
-  }
-
-  public async getListOfPrerequisitesWeaponMagazineList(): Promise<ListOfPrerequisitesWeaponMagazineDto> {
-    const factories = await this.factoryService.findByType('magazine');
-    const calibers = await this.caliberService.findAll();
-    const bodies = await this.materialService.findAll();
-    const categories = await this.legalisationCategoryService.findAll();
-    // const riffles = await this.riffleService.findAll();
-    return {
-      calibers: calibers,
-      bodies: bodies,
-      factories: factories,
-      categories: categories,
-    };
   }
 
   /**
@@ -132,6 +118,9 @@ export class MagazineService {
       category: {
         id: magazine.categoryId,
       },
+      forWeaponType: {
+        id: magazine.weaponTypeId,
+      },
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
@@ -166,6 +155,14 @@ export class MagazineService {
       width: magazine.width,
       capacity: magazine.capacity,
       category: magazine.category,
+      riffles: magazine.riffles
+        ? this.riffleService.mapEntityArrayToDtoArray(magazine.riffles)
+        : [],
+      handguns: magazine.handguns
+        ? this.handGunService.mapEntityArrayToDtoArray(magazine.handguns)
+        : [],
+      forWeaponType: magazine.forWeaponType,
+      description: magazine.description,
     };
   }
 
@@ -183,6 +180,9 @@ export class MagazineService {
         caliber: true,
         factory: true,
         category: true,
+        handguns: true,
+        riffles: true,
+        forWeaponType: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
@@ -202,6 +202,29 @@ export class MagazineService {
         caliber: true,
         factory: true,
         category: true,
+        handguns: true,
+        riffles: true,
+        forWeaponType: true,
+      },
+    });
+    return this.mapEntityArrayToDtoArray(magazines);
+  }
+
+  public async findByCategory(category: string): Promise<WeaponMagazineDto[]> {
+    const magazines = await this.weaponMagazineRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      relations: {
+        body: true,
+        caliber: true,
+        factory: true,
+        category: true,
+        handguns: true,
+        riffles: true,
+        forWeaponType: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);

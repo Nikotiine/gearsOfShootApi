@@ -13,7 +13,6 @@ import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
-import { WeaponMagazineDto } from './weapon-magazine.dto';
 
 export class CreateHandGunDto {
   @ApiProperty({

@@ -14,6 +14,7 @@ import { Material } from './material.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { LegislationCategory } from './legislation-category.entity';
+import { WeaponType } from './weapon-type.entity';
 @Entity()
 export class WeaponMagazine extends BaseEntity {
   @ManyToOne(() => LegislationCategory, (category) => category.magazines)
@@ -49,18 +50,15 @@ export class WeaponMagazine extends BaseEntity {
   })
   riffles: Riffle[];
 
-  @OneToMany(() => Riffle, (riffle) => riffle.providedMagazine)
-  riffle: Riffle;
-
   @ManyToMany(() => HandGun, (handgun) => handgun.compatiblesMagazines)
   @JoinTable({
     name: 'handgun_magazines',
   })
   handguns: HandGun[];
 
-  @OneToMany(() => HandGun, (handgun) => handgun.providedMagazine)
-  handgun: HandGun;
-
   @Column({ nullable: true })
   description: string;
+
+  @ManyToOne(() => WeaponType, (type) => type.magazines)
+  forWeaponType: WeaponType;
 }

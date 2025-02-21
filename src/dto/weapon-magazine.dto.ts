@@ -4,6 +4,9 @@ import { CaliberDto } from './caliber.dto';
 
 import { MaterialDto } from './material.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
+import { RiffleDto } from './riffle.dto';
+import { HandGunDto } from './hand-gun.dto';
+import { WeaponTypeDto } from './weapon.dto';
 
 export class WeaponMagazineDto {
   @ApiProperty()
@@ -44,4 +47,22 @@ export class WeaponMagazineDto {
     example: 'C',
   })
   category: LegislationCategoryDto;
+
+  @ApiProperty({
+    type: [RiffleDto],
+  })
+  riffles: RiffleDto[];
+
+  @ApiProperty({
+    type: [HandGunDto],
+  })
+  handguns: HandGunDto[];
+
+  @ApiProperty({
+    type: WeaponTypeDto,
+  })
+  forWeaponType: WeaponTypeDto;
+
+  @ApiProperty()
+  description: string;
 }

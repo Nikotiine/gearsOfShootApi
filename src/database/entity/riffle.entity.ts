@@ -134,10 +134,6 @@ export class Riffle extends BaseEntity {
   })
   compatiblesMagazines: WeaponMagazine[];
 
-  // Si un chargeur de base est fournis
-  @ManyToOne(() => WeaponMagazine, (mag) => mag.riffle)
-  providedMagazine: WeaponMagazine;
-
   // Capacity du chageur de base
   @Column({ default: 1 })
   providedMagazineQuantity: number;

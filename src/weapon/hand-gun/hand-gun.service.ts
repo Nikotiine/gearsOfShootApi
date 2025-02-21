@@ -350,7 +350,7 @@ export class HandGunService {
     };
   }
 
-  private mapEntityArrayToDtoArray(handGuns: HandGun[]): HandGunDto[] {
+  public mapEntityArrayToDtoArray(handGuns: HandGun[]): HandGunDto[] {
     return handGuns.map((handGun) => {
       return this.mapEntityToDto(handGun);
     });

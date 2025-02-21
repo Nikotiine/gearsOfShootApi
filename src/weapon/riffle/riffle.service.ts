@@ -328,7 +328,7 @@ export class RiffleService {
     };
   }
 
-  private mapEntityArrayToDtoArray(riffles: Riffle[]): RiffleDto[] {
+  public mapEntityArrayToDtoArray(riffles: Riffle[]): RiffleDto[] {
     return riffles.map((riffle) => {
       return this.mapEntityToDto(riffle);
     });
