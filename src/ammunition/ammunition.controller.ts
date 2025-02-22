@@ -23,6 +23,7 @@ import {
   UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
+import { SwaggerDescription } from '../enum/swagger-description.enum';
 
 @Controller('ammunition')
 @ApiTags('Ammunition')
@@ -45,13 +46,29 @@ export class AmmunitionController {
   ): Promise<AmmunitionDto[]> {
     return this.ammunitionService.findByCaliber(caliberId);
   }
-
-  @Get('by/category/:category')
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne la munition trouver par son id',
+  })
+  @ApiOkResponse({
+    type: AmmunitionDto,
+  })
   @ApiParam({
-    name: 'category',
+    name: SwaggerDescription.ID_PARAM,
+  })
+  public async findById(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<AmmunitionDto> {
+    return this.ammunitionService.findById(id);
+  }
+
+  @Get(SwaggerDescription.FIND_BY_CATEGORY)
+  @ApiParam({
+    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   @ApiOperation({
-    summary: 'Filtre par calibre',
+    summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
     description: 'Retourne la liste des munitions filtre par calibre',
   })
   @ApiOkResponse({

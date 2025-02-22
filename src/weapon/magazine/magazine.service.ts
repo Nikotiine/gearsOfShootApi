@@ -75,8 +75,12 @@ export class MagazineService {
         caliber: true,
         factory: true,
         category: true,
-        handguns: true,
-        riffles: true,
+        handguns: {
+          factory: true,
+        },
+        riffles: {
+          factory: true,
+        },
         forWeaponType: true,
       },
     });
