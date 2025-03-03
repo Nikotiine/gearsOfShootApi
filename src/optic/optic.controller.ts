@@ -23,6 +23,7 @@ import {
   UpdateOpticDto,
 } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
+import { SwaggerDescription } from '../enum/swagger-description.enum';
 
 @Controller('optic')
 @ApiTags('Optic')
@@ -84,13 +85,13 @@ export class OpticController {
     return await this.opticService.insert(optic);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition de l optique',
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiBody({
     type: UpdateOpticDto,
@@ -99,9 +100,10 @@ export class OpticController {
     type: OpticDto,
   })
   public async edit(
-    @Param('id') id: number,
-    optic: UpdateOpticDto,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+    @Body() optic: UpdateOpticDto,
   ): Promise<OpticDto> {
+    console.log('icicicicicicicii', optic);
     return await this.opticService.edit(id, optic);
   }
 

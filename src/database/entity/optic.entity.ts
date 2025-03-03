@@ -65,8 +65,7 @@ export class Optic extends BaseEntity {
   @Column()
   isCollarsProvided: boolean;
 
-  @ManyToOne(() => OpticCollar, (collar) => collar.opticsWithCollard, {
-    nullable: true,
-  })
-  providedCollar: OpticCollar;
+  // Reference de l'objet
+  @Column()
+  reference: string;
 }
