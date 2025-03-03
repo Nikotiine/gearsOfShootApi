@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
 import { Repository } from 'typeorm';
@@ -55,13 +59,11 @@ export class OpticService {
       type: {
         id: optic.opticTypeId,
       },
-      providedCollar: {
-        id: optic.providedCollarId,
-      },
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
     });
+    entity.reference = this.createReference(entity);
     const created = await this.opticRepository.save(entity);
     return await this.findById(created.id);
   }
@@ -80,21 +82,21 @@ export class OpticService {
         type: true,
       },
     });
+    if (!optic) {
+      throw new NotFoundException(CodeError.OPTIC_NOT_FOUND);
+    }
     return this.mapOpticToOpticDto(optic);
   }
 
   public async getListOfPrerequisitesOpticDto(): Promise<ListOfPrerequisitesOpticDto> {
-    const factories = await this.factoryService.findByType('optic');
     const types = await this.opticTypeService.findAll();
     const units = await this.opticUnitService.findAll();
     const focalPlanes = await this.opticFocalPlaneService.findAll();
-    const opticCollars = await this.opticCollarService.findAll();
+
     return {
-      factories: factories,
       types: types,
       units: units,
       focalPlanes: focalPlanes,
-      opticCollars: opticCollars,
     };
   }
 
@@ -113,6 +115,7 @@ export class OpticService {
   }
 
   public async edit(id: number, optic: UpdateOpticDto) {
+    console.log(optic);
     const updatedResult = await this.opticRepository.update(id, {
       name: optic.name,
       maxParallax: optic.maxParallax,
@@ -137,9 +140,6 @@ export class OpticService {
       },
       type: {
         id: optic.opticTypeId,
-      },
-      providedCollar: {
-        id: optic.providedCollarId,
       },
       length: optic.length,
       eyeRelief: optic.eyeRelief,
@@ -192,6 +192,14 @@ export class OpticService {
       focalPlane: optic.focalPlane,
       isParallax: optic.isParallax,
       type: optic.type,
+      reference: optic.reference,
+      length: optic.length,
+      isCollarsProvided: optic.isCollarsProvided,
+      eyeRelief: optic.eyeRelief,
     };
+  }
+
+  private createReference(optic: Optic): string {
+    return `${optic.factory.name}-${optic.name.substring(0 - 3)}/${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`;
   }
 }

@@ -17,7 +17,4 @@ export class OpticCollar extends BaseEntity {
 
   @ManyToOne(() => RailSize, (rail) => rail.opticCollars)
   railSize: RailSize;
-
-  @OneToMany(() => Optic, (optic) => optic.providedCollar)
-  opticsWithCollard: Optic[];
 }

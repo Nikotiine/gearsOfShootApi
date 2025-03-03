@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional } from 'class-validator';
 import { FactoryDto } from './factory.dto';
-import { OpticCollarDto } from './optic-collar.dto';
 
 export class FocalPlaneDto {
   @ApiProperty()
@@ -32,10 +31,6 @@ export class ListOfPrerequisitesOpticDto {
   })
   types: OpticTypeDto[];
   @ApiProperty({
-    type: [FactoryDto],
-  })
-  factories: FactoryDto[];
-  @ApiProperty({
     type: [OpticUnitDto],
   })
   units: OpticUnitDto[];
@@ -43,11 +38,6 @@ export class ListOfPrerequisitesOpticDto {
     type: [FocalPlaneDto],
   })
   focalPlanes: FocalPlaneDto[];
-
-  @ApiProperty({
-    type: [OpticCollarDto],
-  })
-  opticCollars: OpticCollarDto[];
 }
 export class CreateOpticDto {
   @ApiProperty()
@@ -101,12 +91,6 @@ export class CreateOpticDto {
   eyeRelief: number;
   @ApiProperty()
   isCollarsProvided: boolean;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  @IsOptional()
-  providedCollarId: number;
 }
 
 export class UpdateOpticDto extends CreateOpticDto {
@@ -130,8 +114,12 @@ export class OpticDto {
   @IsOptional()
   description: string;
   @ApiProperty()
+  isCollarsProvided: boolean;
+  @ApiProperty()
   @IsNumber()
   maxZoom: number;
+  @ApiProperty()
+  length: number;
   @ApiProperty()
   @IsNumber()
   minZoom: number;
@@ -170,4 +158,8 @@ export class OpticDto {
     type: OpticTypeDto,
   })
   type: OpticTypeDto;
+  @ApiProperty()
+  reference: string;
+  @ApiProperty()
+  eyeRelief: number;
 }
