@@ -1,10 +1,10 @@
 import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Optic } from './optic.entity';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Factory } from './factory.entity';
-//TODO:Mettre l unicite en place
+
 @Entity()
+@Unique(['name', 'factory', 'height', 'diameter'])
 export class OpticCollar extends BaseEntity {
   @ManyToOne(() => Factory, (factory) => factory.opticsCollar)
   factory: Factory;
@@ -17,4 +17,13 @@ export class OpticCollar extends BaseEntity {
 
   @ManyToOne(() => RailSize, (rail) => rail.opticCollars)
   railSize: RailSize;
+
+  @Column()
+  reference: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  description: string;
 }

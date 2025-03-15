@@ -18,7 +18,7 @@ import {
 import { FactoryService, FactoryTypes } from './factory.service';
 import {
   CreateFactoryDto,
-  EditFactoryDto,
+  UpdateFactoryDto,
   FactoryDto,
   ListOfPrerequisitesFactoryDto,
 } from '../../dto/factory.dto';
@@ -95,7 +95,7 @@ export class FactoryController {
     type: FactoryDto,
   })
   @ApiBody({
-    type: EditFactoryDto,
+    type: UpdateFactoryDto,
   })
   @ApiOperation({
     summary: 'Edition',
@@ -103,7 +103,7 @@ export class FactoryController {
   })
   public async edit(
     @Param('id') id: number,
-    @Body() factory: EditFactoryDto,
+    @Body() factory: UpdateFactoryDto,
   ): Promise<FactoryDto> {
     return await this.factoryService.edit(id, factory);
   }

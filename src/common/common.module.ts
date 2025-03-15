@@ -26,6 +26,7 @@ import { OpticReadyPlate } from '../database/entity/optic-ready-plate.entity';
 import { LegislationCategoryController } from './legislation-category/legislation-category.controller';
 import { ColorController } from './color/color.controller';
 import { MaterialController } from './material/material.controller';
+import { RailSizeController } from './rail-size/rail-size.controller';
 
 @Module({
   controllers: [
@@ -35,6 +36,7 @@ import { MaterialController } from './material/material.controller';
     LegislationCategoryController,
     ColorController,
     MaterialController,
+    RailSizeController,
   ],
   providers: [
     FactoryService,

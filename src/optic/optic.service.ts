@@ -114,8 +114,7 @@ export class OpticService {
     return this.mapOpticsArrayToOpticsDtoArray(optics);
   }
 
-  public async edit(id: number, optic: UpdateOpticDto) {
-    console.log(optic);
+  public async edit(id: number, optic: UpdateOpticDto): Promise<OpticDto> {
     const updatedResult = await this.opticRepository.update(id, {
       name: optic.name,
       maxParallax: optic.maxParallax,

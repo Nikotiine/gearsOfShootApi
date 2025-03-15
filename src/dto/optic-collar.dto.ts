@@ -18,6 +18,14 @@ export class OpticCollarDto {
     type: FactoryDto,
   })
   factory: FactoryDto;
+  @ApiProperty({
+    example: 'Une description de la marque et ses produits',
+  })
+  description: string;
+  @ApiProperty()
+  reference: string;
+  @ApiProperty()
+  name: string;
 }
 
 export class CreateOpticCollarDto {
@@ -29,4 +37,15 @@ export class CreateOpticCollarDto {
   railSizeId: number;
   @ApiProperty()
   factoryId: number;
+  @ApiProperty()
+  name: string;
+  @ApiProperty({
+    example: 'Une description de la marque et ses produits',
+  })
+  description: string;
+}
+
+export class UpdateOpticCollarDto extends CreateOpticCollarDto {
+  @ApiProperty()
+  id: number;
 }

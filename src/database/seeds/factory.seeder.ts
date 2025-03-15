@@ -4,6 +4,7 @@ import { Factory } from '../entity/factory.entity';
 
 import { CreateFactoryDto, CreateFactoryTypeDto } from '../../dto/factory.dto';
 import { FactoryType } from '../entity/factory-type.entity';
+import { FactoryTypeEnum } from '../../enum/factory-type.enum';
 
 export default class FactorySeeder implements Seeder {
   /**
@@ -18,27 +19,30 @@ export default class FactorySeeder implements Seeder {
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
     const weaponFactory: CreateFactoryTypeDto = {
-      name: 'weapon',
+      name: FactoryTypeEnum.WEAPON,
     };
     const ammoFactory: CreateFactoryTypeDto = {
-      name: 'ammunition',
+      name: FactoryTypeEnum.AMMUNITION,
     };
     const opticFactory: CreateFactoryTypeDto = {
-      name: 'optic',
+      name: FactoryTypeEnum.OPTIC,
     };
     const rdsFactory: CreateFactoryTypeDto = {
-      name: 'rds',
+      name: FactoryTypeEnum.RDS,
     };
     const magFactory: CreateFactoryTypeDto = {
-      name: 'magazine',
+      name: FactoryTypeEnum.MAGAZINE,
     };
-
+    const accessoriesFactory: CreateFactoryTypeDto = {
+      name: FactoryTypeEnum.ACCESSORY,
+    };
     const factoryTypeRepo = dataSource.getRepository(FactoryType);
     const wf = await factoryTypeRepo.save(weaponFactory);
     const af = await factoryTypeRepo.save(ammoFactory);
     const of = await factoryTypeRepo.save(opticFactory);
     const rf = await factoryTypeRepo.save(rdsFactory);
     const mf = await factoryTypeRepo.save(magFactory);
+    const accf = await factoryTypeRepo.save(accessoriesFactory);
 
     const factoriesW: CreateFactoryDto[] = [
       {
@@ -154,6 +158,18 @@ export default class FactorySeeder implements Seeder {
         description: 'Description',
         reference: 'WIN',
         typeId: mf.id,
+      },
+      {
+        name: 'Accesory 1',
+        description: 'Description',
+        reference: 'ACC1',
+        typeId: accf.id,
+      },
+      {
+        name: 'Accesory 2',
+        description: 'Description',
+        reference: 'ACC2',
+        typeId: accf.id,
       },
     ];
     const repository = dataSource.getRepository(Factory);

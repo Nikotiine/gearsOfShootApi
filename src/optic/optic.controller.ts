@@ -30,28 +30,28 @@ import { SwaggerDescription } from '../enum/swagger-description.enum';
 export class OpticController {
   constructor(private readonly opticService: OpticService) {}
 
-  @Get('all')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
     type: [OpticDto],
   })
   @ApiOperation({
-    summary: 'Liste complete',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste completes des optiques',
   })
   public async findAllOptics(): Promise<OpticDto[]> {
     return await this.opticService.findAll();
   }
 
-  @Get('by/:id')
+  @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOkResponse({
     type: OpticDto,
   })
   @ApiOperation({
-    summary: 'Par id',
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
     description: 'Retourne le detail de l optique',
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   public async findById(@Param('id') id: number): Promise<OpticDto> {
     return await this.opticService.findById(id);
@@ -103,17 +103,16 @@ export class OpticController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() optic: UpdateOpticDto,
   ): Promise<OpticDto> {
-    console.log('icicicicicicicii', optic);
     return await this.opticService.edit(id, optic);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique de l optique',
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,

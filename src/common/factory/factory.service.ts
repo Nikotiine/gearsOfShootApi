@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   CreateFactoryDto,
-  EditFactoryDto,
+  UpdateFactoryDto,
   FactoryDto,
   ListOfPrerequisitesFactoryDto,
 } from '../../dto/factory.dto';
@@ -148,7 +148,10 @@ export class FactoryService {
    * @param id
    * @param factory
    */
-  public async edit(id: number, factory: EditFactoryDto): Promise<FactoryDto> {
+  public async edit(
+    id: number,
+    factory: UpdateFactoryDto,
+  ): Promise<FactoryDto> {
     const updateResult = await this.factoryRepository.update(id, {
       id: id,
       name: factory.name,

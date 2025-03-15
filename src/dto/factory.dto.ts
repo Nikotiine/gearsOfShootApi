@@ -27,7 +27,7 @@ export class CreateFactoryDto {
   @IsNotEmpty()
   reference: string;
 }
-export class EditFactoryDto extends CreateFactoryDto {
+export class UpdateFactoryDto extends CreateFactoryDto {
   @ApiProperty()
   id: number;
 }

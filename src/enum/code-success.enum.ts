@@ -15,4 +15,5 @@ export enum CodeSuccess {
   CALIBER_DELETE = '101',
   FACTORY_DELETE = '102',
   THREADED_SIZE_DELETE = '103',
+  OPTIC_COLLAR_SOFT_DELETE = '104',
 }
