@@ -31,4 +31,15 @@ export class MaterialService {
       reference: created.reference,
     };
   }
+
+  public async findById(id: number): Promise<MaterialDto> {
+    const mat = await this.materialRepository.findOne({
+      where: { id: id },
+    });
+    return {
+      id: mat.id,
+      name: mat.name,
+      reference: mat.reference,
+    };
+  }
 }

@@ -12,6 +12,9 @@ import {
 } from '../../dto/create-magazine.dto';
 import { RiffleService } from '../riffle/riffle.service';
 import { HandGunService } from '../hand-gun/hand-gun.service';
+import { FactoryService } from '../../common/factory/factory.service';
+import { CaliberService } from '../../common/caliber/caliber.service';
+import { MaterialService } from '../../common/material/material.service';
 
 @Injectable()
 export class MagazineService {
@@ -20,6 +23,9 @@ export class MagazineService {
     private readonly weaponMagazineRepository: Repository<WeaponMagazine>,
     private readonly riffleService: RiffleService,
     private readonly handGunService: HandGunService,
+    private readonly factoryService: FactoryService,
+    private readonly caliberService: CaliberService,
+    private readonly materielService: MaterialService,
   ) {}
 
   /**
@@ -51,7 +57,7 @@ export class MagazineService {
         id: magazine.bodyId,
       },
       length: magazine.length,
-      reference: magazine.reference,
+      reference: await this.createReference(magazine),
       category: {
         id: magazine.categoryId,
       },
@@ -115,7 +121,7 @@ export class MagazineService {
         id: magazine.bodyId,
       },
       length: magazine.length,
-      reference: magazine.reference,
+      reference: await this.createReference(magazine),
       height: magazine.height,
       capacity: magazine.capacity,
       width: magazine.width,
@@ -232,5 +238,16 @@ export class MagazineService {
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
+  }
+
+  private async createReference(
+    magazine: CreateWeaponMagazineDto,
+  ): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      magazine.factoryId,
+    );
+    const caliber = await this.caliberService.findById(magazine.caliberId);
+    const material = await this.materielService.findById(magazine.bodyId);
+    return `${factoryRef.substring(0, 3)}-${caliber.reference.toUpperCase()}-${magazine.capacity}/${material.reference}`;
   }
 }

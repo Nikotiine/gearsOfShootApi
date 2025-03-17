@@ -24,9 +24,6 @@ export class CreateWeaponMagazineDto {
   })
   width: number;
 
-  @ApiProperty()
-  reference: string;
-
   @ApiProperty({
     description: 'matiere du chargeur',
   })
