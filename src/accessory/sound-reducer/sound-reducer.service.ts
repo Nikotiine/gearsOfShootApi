@@ -4,7 +4,6 @@ import { SoundNoiseReducer } from '../../database/entity/sound-noise-reducer.ent
 import { Repository } from 'typeorm';
 import {
   CreateSoundNoiseReducerDto,
-  ListOfPrerequisitesSoundNoiseReducerDto,
   SoundNoiseReducerDto,
   UpdateSoundNoiseReducerDto,
 } from '../../dto/sound-noise-reducer.dto';
@@ -29,7 +28,13 @@ export class SoundReducerService {
    * Retourne tous les reduceteur de sons
    */
   public async findAll(): Promise<SoundNoiseReducerDto[]> {
-    const soundNoiseReducers = await this.soundNoiseReducerRepository.find();
+    const soundNoiseReducers = await this.soundNoiseReducerRepository.find({
+      relations: {
+        caliber: true,
+        threadedSize: true,
+        factory: true,
+      },
+    });
     return this.mapArrayEntityToArrayDto(soundNoiseReducers);
   }
 
@@ -49,9 +54,11 @@ export class SoundReducerService {
       },
       diameter: soundNoiseReducer.diameter,
       description: soundNoiseReducer.description,
-      reference: soundNoiseReducer.reference,
+      reference: await this.createReference(soundNoiseReducer),
       isCleanable: soundNoiseReducer.isCleanable,
       length: soundNoiseReducer.length,
+      chicane: soundNoiseReducer.chicane,
+      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     });
     const created = await this.soundNoiseReducerRepository.save(entity);
     return this.findById(created.id);
@@ -100,9 +107,11 @@ export class SoundReducerService {
         id: soundNoiseReducer.caliberId,
       },
       description: soundNoiseReducer.description,
-      reference: soundNoiseReducer.reference,
+      reference: await this.createReference(soundNoiseReducer),
       isCleanable: soundNoiseReducer.isCleanable,
       diameter: soundNoiseReducer.diameter,
+      chicane: soundNoiseReducer.chicane,
+      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(
@@ -110,17 +119,6 @@ export class SoundReducerService {
       );
     }
     return await this.findById(id);
-  }
-
-  public async getListOfPrerequisitesSoundNoiseReducerList(): Promise<ListOfPrerequisitesSoundNoiseReducerDto> {
-    const factories = await this.factoryService.findByType('rds');
-    const calibers = await this.caliberService.findAll();
-    const threadedSizes = await this.threadedSizeService.findAll();
-    return {
-      factories: factories,
-      calibers: calibers,
-      threadedSizes: threadedSizes,
-    };
   }
 
   private mapArrayEntityToArrayDto(
@@ -147,6 +145,21 @@ export class SoundReducerService {
       isCleanable: soundNoiseReducer.isCleanable,
       threadedSize: soundNoiseReducer.threadedSize,
       reference: soundNoiseReducer.reference,
+      chicane: soundNoiseReducer.chicane,
+      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     };
+  }
+  private async createReference(
+    rds: CreateSoundNoiseReducerDto,
+  ): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      rds.factoryId,
+    );
+    const caliber = await this.caliberService.findById(rds.caliberId);
+    const threadSize = await this.threadedSizeService.findById(
+      rds.threadedSizeId,
+    );
+
+    return `${rds.name}-${factoryRef.substring(0, 3)}-${caliber.reference}/${threadSize.reference}`;
   }
 }

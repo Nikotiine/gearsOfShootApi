@@ -9,9 +9,6 @@ import { WeaponMagazine } from '../database/entity/weapon-magazine.entity';
 import { CommonModule } from '../common/common.module';
 import { MagazineService } from './magazine/magazine.service';
 import { MagazineController } from './magazine/magazine.controller';
-import { SoundReducerController } from './sound-reducer/sound-reducer.controller';
-import { SoundNoiseReducer } from '../database/entity/sound-noise-reducer.entity';
-import { SoundReducerService } from './sound-reducer/sound-reducer.service';
 import { BarrelTypeService } from './barrel-type/barrel-type.service';
 import { WeaponBarrelType } from '../database/entity/weapon-barrel-type.entity';
 import { ReloadModeService } from './reload-mode/reload-mode.service';
@@ -32,7 +29,6 @@ import { MLockOption } from '../database/entity/m-lock-option.entity';
     WeaponController,
     WeaponTypeController,
     MagazineController,
-    SoundReducerController,
     HandGunController,
     RiffleController,
   ],
@@ -40,7 +36,6 @@ import { MLockOption } from '../database/entity/m-lock-option.entity';
     WeaponService,
     WeaponTypeService,
     MagazineService,
-    SoundReducerService,
     BarrelTypeService,
     ReloadModeService,
     TriggerTypeService,
@@ -52,7 +47,6 @@ import { MLockOption } from '../database/entity/m-lock-option.entity';
     TypeOrmModule.forFeature([
       WeaponType,
       WeaponMagazine,
-      SoundNoiseReducer,
       WeaponBarrelType,
       WeaponReloadMode,
       TriggerType,

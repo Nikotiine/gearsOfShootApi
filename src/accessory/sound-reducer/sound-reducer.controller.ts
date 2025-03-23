@@ -18,57 +18,44 @@ import {
 import { SoundReducerService } from './sound-reducer.service';
 import {
   CreateSoundNoiseReducerDto,
-  ListOfPrerequisitesSoundNoiseReducerDto,
   SoundNoiseReducerDto,
   UpdateSoundNoiseReducerDto,
 } from '../../dto/sound-noise-reducer.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('sound-reducer')
 @ApiTags('Sound-reducer')
 export class SoundReducerController {
   constructor(private readonly soundNoiseReducerService: SoundReducerService) {}
 
-  @Get('all')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
     type: [SoundNoiseReducerDto],
   })
   @ApiOperation({
-    summary: 'Liste des RDS',
-    description: 'Retourne la liste de tous les reducteur de son disponible',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
+    description: 'Retourne la liste de tous les reducteurs de son disponible',
   })
   public async findAll(): Promise<SoundNoiseReducerDto[]> {
     return await this.soundNoiseReducerService.findAll();
   }
 
-  @Get('by/:id')
+  @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOperation({
-    summary: 'Par id',
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
     description: 'Retourne le detail du rds selectionner avec son id',
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOkResponse({
     type: SoundNoiseReducerDto,
   })
   public async findById(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
   ): Promise<SoundNoiseReducerDto> {
     return await this.soundNoiseReducerService.findById(id);
-  }
-
-  @Get('prerequisites')
-  @ApiOperation({
-    summary: 'Liste des prerequis',
-    description:
-      'Retourne la liste des pre requis pour la creation d un nouveau rds',
-  })
-  @ApiOkResponse({
-    type: ListOfPrerequisitesSoundNoiseReducerDto,
-  })
-  public async findPrerequisitesSoundReducerList(): Promise<ListOfPrerequisitesSoundNoiseReducerDto> {
-    return await this.soundNoiseReducerService.getListOfPrerequisitesSoundNoiseReducerList();
   }
 
   @Post('')
@@ -76,7 +63,7 @@ export class SoundReducerController {
     type: SoundNoiseReducerDto,
   })
   @ApiOperation({
-    summary: 'Ajout d un RDS',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d un nouveau reducteur de son en base de donnee',
   })
   @ApiBody({
@@ -88,9 +75,9 @@ export class SoundReducerController {
     return await this.soundNoiseReducerService.insert(soundReducer);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d un reducteur de son',
   })
   @ApiCreatedResponse({
@@ -100,27 +87,29 @@ export class SoundReducerController {
     type: UpdateSoundNoiseReducerDto,
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     rds: UpdateSoundNoiseReducerDto,
   ): Promise<SoundNoiseReducerDto> {
     return await this.soundNoiseReducerService.edit(id, rds);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique d un reducteur de son',
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.soundNoiseReducerService.delete(id);
   }
 }

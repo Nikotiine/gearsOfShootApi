@@ -13,7 +13,7 @@ export default class ThreadedSizeSeeder implements Seeder {
     const sizes: CreateThreadedSizeDto[] = [
       {
         size: '1/2 X 20',
-        reference: '1/2.28',
+        reference: '1/2.20',
       },
       {
         size: '1/2 X 28',
@@ -21,7 +21,7 @@ export default class ThreadedSizeSeeder implements Seeder {
       },
       {
         size: 'M9 X 0.75',
-        reference: '1/2.28',
+        reference: 'M9.075',
       },
     ];
     const repository = dataSource.getRepository(ThreadedSize);

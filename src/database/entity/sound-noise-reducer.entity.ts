@@ -22,6 +22,12 @@ export class SoundNoiseReducer extends BaseEntity {
   length: number;
 
   @Column()
+  chicane: number;
+
+  @Column()
+  estimatedNoiseReduction: number;
+
+  @Column()
   name: string;
 
   @Column()
