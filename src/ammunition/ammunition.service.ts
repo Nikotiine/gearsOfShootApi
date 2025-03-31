@@ -165,11 +165,11 @@ export class AmmunitionService {
    * Retourne les munition suivant leurs categorisation
    * @param category
    */
-  public async findByCategory(category: string): Promise<AmmunitionDto[]> {
+  public async findByCategory(category: number): Promise<AmmunitionDto[]> {
     const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
       where: {
         category: {
-          name: category,
+          id: category,
         },
       },
       relations: {

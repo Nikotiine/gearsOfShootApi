@@ -220,11 +220,11 @@ export class MagazineService {
     return this.mapEntityArrayToDtoArray(magazines);
   }
 
-  public async findByCategory(category: string): Promise<WeaponMagazineDto[]> {
+  public async findByCategory(category: number): Promise<WeaponMagazineDto[]> {
     const magazines = await this.weaponMagazineRepository.find({
       where: {
         category: {
-          name: category,
+          id: category,
         },
       },
       relations: {
