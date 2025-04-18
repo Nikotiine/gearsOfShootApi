@@ -103,7 +103,7 @@ export class WeaponTypeService {
     return await this.findById(id);
   }
 
-  private async findById(id: number): Promise<WeaponTypeDto> {
+  public async findById(id: number): Promise<WeaponTypeDto> {
     const type = await this.weaponTypeRepository.findOne({
       where: {
         id: id,

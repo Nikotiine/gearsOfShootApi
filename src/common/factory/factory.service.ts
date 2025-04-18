@@ -157,6 +157,9 @@ export class FactoryService {
       name: factory.name,
       reference: factory.reference,
       description: factory.description,
+      type: {
+        id: factory.typeId,
+      },
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.FACTORY_UPDATE_FAILED);
@@ -182,7 +185,7 @@ export class FactoryService {
    * @param id {number} id de la marque
    * @private
    */
-  private async findById(id: number): Promise<FactoryDto> {
+  public async findById(id: number): Promise<FactoryDto> {
     return this.factoryRepository.findOne({
       where: {
         id: id,

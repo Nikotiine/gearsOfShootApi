@@ -78,7 +78,7 @@ export class AmmunitionBodyTypeService {
     return this.findById(id);
   }
 
-  private async findById(id: number): Promise<AmmunitionBodyTypeDto> {
+  async findById(id: number): Promise<AmmunitionBodyTypeDto> {
     const body = await this.ammunitionBodyTypeRepository.findOne({
       where: {
         id: id,

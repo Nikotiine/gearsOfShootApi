@@ -141,10 +141,3 @@ export class AmmunitionDto {
   })
   caliber: CaliberDto;
 }
-
-export class ListOfPrerequisitesAmmunitionDto {
-  @ApiProperty({
-    type: [PercussionTypeDto],
-  })
-  percussionTypes: PercussionTypeDto[];
-}

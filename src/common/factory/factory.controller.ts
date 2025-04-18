@@ -23,15 +23,17 @@ import {
   ListOfPrerequisitesFactoryDto,
 } from '../../dto/factory.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { OpticDto } from '../../dto/optic.dto';
 
 @Controller('factory')
 @ApiTags('Factory')
 export class FactoryController {
   constructor(private readonly factoryService: FactoryService) {}
 
-  @Get('all')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
-    summary: 'Liste complete',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la listes de toutes les marques sans distinction',
   })
   @ApiOkResponse({
@@ -39,6 +41,21 @@ export class FactoryController {
   })
   public async findAll(): Promise<FactoryDto[]> {
     return await this.factoryService.findAll();
+  }
+
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiOkResponse({
+    type: FactoryDto,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail de la marque',
+  })
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  public async findById(@Param('id') id: number): Promise<FactoryDto> {
+    return await this.factoryService.findById(id);
   }
 
   @Get('by/:type')
@@ -87,9 +104,9 @@ export class FactoryController {
     return await this.factoryService.insert(factory);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiCreatedResponse({
     type: FactoryDto,
@@ -98,11 +115,11 @@ export class FactoryController {
     type: UpdateFactoryDto,
   })
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d une marque (ne pas editier son type)',
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() factory: UpdateFactoryDto,
   ): Promise<FactoryDto> {
     return await this.factoryService.edit(id, factory);

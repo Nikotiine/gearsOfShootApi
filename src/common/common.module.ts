@@ -27,6 +27,7 @@ import { LegislationCategoryController } from './legislation-category/legislatio
 import { ColorController } from './color/color.controller';
 import { MaterialController } from './material/material.controller';
 import { RailSizeController } from './rail-size/rail-size.controller';
+import { PercussionTypeController } from './percussion-type/percussion-type.controller';
 
 @Module({
   controllers: [
@@ -37,6 +38,7 @@ import { RailSizeController } from './rail-size/rail-size.controller';
     ColorController,
     MaterialController,
     RailSizeController,
+    PercussionTypeController,
   ],
   providers: [
     FactoryService,
