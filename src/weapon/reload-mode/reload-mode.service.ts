@@ -10,11 +10,11 @@ import { WeaponReloadModeDto } from '../../dto/weapon.dto';
 export class ReloadModeService {
   constructor(
     @InjectRepository(WeaponReloadMode)
-    private readonly percussionTypeRepository: Repository<WeaponReloadMode>,
+    private readonly reloadModeRepository: Repository<WeaponReloadMode>,
   ) {}
 
   public async findAll(): Promise<WeaponReloadModeDto[]> {
-    const types = await this.percussionTypeRepository.find();
+    const types = await this.reloadModeRepository.find();
     return types.map((type) => {
       return {
         id: type.id,

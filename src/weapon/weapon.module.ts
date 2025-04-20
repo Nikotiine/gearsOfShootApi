@@ -24,6 +24,7 @@ import { RiffleService } from './riffle/riffle.service';
 import { MLockOptionService } from './m-lock-option/m-lock-option.service';
 import { MLockOption } from '../database/entity/m-lock-option.entity';
 import { BarrelTypeController } from './barrel-type/barrel-type.controller';
+import { ReloadModeController } from './reload-mode/reload-mode.controller';
 
 @Module({
   controllers: [
@@ -33,6 +34,7 @@ import { BarrelTypeController } from './barrel-type/barrel-type.controller';
     HandGunController,
     RiffleController,
     BarrelTypeController,
+    ReloadModeController,
   ],
   providers: [
     WeaponService,

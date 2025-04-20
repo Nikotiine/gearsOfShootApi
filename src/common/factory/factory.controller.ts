@@ -18,13 +18,12 @@ import {
 import { FactoryService, FactoryTypes } from './factory.service';
 import {
   CreateFactoryDto,
-  UpdateFactoryDto,
   FactoryDto,
   ListOfPrerequisitesFactoryDto,
+  UpdateFactoryDto,
 } from '../../dto/factory.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
-import { OpticDto } from '../../dto/optic.dto';
 
 @Controller('factory')
 @ApiTags('Factory')
@@ -54,11 +53,13 @@ export class FactoryController {
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
-  public async findById(@Param('id') id: number): Promise<FactoryDto> {
+  public async findById(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<FactoryDto> {
     return await this.factoryService.findById(id);
   }
 
-  @Get('by/:type')
+  @Get(SwaggerDescription.FIND_BY_TYPE)
   @ApiOperation({
     summary: 'Liste par type',
     description: 'Retourne la liste des marques suivant leur type ',
@@ -67,10 +68,10 @@ export class FactoryController {
     type: [FactoryDto],
   })
   @ApiParam({
-    name: 'type',
+    name: SwaggerDescription.FIND_BY_TYPE_PARAM,
   })
   public async findByType(
-    @Param('type') type: FactoryTypes,
+    @Param(SwaggerDescription.FIND_BY_TYPE_PARAM) type: FactoryTypes,
   ): Promise<FactoryDto[]> {
     return await this.factoryService.findByType(type);
   }
@@ -90,7 +91,7 @@ export class FactoryController {
 
   @Post('')
   @ApiOperation({
-    summary: 'Ajout',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description:
       'Ajout d une nouvelle marque pour un type specifique et retourne le dto apres creation',
   })
@@ -125,9 +126,9 @@ export class FactoryController {
     return await this.factoryService.edit(id, factory);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
@@ -136,7 +137,9 @@ export class FactoryController {
     summary: 'Suppression logique',
     description: 'Sppression logique de la marque',
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.factoryService.delete(id);
   }
 }
