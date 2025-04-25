@@ -9,7 +9,7 @@ import { RailSizeDto } from '../../dto/rail-size.dto';
 export class RailSizeController {
   constructor(private readonly railSizeService: RailSizeService) {}
 
-  @Get()
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la listes de toutes les taille de rail optique',

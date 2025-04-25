@@ -21,27 +21,43 @@ import {
   ThreadedSizeDto,
 } from '../../dto/threaded-size.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('threaded-size')
 @ApiTags('Threaded-size')
 export class ThreadedSizeController {
   constructor(private readonly threadedSieService: ThreadedSizeService) {}
 
-  @Get('')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
     type: [ThreadedSizeDto],
   })
   @ApiOperation({
-    summary: 'Listes des filletages',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste des filletage disponible',
   })
   public async findAllThreadedSize(): Promise<ThreadedSizeDto[]> {
     return await this.threadedSieService.findAll();
   }
 
-  @Post('')
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
   @ApiOperation({
-    summary: 'Ajout d un filetage',
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail du filletage',
+  })
+  @ApiOkResponse({
+    type: ThreadedSizeDto,
+  })
+  public async findById(@Param('id') id: number): Promise<ThreadedSizeDto> {
+    return this.threadedSieService.findById(id);
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajouter un nouveux type de filetage arme ou rds ',
   })
   @ApiCreatedResponse({
@@ -56,33 +72,33 @@ export class ThreadedSizeController {
     return await this.threadedSieService.insert(threadedSize);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiCreatedResponse({
     type: ThreadedSizeDto,
   })
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d une taille de filletage',
   })
   @ApiBody({
     type: ThreadedSizeDto,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     size: ThreadedSizeDto,
   ): Promise<ThreadedSizeDto> {
     return await this.threadedSieService.edit(id, size);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Soft delete  d un  filletage',
   })
   @ApiOkResponse({

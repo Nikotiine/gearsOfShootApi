@@ -41,6 +41,7 @@ export class SoundReducerService {
   public async insert(
     soundNoiseReducer: CreateSoundNoiseReducerDto,
   ): Promise<SoundNoiseReducerDto> {
+    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
     const entity = this.soundNoiseReducerRepository.create({
       name: soundNoiseReducer.name,
       caliber: {
@@ -94,6 +95,7 @@ export class SoundReducerService {
     id: number,
     soundNoiseReducer: UpdateSoundNoiseReducerDto,
   ): Promise<SoundNoiseReducerDto> {
+    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
     const updateResult = await this.soundNoiseReducerRepository.update(id, {
       name: soundNoiseReducer.name,
       length: soundNoiseReducer.length,
@@ -124,13 +126,18 @@ export class SoundReducerService {
   private mapArrayEntityToArrayDto(
     soundNoiseReducers: SoundNoiseReducer[],
   ): SoundNoiseReducerDto[] {
-    const array: SoundNoiseReducerDto[] = [];
-    for (const soundNoiseReducer of soundNoiseReducers) {
-      array.push(this.mapEntityToDto(soundNoiseReducer));
-    }
-    return array;
+    return soundNoiseReducers.map(this.mapEntityToDto.bind(this));
   }
 
+  /**
+   * Mappe une entité `SoundNoiseReducer` vers un objet DTO `SoundNoiseReducerDto`.
+   *
+   * Cette méthode est utilisée pour transformer une entité de base de données ou métier
+   * en un Data Transfer Object (DTO)
+   * @private
+   * @param {SoundNoiseReducer} soundNoiseReducer - L'entité représentant un réducteur de son.
+   * @returns {SoundNoiseReducerDto} L'objet DTO contenant les données du réducteur de son.
+   */
   private mapEntityToDto(
     soundNoiseReducer: SoundNoiseReducer,
   ): SoundNoiseReducerDto {
@@ -149,6 +156,22 @@ export class SoundReducerService {
       estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     };
   }
+
+  /**
+   * Génère une référence unique pour un réducteur de son à partir des données fournies.
+   *
+   * Cette méthode construit une chaîne de référence en combinant le nom du réducteur,
+   * une partie de la référence de la fabrique, la référence du calibre et celle du filetage.
+   * Elle interroge les services associés pour récupérer les valeurs nécessaires.
+   *
+   * Format retourné : `<name>-<factoryRef[0..2]>-<caliberRef>/<threadSizeRef>`
+   * Exemple : `SilentMax-FAC-9MM/M13x1`
+   *
+   * @private
+   * @async
+   * @param {CreateSoundNoiseReducerDto} rds - Données nécessaires à la création du réducteur de son.
+   * @returns {Promise<string>} Une promesse résolue avec la référence générée.
+   */
   private async createReference(
     rds: CreateSoundNoiseReducerDto,
   ): Promise<string> {
@@ -161,5 +184,28 @@ export class SoundReducerService {
     );
 
     return `${rds.name}-${factoryRef.substring(0, 3)}-${caliber.reference}/${threadSize.reference}`;
+  }
+
+  /**
+   * Vérifie si un réducteur de son avec les mêmes propriétés existe déjà.
+   *
+   * @private
+   * @param {CreateSoundNoiseReducerDto} dto - Données du réducteur à vérifier.
+   * @throws {BadRequestException} Si un réducteur avec le même nom, fabrique et filetage existe.
+   */
+  private async ensureSoundNoiseReducerDoesNotExist(
+    dto: CreateSoundNoiseReducerDto,
+  ): Promise<void> {
+    const isExist = await this.soundNoiseReducerRepository.findOne({
+      where: {
+        name: dto.name,
+        factory: { id: dto.factoryId },
+        threadedSize: { id: dto.threadedSizeId },
+      },
+    });
+
+    if (isExist) {
+      throw new BadRequestException(CodeError.SOUND_NOISE_EXIST);
+    }
   }
 }

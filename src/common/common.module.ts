@@ -28,6 +28,7 @@ import { ColorController } from './color/color.controller';
 import { MaterialController } from './material/material.controller';
 import { RailSizeController } from './rail-size/rail-size.controller';
 import { PercussionTypeController } from './percussion-type/percussion-type.controller';
+import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate.controller';
 
 @Module({
   controllers: [
@@ -39,6 +40,7 @@ import { PercussionTypeController } from './percussion-type/percussion-type.cont
     MaterialController,
     RailSizeController,
     PercussionTypeController,
+    OpticReadyPlateController,
   ],
   providers: [
     FactoryService,

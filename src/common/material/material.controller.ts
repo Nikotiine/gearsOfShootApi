@@ -36,6 +36,7 @@ export class MaterialController {
   public async findAll(): Promise<MaterialDto[]> {
     return await this.materialService.findAll();
   }
+
   @Get(SwaggerDescription.FIND_BY_ID)
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
@@ -96,7 +97,7 @@ export class MaterialController {
     type: ApiDeleteResponseDto,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Sppression logique du materiau',
   })
   public async delete(
