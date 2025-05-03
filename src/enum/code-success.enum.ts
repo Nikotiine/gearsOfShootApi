@@ -18,4 +18,5 @@ export enum CodeSuccess {
   OPTIC_COLLAR_SOFT_DELETE = '104',
   COLOR_DELETE = '105',
   MATERIAL_DELETE = '106',
+  OPTIC_READY_PLATE_DELETE = '107',
 }
