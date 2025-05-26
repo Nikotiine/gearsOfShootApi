@@ -32,30 +32,27 @@ export class RiffleService {
     const entity = this.riffleRepository.create({
       name: riffle.name,
       variation: riffle.variation,
-      factory: {
-        id: riffle.factoryId,
-      },
+      factory: riffle.factory,
       isThreadedBarrel: riffle.isThreadedBarrel,
       isAdjustableTrigger: riffle.isAdjustableTrigger,
-      caliber: {
-        id: riffle.caliberId,
-      },
-      type: {
-        id: riffle.typeId,
-      },
+      caliber: riffle.caliber,
+      type: riffle.type,
       description: riffle.description,
       barrelLength: riffle.barrelLength,
       barrelType: {
         id: riffle.barrelTypeId,
       },
-      category: {
-        id: riffle.categoryId,
-      },
+      category: riffle.category,
       threadedSize: {
         id: riffle.threadedSizeId,
       },
       adjustableTriggerValue: riffle.adjustableTriggerValue,
-      reference: await this.weaponService.createReference(riffle),
+      reference: await this.weaponService.createReference(
+        riffle.factory,
+        riffle.caliber,
+        riffle.name,
+        riffle.variation,
+      ),
       percussionType: {
         id: riffle.percussionTypeId,
       },
@@ -91,12 +88,8 @@ export class RiffleService {
     const entity = await this.riffleRepository.preload({
       id: id,
       ...riffle,
-      factory: {
-        id: riffle.factoryId,
-      },
-      caliber: {
-        id: riffle.caliberId,
-      },
+      factory: riffle.factory,
+      caliber: riffle.caliber,
       barrelColor: {
         id: riffle.barrelColorId,
       },
@@ -118,7 +111,13 @@ export class RiffleService {
       threadedSize: {
         id: riffle.threadedSizeId,
       },
-      reference: await this.weaponService.createReference(riffle),
+
+      reference: await this.weaponService.createReference(
+        riffle.factory,
+        riffle.caliber,
+        riffle.name,
+        riffle.variation,
+      ),
     });
 
     /* const updateResult = await this.riffleRepository.update(id, {
@@ -274,12 +273,8 @@ export class RiffleService {
       where: {
         name: newEntity.name,
         variation: newEntity.variation,
-        caliber: {
-          id: newEntity.caliberId,
-        },
-        factory: {
-          id: newEntity.factoryId,
-        },
+        caliber: newEntity.caliber,
+        factory: newEntity.factory,
       },
     });
     return !!handGun;

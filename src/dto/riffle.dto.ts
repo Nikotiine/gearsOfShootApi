@@ -37,24 +37,28 @@ export class CreateRiffleDto {
 
   @ApiProperty({
     description: 'La categorie de l arme en france',
+    type: LegislationCategoryDto,
   })
-  categoryId: number;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     description: 'Le calibre de l arme',
+    type: CaliberDto,
   })
-  caliberId: number;
+  caliber: CaliberDto;
 
   @ApiProperty({
     description: 'la marque',
+    type: FactoryDto,
   })
-  factoryId: number;
+  factory: FactoryDto;
 
   @ApiProperty({
     description: 'Type d arme',
     example: 'Fusil a verrou',
+    type: WeaponTypeDto,
   })
-  typeId: number;
+  type: WeaponTypeDto;
 
   @ApiProperty({
     example: 51,

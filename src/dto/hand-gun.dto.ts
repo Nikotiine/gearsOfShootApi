@@ -38,24 +38,28 @@ export class CreateHandGunDto {
 
   @ApiProperty({
     description: 'La categorie de l arme en france',
+    type: LegislationCategoryDto,
   })
-  categoryId: number;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     description: 'Le calibre de l arme',
+    type: CaliberDto,
   })
-  caliberId: number;
+  caliber: CaliberDto;
 
   @ApiProperty({
     description: 'la marque',
+    type: FactoryDto,
   })
-  factoryId: number;
+  factory: FactoryDto;
 
   @ApiProperty({
     description: 'Type d arme',
     example: 'Fusil a verrou',
+    type: WeaponTypeDto,
   })
-  typeId: number;
+  type: WeaponTypeDto;
 
   @ApiProperty({
     example: 51,
@@ -80,15 +84,17 @@ export class CreateHandGunDto {
 
   @ApiProperty({
     description: 'Le type de canon (lourd/leger...)',
+    type: WeaponBarrelTypeDto,
   })
-  barrelTypeId: number;
+  barrelType: WeaponBarrelTypeDto;
 
   @ApiProperty({
     nullable: true,
     description: 'Les dimmension du filletage',
+    type: ThreadedSizeDto,
   })
   @IsOptional()
-  threadedSizeId: number;
+  threadedSize: ThreadedSizeDto;
 
   @ApiProperty({
     nullable: true,
@@ -96,12 +102,21 @@ export class CreateHandGunDto {
     example: 'Entre 1 et 2kg',
   })
   @IsOptional()
-  adjustableTriggerValue: string;
+  adjustableTriggerMinWeight: number;
+
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMaxWeight: number;
 
   @ApiProperty({
     description: 'Le type de percussion ( annulaire ou centrale )',
+    type: PercussionTypeDto,
   })
-  percussionTypeId: number;
+  percussionType: PercussionTypeDto;
 
   @ApiProperty({
     example: 1,
@@ -118,9 +133,10 @@ export class CreateHandGunDto {
   @ApiProperty({
     description: 'La matiere de la crosse ou caracasse',
     nullable: true,
+    type: MaterialDto,
   })
   @IsOptional()
-  buttMaterialId: number;
+  buttMaterial: MaterialDto;
 
   @ApiProperty({
     description: 'Guidon reglable',
@@ -137,16 +153,19 @@ export class CreateHandGunDto {
   @ApiProperty({
     description: 'la couleur de la crosse',
     nullable: true,
+    type: ColorDto,
   })
   @IsOptional()
-  buttColorId: number;
+  buttColor: ColorDto;
 
   @ApiProperty({
     description: 'la couleur du canon ',
     nullable: true,
+    type: ColorDto,
   })
   @IsOptional()
-  barrelColorId: number;
+  barrelColor: ColorDto;
+
   @ApiProperty({
     example: true,
   })
@@ -159,21 +178,24 @@ export class CreateHandGunDto {
 
   @ApiProperty({
     nullable: true,
+    type: WeaponTriggerTypeDto,
   })
   @IsOptional()
-  triggerTypeId: number;
+  triggerType: WeaponTriggerTypeDto;
 
   @ApiProperty({
     nullable: true,
+    type: ColorDto,
   })
   @IsOptional()
-  slideColorId: number;
+  slideColor: ColorDto;
 
   @ApiProperty({
     nullable: true,
+    type: MaterialDto,
   })
   @IsOptional()
-  slideMaterialId: number;
+  slideMaterial: MaterialDto;
 
   @ApiProperty()
   isExternalHammer: boolean;
@@ -267,8 +289,21 @@ export class HandGunDto {
   })
   threadedSize: ThreadedSizeDto;
 
-  @ApiProperty()
-  adjustableTriggerValue: string;
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMinWeight: number;
+
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMaxWeight: number;
 
   @ApiProperty({
     type: PercussionTypeDto,

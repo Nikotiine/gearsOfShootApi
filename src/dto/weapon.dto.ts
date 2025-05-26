@@ -5,7 +5,6 @@ import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
-import { WeaponMagazineDto } from './weapon-magazine.dto';
 import { RailSizeDto } from './rail-size.dto';
 import { MaterialDto } from './material.dto';
 import { ColorDto } from './color.dto';
@@ -97,24 +96,28 @@ export abstract class CreateWeaponDto {
 
   @ApiProperty({
     description: 'La categorie de l arme en france',
+    type: LegislationCategoryDto,
   })
-  categoryId: number;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     description: 'Le calibre de l arme',
+    type: CaliberDto,
   })
-  caliberId: number;
+  caliber: CaliberDto;
 
   @ApiProperty({
     description: 'la marque',
+    type: FactoryDto,
   })
-  factoryId: number;
+  factory: FactoryDto;
 
   @ApiProperty({
     description: 'Type d arme',
     example: 'Fusil a verrou',
+    type: WeaponTypeDto,
   })
-  typeId: number;
+  type: WeaponTypeDto;
 
   @ApiProperty({
     example: 51,

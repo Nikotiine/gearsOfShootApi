@@ -12,9 +12,6 @@ import {
 } from '../../dto/create-magazine.dto';
 import { RiffleService } from '../riffle/riffle.service';
 import { HandGunService } from '../hand-gun/hand-gun.service';
-import { FactoryService } from '../../common/factory/factory.service';
-import { CaliberService } from '../../common/caliber/caliber.service';
-import { MaterialService } from '../../common/material/material.service';
 
 @Injectable()
 export class MagazineService {
@@ -23,9 +20,6 @@ export class MagazineService {
     private readonly weaponMagazineRepository: Repository<WeaponMagazine>,
     private readonly riffleService: RiffleService,
     private readonly handGunService: HandGunService,
-    private readonly factoryService: FactoryService,
-    private readonly caliberService: CaliberService,
-    private readonly materielService: MaterialService,
   ) {}
 
   /**
@@ -46,26 +40,16 @@ export class MagazineService {
     const entity = this.weaponMagazineRepository.create({
       width: magazine.width,
       height: magazine.height,
-      caliber: {
-        id: magazine.caliberId,
-      },
-      factory: {
-        id: magazine.factoryId,
-      },
+      caliber: magazine.caliber,
+      factory: magazine.factory,
+      body: magazine.body,
       capacity: magazine.capacity,
-      body: {
-        id: magazine.bodyId,
-      },
       length: magazine.length,
       reference: await this.createReference(magazine),
-      category: {
-        id: magazine.categoryId,
-      },
+      category: magazine.category,
       riffles: magazine.compatibleRiffle,
       handguns: magazine.compatibleHandGun,
-      forWeaponType: {
-        id: magazine.weaponTypeId,
-      },
+      forWeaponType: magazine.weaponType,
     });
     const created = await this.weaponMagazineRepository.save(entity);
     return this.findById(created.id);
@@ -111,26 +95,16 @@ export class MagazineService {
     magazine: UpdateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
     const updateResult = await this.weaponMagazineRepository.update(id, {
-      caliber: {
-        id: magazine.caliberId,
-      },
-      factory: {
-        id: magazine.factoryId,
-      },
-      body: {
-        id: magazine.bodyId,
-      },
+      caliber: magazine.caliber,
+      factory: magazine.factory,
+      body: magazine.body,
       length: magazine.length,
       reference: await this.createReference(magazine),
       height: magazine.height,
       capacity: magazine.capacity,
       width: magazine.width,
-      category: {
-        id: magazine.categoryId,
-      },
-      forWeaponType: {
-        id: magazine.weaponTypeId,
-      },
+      category: magazine.category,
+      forWeaponType: magazine.weaponType,
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
@@ -243,11 +217,6 @@ export class MagazineService {
   private async createReference(
     magazine: CreateWeaponMagazineDto,
   ): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      magazine.factoryId,
-    );
-    const caliber = await this.caliberService.findById(magazine.caliberId);
-    const material = await this.materielService.findById(magazine.bodyId);
-    return `${factoryRef.substring(0, 3)}-${caliber.reference.toUpperCase()}-${magazine.capacity}/${material.reference}`;
+    return `${magazine.factory.reference.substring(0, 3)}-${magazine.caliber.reference.toUpperCase()}-${magazine.capacity}/${magazine.body.reference}`;
   }
 }
