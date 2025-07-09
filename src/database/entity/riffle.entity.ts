@@ -122,7 +122,10 @@ export class Riffle extends BaseEntity {
 
   // Valeur de reglage de la detente
   @Column({ nullable: true })
-  adjustableTriggerValue: string;
+  adjustableTriggerMinWeight: number;
+  // Valeur de reglage de la detente
+  @Column({ nullable: true })
+  adjustableTriggerMaxWeight: number;
 
   // Mode de percussion
   @ManyToOne(() => PercussionType, (type) => type.riffles)

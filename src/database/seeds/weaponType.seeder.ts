@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { WeaponType } from '../entity/weapon-type.entity';
 import { CreateWeaponTypeDto } from '../../dto/weapon.dto';
 import { WeaponReloadMode } from '../entity/weapon-reload-mode.entity';
+import { WeaponTypeEnum } from '../../enum/weapon-type.enum';
 
 export default class WeaponTypeSeeder implements Seeder {
   /**
@@ -39,31 +40,37 @@ export default class WeaponTypeSeeder implements Seeder {
       {
         name: 'Pistolet',
         modeId: 2,
+        type: WeaponTypeEnum.HANDGUN,
         reference: 'PIST',
       },
       {
         name: 'Revolver',
         modeId: 1,
+        type: WeaponTypeEnum.HANDGUN,
         reference: 'REVO',
       },
       {
         name: 'fusil a verrou',
         modeId: 1,
+        type: WeaponTypeEnum.RIFFLE,
         reference: 'FUVE',
       },
       {
         name: 'Carabine PCP',
         modeId: 1,
+        type: WeaponTypeEnum.RIFFLE,
         reference: 'CPCP',
       },
       {
         name: 'Carabine C02',
         modeId: 1,
+        type: WeaponTypeEnum.RIFFLE,
         reference: 'CCO2',
       },
       {
         name: 'AR 15',
         modeId: 2,
+        type: WeaponTypeEnum.RIFFLE,
         reference: 'AR15',
       },
     ];
@@ -75,6 +82,7 @@ export default class WeaponTypeSeeder implements Seeder {
           mode: {
             id: type.modeId,
           },
+          type: type.type,
           reference: type.reference,
         },
       ]);

@@ -119,7 +119,9 @@ export class HandGunService {
         percussionType: true,
         category: true,
         caliber: true,
-        type: true,
+        type: {
+          mode: true,
+        },
         barrelType: true,
         providedOpticReadyPlate: true,
         barrelColor: true,

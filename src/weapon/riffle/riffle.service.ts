@@ -39,33 +39,24 @@ export class RiffleService {
       type: riffle.type,
       description: riffle.description,
       barrelLength: riffle.barrelLength,
-      barrelType: {
-        id: riffle.barrelTypeId,
-      },
+      barrelType: riffle.barrelType,
       category: riffle.category,
-      threadedSize: {
-        id: riffle.threadedSizeId,
-      },
-      adjustableTriggerValue: riffle.adjustableTriggerValue,
+      threadedSize: riffle.threadedSize,
+      adjustableTriggerMaxWeight: riffle.adjustableTriggerMaxWeight,
+      adjustableTriggerMinWeight: riffle.adjustableTriggerMinWeight,
       reference: await this.weaponService.createReference(
         riffle.factory,
         riffle.caliber,
         riffle.name,
         riffle.variation,
       ),
-      percussionType: {
-        id: riffle.percussionTypeId,
-      },
+      percussionType: riffle.percussionType,
       providedMagazineQuantity: riffle.providedMagazineQuantity,
       barrelSize: riffle.barrelSize,
       isAdjustableButt: riffle.isAdjustableButt,
       isAdjustableBusk: riffle.isAdjustableBusk,
-      buttMaterial: {
-        id: riffle.buttMaterialId,
-      },
-      railSize: {
-        id: riffle.railSizeId,
-      },
+      buttMaterial: riffle.buttMaterial,
+      railSize: riffle.railSize,
       grenadierSlot: riffle.grenadierSlot,
       qcSlot: riffle.qcSlot,
       isMlockCompatibility: riffle.isMlockCompatibility,
@@ -73,12 +64,8 @@ export class RiffleService {
       isAdjustableFrontSight: riffle.isAdjustableFrontSight,
       isAdjustableBackSight: riffle.isAdjustableBackSight,
       mLockOptions: riffle.mLockOptions,
-      barrelColor: {
-        id: riffle.barrelColorId,
-      },
-      buttColor: {
-        id: riffle.buttColorId,
-      },
+      barrelColor: riffle.barrelColor,
+      buttColor: riffle.buttColor,
     });
     const created = await this.riffleRepository.save(entity);
     return this.findById(created.id);
@@ -90,27 +77,13 @@ export class RiffleService {
       ...riffle,
       factory: riffle.factory,
       caliber: riffle.caliber,
-      barrelColor: {
-        id: riffle.barrelColorId,
-      },
-      buttColor: {
-        id: riffle.buttColorId,
-      },
-      buttMaterial: {
-        id: riffle.buttMaterialId,
-      },
-      railSize: {
-        id: riffle.railSizeId,
-      },
-      percussionType: {
-        id: riffle.percussionTypeId,
-      },
-      barrelType: {
-        id: riffle.barrelTypeId,
-      },
-      threadedSize: {
-        id: riffle.threadedSizeId,
-      },
+      barrelColor: riffle.barrelColor,
+      buttColor: riffle.buttColor,
+      buttMaterial: riffle.buttMaterial,
+      railSize: riffle.railSize,
+      percussionType: riffle.percussionType,
+      barrelType: riffle.barrelType,
+      threadedSize: riffle.threadedSize,
 
       reference: await this.weaponService.createReference(
         riffle.factory,
@@ -120,64 +93,6 @@ export class RiffleService {
       ),
     });
 
-    /* const updateResult = await this.riffleRepository.update(id, {
-      name: riffle.name,
-      variation: riffle.variation,
-      factory: {
-        id: riffle.factoryId,
-      },
-      isThreadedBarrel: riffle.isThreadedBarrel,
-      isAdjustableTrigger: riffle.isAdjustableTrigger,
-
-      caliber: {
-        id: riffle.caliberId,
-      },
-      type: {
-        id: riffle.typeId,
-      },
-      description: riffle.description,
-      barrelLength: riffle.barrelLength,
-      barrelType: {
-        id: riffle.barrelTypeId,
-      },
-      category: {
-        id: riffle.categoryId,
-      },
-      threadedSize: {
-        id: riffle.threadedSizeId,
-      },
-      adjustableTriggerValue: riffle.adjustableTriggerValue,
-      reference: await this.weaponService.createReference(riffle),
-      percussionType: {
-        id: riffle.percussionTypeId,
-      },
-      providedMagazineQuantity: riffle.providedMagazineQuantity,
-      barrelSize: riffle.barrelSize,
-      isAdjustableButt: riffle.isAdjustableButt,
-      isAdjustableBusk: riffle.isAdjustableBusk,
-      buttMaterial: {
-        id: riffle.buttMaterialId,
-      },
-      railSize: {
-        id: riffle.railSizeId,
-      },
-      grenadierSlot: riffle.grenadierSlot,
-      qcSlot: riffle.qcSlot,
-      isMlockCompatibility: riffle.isMlockCompatibility,
-      isOpenAim: riffle.isOpenAim,
-      isAdjustableFrontSight: riffle.isAdjustableFrontSight,
-      isAdjustableBackSight: riffle.isAdjustableBackSight,
-      mLockOptions: riffle.mLockOptions,
-      barrelColor: {
-        id: riffle.barrelColorId,
-      },
-      buttColor: {
-        id: riffle.buttColorId,
-      },
-    });
-    if (updateResult.affected === 0) {
-      throw new BadRequestException(CodeError.WEAPON_UPDATE_FAILED);
-    }*/
     await this.riffleRepository.save(entity);
     return this.findById(id);
   }
@@ -195,7 +110,9 @@ export class RiffleService {
         percussionType: true,
         category: true,
         caliber: true,
-        type: true,
+        type: {
+          mode: true,
+        },
         barrelType: true,
         railSize: true,
         mLockOptions: true,
@@ -289,7 +206,8 @@ export class RiffleService {
       type: riffle.type,
       threadedSize: riffle.threadedSize,
       reference: riffle.reference,
-      adjustableTriggerValue: riffle.adjustableTriggerValue,
+      adjustableTriggerMaxWeight: riffle.adjustableTriggerMaxWeight,
+      adjustableTriggerMinWeight: riffle.adjustableTriggerMinWeight,
       barrelType: riffle.barrelType,
       isAdjustableTrigger: riffle.isAdjustableTrigger,
       caliber: riffle.caliber,

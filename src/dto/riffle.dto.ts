@@ -83,15 +83,17 @@ export class CreateRiffleDto {
 
   @ApiProperty({
     description: 'Le type de canon (lourd/leger...)',
+    type: WeaponBarrelTypeDto,
   })
-  barrelTypeId: number;
+  barrelType: WeaponBarrelTypeDto;
 
   @ApiProperty({
     nullable: true,
     description: 'Les dimmension du filletage',
+    type: ThreadedSizeDto,
   })
   @IsOptional()
-  threadedSizeId: number;
+  threadedSize: ThreadedSizeDto;
 
   @ApiProperty({
     nullable: true,
@@ -99,12 +101,21 @@ export class CreateRiffleDto {
     example: 'Entre 1 et 2kg',
   })
   @IsOptional()
-  adjustableTriggerValue: string;
+  adjustableTriggerMinWeight: number;
+
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMaxWeight: number;
 
   @ApiProperty({
     description: 'Le type de percussion ( annulaire ou centrale )',
+    type: PercussionTypeDto,
   })
-  percussionTypeId: number;
+  percussionType: PercussionTypeDto;
 
   @ApiProperty({
     example: 1,
@@ -121,9 +132,10 @@ export class CreateRiffleDto {
   @ApiProperty({
     description: 'La matiere de la crosse ou caracasse',
     nullable: true,
+    type: MaterialDto,
   })
   @IsOptional()
-  buttMaterialId: number;
+  buttMaterial: MaterialDto;
 
   @ApiProperty({
     description: 'Guidon reglable',
@@ -140,16 +152,19 @@ export class CreateRiffleDto {
   @ApiProperty({
     description: 'la couleur de la crosse',
     nullable: true,
+    type: ColorDto,
   })
   @IsOptional()
-  buttColorId: number;
+  buttColor: ColorDto;
 
   @ApiProperty({
     description: 'la couleur du canon ',
     nullable: true,
+    type: ColorDto,
   })
   @IsOptional()
-  barrelColorId: number;
+  barrelColor: ColorDto;
+
   @ApiProperty({ description: 'Crosse ajustable en profondeur' })
   @IsBoolean()
   isAdjustableButt: boolean;
@@ -158,9 +173,9 @@ export class CreateRiffleDto {
   @IsBoolean()
   isAdjustableBusk: boolean;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: RailSizeDto })
   @IsOptional()
-  railSizeId: number;
+  railSize: RailSizeDto;
 
   @ApiProperty({ description: 'Grenadiere' })
   grenadierSlot: number;
@@ -258,8 +273,21 @@ export class RiffleDto {
   })
   threadedSize: ThreadedSizeDto;
 
-  @ApiProperty()
-  adjustableTriggerValue: string;
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMinWeight: number;
+
+  @ApiProperty({
+    nullable: true,
+    description: 'les valeurs de poids depart de la detente',
+    example: 'Entre 1 et 2kg',
+  })
+  @IsOptional()
+  adjustableTriggerMaxWeight: number;
 
   @ApiProperty({
     type: PercussionTypeDto,

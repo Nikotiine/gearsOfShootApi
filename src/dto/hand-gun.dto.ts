@@ -177,7 +177,6 @@ export class CreateHandGunDto {
   decocking: boolean;
 
   @ApiProperty({
-    nullable: true,
     type: WeaponTriggerTypeDto,
   })
   @IsOptional()
