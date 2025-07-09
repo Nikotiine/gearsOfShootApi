@@ -21,6 +21,7 @@ import {
   CreateAmmunitionHeadTypeDto,
 } from '../../dto/ammunition.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('ammunition-head-type')
 @ApiTags('AmmunitionHeadType')
@@ -29,9 +30,9 @@ export class AmmunitionHeadTypeController {
     private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
   ) {}
 
-  @Get('')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
-    summary: 'Toutes les oviges',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de toutes les oviges disponible',
   })
   @ApiOkResponse({
@@ -39,6 +40,23 @@ export class AmmunitionHeadTypeController {
   })
   public async findAllHeadTypes(): Promise<AmmunitionHeadTypeDto[]> {
     return await this.ammunitionHeadTypeService.findAll();
+  }
+
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiOkResponse({
+    type: AmmunitionHeadTypeDto,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail de le l ogive',
+  })
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  public async findById(
+    @Param('id') id: number,
+  ): Promise<AmmunitionHeadTypeDto> {
+    return await this.ammunitionHeadTypeService.findById(id);
   }
 
   @Post('')
@@ -57,6 +75,7 @@ export class AmmunitionHeadTypeController {
   ): Promise<AmmunitionHeadTypeDto> {
     return this.ammunitionHeadTypeService.insert(ammunitionHeadType);
   }
+
   @Put(':id')
   @ApiOperation({
     summary: 'Edition',

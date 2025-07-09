@@ -35,6 +35,7 @@ export class WeaponTypeService {
           name: true,
         },
         reference: true,
+        type: true,
       },
     });
     return weaponTypes.map((type) => {
@@ -43,6 +44,7 @@ export class WeaponTypeService {
         name: type.name,
         mode: type.mode,
         reference: type.reference,
+        type: type.type,
       };
     });
   }
@@ -70,6 +72,7 @@ export class WeaponTypeService {
       name: created.name,
       mode: created.mode,
       reference: created.reference,
+      type: created.type,
     };
   }
 
@@ -103,7 +106,7 @@ export class WeaponTypeService {
     return await this.findById(id);
   }
 
-  private async findById(id: number): Promise<WeaponTypeDto> {
+  public async findById(id: number): Promise<WeaponTypeDto> {
     const type = await this.weaponTypeRepository.findOne({
       where: {
         id: id,
@@ -117,6 +120,7 @@ export class WeaponTypeService {
       name: type.name,
       reference: type.reference,
       mode: type.mode,
+      type: type.type,
     };
   }
 

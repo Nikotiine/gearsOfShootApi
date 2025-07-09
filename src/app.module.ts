@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { NodemailerModule } from './nodemailer/nodemailer.module';
 import { OpticModule } from './optic/optic.module';
+import { AccessoryModule } from './accessory/accessory.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { OpticModule } from './optic/optic.module';
     AuthModule,
     NodemailerModule,
     OpticModule,
+    AccessoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

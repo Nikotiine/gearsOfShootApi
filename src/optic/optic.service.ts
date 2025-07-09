@@ -62,8 +62,8 @@ export class OpticService {
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
+      reference: await this.createReference(optic),
     });
-    entity.reference = this.createReference(entity);
     const created = await this.opticRepository.save(entity);
     return await this.findById(created.id);
   }
@@ -143,6 +143,7 @@ export class OpticService {
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
+      reference: await this.createReference(optic),
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
@@ -198,7 +199,10 @@ export class OpticService {
     };
   }
 
-  private createReference(optic: Optic): string {
-    return `${optic.factory.name}-${optic.name.substring(0 - 3)}/${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`;
+  private async createReference(optic: CreateOpticDto): Promise<string> {
+    const factoryRef = await this.factoryService.findFactoryReferenceById(
+      optic.factoryId,
+    );
+    return `${factoryRef.toUpperCase()}-${optic.name.substring(0 - 3)}/${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`;
   }
 }

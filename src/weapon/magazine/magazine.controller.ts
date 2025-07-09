@@ -85,14 +85,14 @@ export class MagazineController {
     name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   public async findByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: number,
   ): Promise<WeaponMagazineDto[]> {
     return await this.magzineService.findByCategory(category);
   }
 
   @Post('')
   @ApiOperation({
-    summary: 'Ajout de chargeur',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajoute un nouveau chargeur en bdd et le retoune',
   })
   @ApiBody({
@@ -115,7 +115,7 @@ export class MagazineController {
     type: WeaponMagazineDto,
   })
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d un chargeur',
   })
   @ApiBody({
@@ -133,7 +133,7 @@ export class MagazineController {
     name: 'id',
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique  d un chargeur',
   })
   @ApiOkResponse({

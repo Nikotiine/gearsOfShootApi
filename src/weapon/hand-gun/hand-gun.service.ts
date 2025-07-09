@@ -33,55 +33,35 @@ export class HandGunService {
       name: handgun.name,
       description: handgun.description,
       variation: handgun.variation,
-      reference: await this.weaponService.createReference(handgun),
-      factory: {
-        id: handgun.factoryId,
-      },
+      reference: await this.weaponService.createReference(
+        handgun.factory,
+        handgun.caliber,
+        handgun.name,
+        handgun.variation,
+      ),
+      factory: handgun.factory,
       isThreadedBarrel: handgun.isThreadedBarrel,
       isAdjustableTrigger: handgun.isAdjustableTrigger,
       isOpticReady: handgun.isOpticReady,
-      caliber: {
-        id: handgun.caliberId,
-      },
-      type: {
-        id: handgun.typeId,
-      },
+      caliber: handgun.caliber,
+      type: handgun.type,
       barrelLength: handgun.barrelLength,
-      barrelType: {
-        id: handgun.barrelTypeId,
-      },
-      barrelColor: {
-        id: handgun.barrelColorId,
-      },
-      category: {
-        id: handgun.categoryId,
-      },
-      threadedSize: {
-        id: handgun.threadedSizeId,
-      },
-      adjustableTriggerValue: handgun.adjustableTriggerValue,
+      barrelType: handgun.barrelType,
+      barrelColor: handgun.barrelColor,
+      category: handgun.category,
+      threadedSize: handgun.threadedSize,
+      adjustableTriggerMaxWeight: handgun.adjustableTriggerMaxWeight,
+      adjustableTriggerMinWeight: handgun.adjustableTriggerMinWeight,
       providedMagazineQuantity: handgun.providedMagazineQuantity,
-      percussionType: {
-        id: handgun.percussionTypeId,
-      },
+      percussionType: handgun.percussionType,
       barrelSize: handgun.barrelSize,
-      slideMaterial: {
-        id: handgun.slideMaterialId,
-      },
-      slideColor: {
-        id: handgun.slideColorId,
-      },
-      buttMaterial: {
-        id: handgun.buttMaterialId,
-      },
-      buttColor: {
-        id: handgun.buttColorId,
-      },
+      slideMaterial: handgun.slideMaterial,
+      slideColor: handgun.slideColor,
+      buttMaterial: handgun.buttMaterial,
+      buttColor: handgun.buttColor,
       isAdjustableFrontSight: handgun.isAdjustableFrontSight,
       isAdjustableBackSight: handgun.isAdjustableBackSight,
-      triggerType: {
-        id: handgun.triggerTypeId,
-      },
+      triggerType: handgun.triggerType,
       decocking: handgun.decocking,
       isExternalHammer: handgun.isExternalHammer,
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
@@ -94,115 +74,31 @@ export class HandGunService {
     id: number,
     handgun: UpdateHandGunDto,
   ): Promise<HandGunDto> {
-    console.log(handgun);
     const updateResult = await this.handGunRepository.preload({
       id: id,
       ...handgun,
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
-      barrelColor: {
-        id: handgun.barrelColorId,
-      },
-      barrelType: {
-        id: handgun.barrelTypeId,
-      },
-      buttColor: {
-        id: handgun.buttColorId,
-      },
-      buttMaterial: {
-        id: handgun.buttMaterialId,
-      },
-      caliber: {
-        id: handgun.caliberId,
-      },
-      category: {
-        id: handgun.categoryId,
-      },
-
-      factory: {
-        id: handgun.factoryId,
-      },
-
-      percussionType: {
-        id: handgun.percussionTypeId,
-      },
-
-      reference: await this.weaponService.createReference(handgun),
-      slideColor: {
-        id: handgun.slideColorId,
-      },
-      slideMaterial: {
-        id: handgun.slideMaterialId,
-      },
-      threadedSize: {
-        id: handgun.threadedSizeId,
-      },
-      triggerType: {
-        id: handgun.triggerTypeId,
-      },
-      type: {
-        id: handgun.typeId,
-      },
+      barrelType: handgun.barrelType,
+      barrelColor: handgun.barrelColor,
+      buttColor: handgun.buttColor,
+      buttMaterial: handgun.buttMaterial,
+      caliber: handgun.caliber,
+      category: handgun.category,
+      factory: handgun.factory,
+      percussionType: handgun.percussionType,
+      reference: await this.weaponService.createReference(
+        handgun.factory,
+        handgun.caliber,
+        handgun.name,
+        handgun.variation,
+      ),
+      slideColor: handgun.slideColor,
+      slideMaterial: handgun.slideMaterial,
+      threadedSize: handgun.threadedSize,
+      triggerType: handgun.triggerType,
+      type: handgun.type,
     });
 
-    /*  const updated = await this.handGunRepository.preload({
-      id: id,
-      adjustableTriggerValue: handgun.adjustableTriggerValue,
-      barrelColor: {
-        id: handgun.barrelColorId,
-      },
-      barrelLength: handgun.barrelLength,
-      barrelSize: handgun.barrelSize,
-      barrelType: {
-        id: handgun.barrelTypeId,
-      },
-      buttColor: {
-        id: handgun.buttColorId,
-      },
-      buttMaterial: {
-        id: handgun.buttMaterialId,
-      },
-      caliber: {
-        id: handgun.caliberId,
-      },
-      category: {
-        id: handgun.categoryId,
-      },
-      decocking: handgun.decocking,
-      description: handgun.description,
-      factory: {
-        id: handgun.factoryId,
-      },
-      isAdjustableBackSight: handgun.isAdjustableBackSight,
-      isAdjustableFrontSight: handgun.isAdjustableFrontSight,
-      isAdjustableTrigger: handgun.isAdjustableTrigger,
-      isExternalHammer: handgun.isExternalHammer,
-      isOpticReady: handgun.isOpticReady,
-      isThreadedBarrel: handgun.isThreadedBarrel,
-      name: handgun.name,
-      percussionType: {
-        id: handgun.percussionTypeId,
-      },
-      providedMagazineQuantity: handgun.providedMagazineQuantity,
-      providedOpticReadyPlate: handgun.providedOpticReadyPlates,
-      reference: await this.weaponService.createReference(handgun),
-      slideColor: {
-        id: handgun.slideColorId,
-      },
-      slideMaterial: {
-        id: handgun.slideMaterialId,
-      },
-      threadedSize: {
-        id: handgun.threadedSizeId,
-      },
-      triggerType: {
-        id: handgun.triggerTypeId,
-      },
-      type: {
-        id: handgun.typeId,
-      },
-      variation: handgun.variation,
-    });
-    await this.handGunRepository.save(updated);*/
     await this.handGunRepository.save(updateResult);
     return this.findById(id);
   }
@@ -223,7 +119,9 @@ export class HandGunService {
         percussionType: true,
         category: true,
         caliber: true,
-        type: true,
+        type: {
+          mode: true,
+        },
         barrelType: true,
         providedOpticReadyPlate: true,
         barrelColor: true,
@@ -303,12 +201,8 @@ export class HandGunService {
       where: {
         name: newEntity.name,
         variation: newEntity.variation,
-        caliber: {
-          id: newEntity.caliberId,
-        },
-        factory: {
-          id: newEntity.factoryId,
-        },
+        caliber: newEntity.caliber,
+        factory: newEntity.factory,
       },
     });
     return !!handGun;
@@ -323,7 +217,8 @@ export class HandGunService {
       type: handGun.type,
       threadedSize: handGun.threadedSize,
       reference: handGun.reference,
-      adjustableTriggerValue: handGun.adjustableTriggerValue,
+      adjustableTriggerMaxWeight: handGun.adjustableTriggerMaxWeight,
+      adjustableTriggerMinWeight: handGun.adjustableTriggerMinWeight,
       barrelType: handGun.barrelType,
       isAdjustableTrigger: handGun.isAdjustableTrigger,
       isOpticReady: handGun.isOpticReady,

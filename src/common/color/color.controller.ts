@@ -1,15 +1,25 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { ColorService } from './color.service';
 
 import { ColorDto, CreateColorDto } from '../../dto/color.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 
 @Controller('color')
 @ApiTags('Color')
@@ -28,6 +38,21 @@ export class ColorController {
     return await this.colorService.findAll();
   }
 
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail du chargeur',
+  })
+  @ApiOkResponse({
+    type: ColorDto,
+  })
+  public async findById(@Param('id') id: number): Promise<ColorDto> {
+    return this.colorService.findById(id);
+  }
+
   @Post()
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
@@ -41,5 +66,43 @@ export class ColorController {
   })
   public async create(@Body() color: CreateColorDto): Promise<ColorDto> {
     return await this.colorService.insert(color);
+  }
+
+  @Put(SwaggerDescription.ID)
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  @ApiCreatedResponse({
+    type: ColorDto,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.UPDATE_SUMMARY,
+    description: 'Edition d une couleur',
+  })
+  @ApiBody({
+    type: ColorDto,
+  })
+  public async edit(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+    @Body() color: ColorDto,
+  ): Promise<ColorDto> {
+    return this.colorService.edit(id, color);
+  }
+
+  @Delete(SwaggerDescription.ID)
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  @ApiOkResponse({
+    type: ApiDeleteResponseDto,
+  })
+  @ApiOperation({
+    summary: 'Suppression logique',
+    description: 'Sppression logique de la couleur',
+  })
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
+    return await this.colorService.delete(id);
   }
 }

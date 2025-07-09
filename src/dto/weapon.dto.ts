@@ -5,12 +5,12 @@ import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
-import { WeaponMagazineDto } from './weapon-magazine.dto';
 import { RailSizeDto } from './rail-size.dto';
 import { MaterialDto } from './material.dto';
 import { ColorDto } from './color.dto';
 import { OpticReadyPlateDto } from './optic-ready-plate.dto';
 import { MLockOptionDto } from './m-lock-option.dto';
+import { WeaponTypeEnum } from '../enum/weapon-type.enum';
 
 export class WeaponReloadModeDto {
   @ApiProperty()
@@ -30,14 +30,23 @@ export class WeaponTriggerTypeDto {
 
 export class CreateWeaponTypeDto {
   @ApiProperty({
-    example: 'Fusil a verrou',
+    example: 'Fusil a verrou titi',
   })
   name: string;
+
   @ApiProperty()
   modeId: number;
+
   @ApiProperty()
   @IsNotEmpty()
   reference: string;
+
+  @ApiProperty({
+    example: 'handgun ou riffle',
+    nullable: true,
+  })
+  @IsOptional()
+  type: WeaponTypeEnum | null;
 }
 
 export class UpdateWeaponTypeDto extends CreateWeaponTypeDto {
@@ -53,13 +62,20 @@ export class WeaponTypeDto {
     example: 'Fusil a verrou',
   })
   name: string;
+
   @ApiProperty({
     type: WeaponReloadModeDto,
   })
   mode: WeaponReloadModeDto;
+
   @ApiProperty()
   @IsNotEmpty()
   reference: string;
+
+  @ApiProperty({
+    enum: WeaponTypeEnum,
+  })
+  type: WeaponTypeEnum;
 }
 export class ListOfPrerequisitesWeaponTypeDto {
   @ApiProperty({
@@ -97,24 +113,28 @@ export abstract class CreateWeaponDto {
 
   @ApiProperty({
     description: 'La categorie de l arme en france',
+    type: LegislationCategoryDto,
   })
-  categoryId: number;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     description: 'Le calibre de l arme',
+    type: CaliberDto,
   })
-  caliberId: number;
+  caliber: CaliberDto;
 
   @ApiProperty({
     description: 'la marque',
+    type: FactoryDto,
   })
-  factoryId: number;
+  factory: FactoryDto;
 
   @ApiProperty({
     description: 'Type d arme',
     example: 'Fusil a verrou',
+    type: WeaponTypeDto,
   })
-  typeId: number;
+  type: WeaponTypeDto;
 
   @ApiProperty({
     example: 51,

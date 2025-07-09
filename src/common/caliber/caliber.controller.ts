@@ -18,15 +18,16 @@ import {
 import { CaliberService } from './caliber.service';
 import { CaliberDto, CreateCaliberDto } from '../../dto/caliber.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('caliber')
 @ApiTags('Caliber')
 export class CaliberController {
   constructor(private readonly caliberService: CaliberService) {}
 
-  @Get('')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
-    summary: 'Liste complete',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de tous les calibres disponible',
   })
   @ApiOkResponse({
@@ -34,6 +35,21 @@ export class CaliberController {
   })
   public async findAllCalibers(): Promise<CaliberDto[]> {
     return await this.caliberService.findAll();
+  }
+
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiOkResponse({
+    type: CaliberDto,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail de l optique',
+  })
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  public async findById(@Param('id') id: number): Promise<CaliberDto> {
+    return await this.caliberService.findById(id);
   }
 
   @Post('')

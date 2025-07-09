@@ -5,6 +5,8 @@ export enum SwaggerDescription {
   ID_PARAM = 'id',
   FIND_BY_ID_SUMMARY = 'Filtré par id',
   FIND_BY_CATEGORY = 'by/category/:category',
+  FIND_BY_TYPE = 'by/category/:type',
+  FIND_BY_TYPE_PARAM = 'type',
   FIND_BY_CATEGORY_PARAM = 'category',
   FIND_BY_CATEGORY_SUMMARY = 'Filtré par categorie',
   FIND_BY_FACTORY = 'by/factory/:factoryName',

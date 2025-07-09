@@ -27,9 +27,6 @@ export default class FactorySeeder implements Seeder {
     const opticFactory: CreateFactoryTypeDto = {
       name: FactoryTypeEnum.OPTIC,
     };
-    const rdsFactory: CreateFactoryTypeDto = {
-      name: FactoryTypeEnum.RDS,
-    };
     const magFactory: CreateFactoryTypeDto = {
       name: FactoryTypeEnum.MAGAZINE,
     };
@@ -40,7 +37,6 @@ export default class FactorySeeder implements Seeder {
     const wf = await factoryTypeRepo.save(weaponFactory);
     const af = await factoryTypeRepo.save(ammoFactory);
     const of = await factoryTypeRepo.save(opticFactory);
-    const rf = await factoryTypeRepo.save(rdsFactory);
     const mf = await factoryTypeRepo.save(magFactory);
     const accf = await factoryTypeRepo.save(accessoriesFactory);
 
@@ -103,19 +99,19 @@ export default class FactorySeeder implements Seeder {
         name: 'SAK',
         description: 'Description',
         reference: 'SAK',
-        typeId: rf.id,
+        typeId: accf.id,
       },
       {
         name: 'Nielsen',
         description: 'Description',
         reference: 'NIEL',
-        typeId: rf.id,
+        typeId: accf.id,
       },
       {
         name: 'Atec',
         description: 'Description',
         reference: 'ATC',
-        typeId: rf.id,
+        typeId: accf.id,
       },
       {
         name: 'Konus',

@@ -23,15 +23,16 @@ import {
   WeaponTypeDto,
 } from '../../dto/weapon.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('weapon-type')
 @ApiTags('Weapon type')
 export class WeaponTypeController {
   constructor(private readonly weaponTypeService: WeaponTypeService) {}
 
-  @Get('all')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
-    summary: 'Liste complete',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste des diffents type d armes possible',
   })
   @ApiOkResponse({
@@ -39,6 +40,21 @@ export class WeaponTypeController {
   })
   public async findAllWeaponTypes(): Promise<WeaponTypeDto[]> {
     return await this.weaponTypeService.findAll();
+  }
+
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail du chargeur',
+  })
+  @ApiOkResponse({
+    type: WeaponTypeDto,
+  })
+  public async findById(@Param('id') id: number): Promise<WeaponTypeDto> {
+    return this.weaponTypeService.findById(id);
   }
 
   @Get('prerequisites')
@@ -56,7 +72,7 @@ export class WeaponTypeController {
 
   @Post('')
   @ApiOperation({
-    summary: 'Ajout d un type d arme',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d un nouveau type d arme en bdd',
   })
   @ApiCreatedResponse({
@@ -76,7 +92,7 @@ export class WeaponTypeController {
     type: WeaponTypeDto,
   })
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d un type d arme',
   })
   @ApiBody({
@@ -97,7 +113,7 @@ export class WeaponTypeController {
     name: 'id',
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique d un type d arme',
   })
   @ApiOkResponse({

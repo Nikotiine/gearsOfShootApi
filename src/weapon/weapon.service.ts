@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { WeaponTypeService } from './weapon-type/weapon-type.service';
 import { CaliberService } from '../common/caliber/caliber.service';
 import { FactoryService } from '../common/factory/factory.service';
-import {
-  CreateWeaponDto,
-  ListOfPrerequisitesWeaponDto,
-} from '../dto/weapon.dto';
+import { ListOfPrerequisitesWeaponDto } from '../dto/weapon.dto';
 
 import { ThreadedSizeService } from '../common/threaded-size/threaded-size.service';
 
@@ -18,6 +15,8 @@ import { TriggerTypeService } from './trigger-type/trigger-type.service';
 import { ColorService } from '../common/color/color.service';
 import { OpticReadyPlateService } from '../common/optic-ready-plate/optic-ready-plate.service';
 import { MLockOptionService } from './m-lock-option/m-lock-option.service';
+import { FactoryDto } from '../dto/factory.dto';
+import { CaliberDto } from '../dto/caliber.dto';
 
 @Injectable()
 export class WeaponService {
@@ -72,11 +71,12 @@ export class WeaponService {
     };
   }
 
-  public async createReference(weapon: CreateWeaponDto): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      weapon.factoryId,
-    );
-    const caliber = await this.caliberService.findById(weapon.caliberId);
-    return `${factoryRef.toUpperCase()}-${caliber.reference.toUpperCase()}-${weapon.name.toUpperCase()}${weapon.variation ? '-' + weapon.variation.substring(0, 3).toUpperCase() : ''}`;
+  public async createReference(
+    factory: FactoryDto,
+    caliber: CaliberDto,
+    name: string,
+    variation: string,
+  ): Promise<string> {
+    return `${factory.reference.toUpperCase()}-${caliber.reference.toUpperCase()}-${name.toUpperCase()}${variation ? '-' + variation.substring(0, 3).toUpperCase() : ''}`;
   }
 }

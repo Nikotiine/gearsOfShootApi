@@ -5,6 +5,7 @@ import { WeaponReloadMode } from './weapon-reload-mode.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
+import { WeaponTypeEnum } from '../../enum/weapon-type.enum';
 
 @Entity()
 export class WeaponType extends BaseEntity {
@@ -14,6 +15,12 @@ export class WeaponType extends BaseEntity {
 
   @ManyToOne(() => WeaponReloadMode, (mode) => mode.weaponTypes)
   mode: WeaponReloadMode;
+
+  @Column({
+    enum: WeaponTypeEnum,
+    default: WeaponTypeEnum.RIFFLE,
+  })
+  type: WeaponTypeEnum;
 
   @Column()
   reference: string;

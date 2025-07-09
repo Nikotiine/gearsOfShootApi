@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AmmunitionHeadType } from '../../database/entity/ammunition-head-type.entity';
 import { Repository } from 'typeorm';
 import {
-  AmmunitionBodyTypeDto,
   AmmunitionHeadTypeDto,
   CreateAmmunitionHeadTypeDto,
 } from '../../dto/ammunition.dto';

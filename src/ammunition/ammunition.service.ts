@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import {
   AmmunitionDto,
   CreateAmmunitionDto,
-  ListOfPrerequisitesAmmunitionDto,
   UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
 import { CodeError } from '../enum/code-error.enum';
@@ -14,8 +13,6 @@ import { CaliberService } from '../common/caliber/caliber.service';
 import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
-import { LegislationCategoryService } from '../common/legislation-category/legislation-category.service';
-import { PercussionTypeService } from '../common/percussion-type/percussion-type.service';
 
 @Injectable()
 export class AmmunitionService {
@@ -25,8 +22,6 @@ export class AmmunitionService {
     private readonly factoryService: FactoryService,
     private readonly caliberService: CaliberService,
     private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
-    private readonly legislationCategoryService: LegislationCategoryService,
-    private readonly percussionTypeService: PercussionTypeService,
   ) {}
 
   /**
@@ -151,25 +146,14 @@ export class AmmunitionService {
   }
 
   /**
-   * Retourne la liste des pre-requis necessaire a l ajout d une munition en bdd
-   * Calibre / marque / type d'ogive / type d'etui
-   */
-  public async getListOfPrerequisitesAmmunitionDto(): Promise<ListOfPrerequisitesAmmunitionDto> {
-    const percussionTypes = await this.percussionTypeService.findAll();
-    return {
-      percussionTypes: percussionTypes,
-    };
-  }
-
-  /**
    * Retourne les munition suivant leurs categorisation
    * @param category
    */
-  public async findByCategory(category: string): Promise<AmmunitionDto[]> {
+  public async findByCategory(category: number): Promise<AmmunitionDto[]> {
     const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
       where: {
         category: {
-          name: category,
+          id: category,
         },
       },
       relations: {

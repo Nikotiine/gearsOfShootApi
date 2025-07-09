@@ -2,6 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { RiffleDto } from './riffle.dto';
 import { HandGunDto } from './hand-gun.dto';
+import { LegislationCategoryDto } from './legislation-category.dto';
+import { WeaponTypeDto } from './weapon.dto';
+import { MaterialDto } from './material.dto';
+import { FactoryDto } from './factory.dto';
+import { CaliberDto } from './caliber.dto';
 
 export class CreateWeaponMagazineDto {
   @ApiProperty({
@@ -26,18 +31,21 @@ export class CreateWeaponMagazineDto {
 
   @ApiProperty({
     description: 'matiere du chargeur',
+    type: MaterialDto,
   })
-  bodyId: number;
+  body: MaterialDto;
 
   @ApiProperty({
     description: 'marque du chargeur',
+    type: FactoryDto,
   })
-  factoryId: number;
+  factory: FactoryDto;
 
   @ApiProperty({
     description: 'calibre des munitions du chargeur',
+    type: CaliberDto,
   })
-  caliberId: number;
+  caliber: CaliberDto;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
@@ -45,13 +53,15 @@ export class CreateWeaponMagazineDto {
 
   @ApiProperty({
     description: 'La categorie de l arme en france',
+    type: LegislationCategoryDto,
   })
-  categoryId: number;
+  category: LegislationCategoryDto;
 
   @ApiProperty({
-    description: 'La categorie de l arme en france',
+    description: 'Le type de l arme',
+    type: WeaponTypeDto,
   })
-  weaponTypeId: number;
+  weaponType: WeaponTypeDto;
 
   @ApiProperty({
     type: [RiffleDto],

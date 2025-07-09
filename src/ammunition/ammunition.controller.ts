@@ -19,7 +19,6 @@ import { AmmunitionService } from './ammunition.service';
 import {
   AmmunitionDto,
   CreateAmmunitionDto,
-  ListOfPrerequisitesAmmunitionDto,
   UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
@@ -75,26 +74,14 @@ export class AmmunitionController {
     type: [AmmunitionDto],
   })
   public async findByCategory(
-    @Param('category') category: string,
+    @Param('category') category: number,
   ): Promise<AmmunitionDto[]> {
     return this.ammunitionService.findByCategory(category);
   }
 
-  @Get('prerequisites')
-  @ApiOkResponse({
-    type: ListOfPrerequisitesAmmunitionDto,
-  })
-  @ApiOperation({
-    summary: 'Liste des pre-requis',
-    description:
-      'Retourne la liste des pre-requis necesssaire a la creation d une nouvelle munition',
-  })
-  public async findPrerequisitesAmmunitionList(): Promise<ListOfPrerequisitesAmmunitionDto> {
-    return this.ammunitionService.getListOfPrerequisitesAmmunitionDto();
-  }
   @Post('')
   @ApiOperation({
-    summary: 'Ajout',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Creation d une nouvelle munition en base de donnée',
   })
   @ApiCreatedResponse({
@@ -109,39 +96,41 @@ export class AmmunitionController {
     return await this.ammunitionService.insert(ammunition);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiBody({
     type: UpdateAmmunitionDto,
   })
   @ApiOperation({
-    summary: 'Edition',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d une  munition en base de donnée',
   })
   @ApiCreatedResponse({
     type: AmmunitionDto,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() ammunition: UpdateAmmunitionDto,
   ): Promise<AmmunitionDto> {
     return await this.ammunitionService.edit(id, ammunition);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique d une  munition en base de donnée',
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.ammunitionService.delete(id);
   }
 }

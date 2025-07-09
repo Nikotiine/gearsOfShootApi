@@ -15,11 +15,13 @@ export class CreateSoundNoiseReducerDto {
   @ApiProperty()
   length: number;
   @ApiProperty()
+  chicane: number;
+  @ApiProperty()
+  estimatedNoiseReduction: number;
+  @ApiProperty()
   name: string;
   @ApiProperty()
   description: string;
-  @ApiProperty()
-  reference: string;
   @ApiProperty()
   isCleanable: boolean;
 }
@@ -56,19 +58,8 @@ export class SoundNoiseReducerDto {
   reference: string;
   @ApiProperty()
   isCleanable: boolean;
-}
-
-export class ListOfPrerequisitesSoundNoiseReducerDto {
-  @ApiProperty({
-    type: [CaliberDto],
-  })
-  calibers: CaliberDto[];
-  @ApiProperty({
-    type: [FactoryDto],
-  })
-  factories: FactoryDto[];
-  @ApiProperty({
-    type: [ThreadedSizeDto],
-  })
-  threadedSizes: ThreadedSizeDto[];
+  @ApiProperty()
+  chicane: number;
+  @ApiProperty()
+  estimatedNoiseReduction: number;
 }

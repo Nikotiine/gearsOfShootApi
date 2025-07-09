@@ -99,7 +99,7 @@ export class ThreadedSizeService {
     });
   }
 
-  private async findById(id: number): Promise<ThreadedSize> {
+  public async findById(id: number): Promise<ThreadedSize> {
     return await this.threadedSizeRepository.findOne({
       where: {
         id: id,

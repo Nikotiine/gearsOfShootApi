@@ -21,6 +21,8 @@ import {
   CreateAmmunitionBodyTypeDto,
 } from '../../dto/ammunition.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { CaliberDto } from '../../dto/caliber.dto';
 
 @Controller('ammunition-body-type')
 @ApiTags('AmmunitionBodyType')
@@ -31,7 +33,7 @@ export class AmmunitionBodyTypeController {
 
   @Get('')
   @ApiOperation({
-    summary: 'Toutes les douilles',
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de toutes les douilles disponible',
   })
   @ApiOkResponse({
@@ -39,6 +41,23 @@ export class AmmunitionBodyTypeController {
   })
   public async findAllBodyTypes(): Promise<AmmunitionBodyTypeDto[]> {
     return await this.ammunitionBodyTypeService.findAll();
+  }
+
+  @Get(SwaggerDescription.FIND_BY_ID)
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
+    description: 'Retourne le detail de la douille',
+  })
+  @ApiParam({
+    name: SwaggerDescription.ID_PARAM,
+  })
+  @ApiOkResponse({
+    type: AmmunitionBodyTypeDto,
+  })
+  public async findById(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<CaliberDto> {
+    return await this.ammunitionBodyTypeService.findById(id);
   }
 
   @Post('')
@@ -58,13 +77,13 @@ export class AmmunitionBodyTypeController {
     return this.ammunitionBodyTypeService.insert(ammunitionBodyType);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
   @ApiOperation({
-    summary: 'Editio',
-    description: 'Editio d un  type de douille pour les munitions',
+    summary: SwaggerDescription.UPDATE_SUMMARY,
+    description: 'Edition d un type de douille',
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiBody({
     type: AmmunitionBodyTypeDto,
@@ -73,24 +92,26 @@ export class AmmunitionBodyTypeController {
     type: AmmunitionBodyTypeDto,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     body: AmmunitionBodyTypeDto,
   ): Promise<AmmunitionBodyTypeDto> {
     return await this.ammunitionBodyTypeService.edit(id, body);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique d une douille',
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.ammunitionBodyTypeService.delete(id);
   }
 }
