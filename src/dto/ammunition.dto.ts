@@ -43,8 +43,11 @@ export class CreateAmmunitionDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty()
-  categoryId: number;
+  @ApiProperty({
+    type: LegislationCategoryDto,
+    example: 'C',
+  })
+  category: LegislationCategoryDto;
 
   @ApiProperty({
     example: 320,
@@ -52,8 +55,10 @@ export class CreateAmmunitionDto {
   @IsNumber()
   initialSpeed: number;
 
-  @ApiProperty()
-  percussionTypeId: number;
+  @ApiProperty({
+    type: PercussionTypeDto,
+  })
+  percussionType: PercussionTypeDto;
 
   @ApiProperty({
     example: 50,
@@ -62,17 +67,25 @@ export class CreateAmmunitionDto {
   @IsNumber()
   packaging: number;
 
-  @ApiProperty()
-  headTypeId: number;
+  @ApiProperty({
+    type: AmmunitionHeadTypeDto,
+  })
+  headType: AmmunitionHeadTypeDto;
 
-  @ApiProperty()
-  bodyTypeId: number;
+  @ApiProperty({
+    type: AmmunitionBodyTypeDto,
+  })
+  bodyType: AmmunitionBodyTypeDto;
 
-  @ApiProperty()
-  factoryId: number;
+  @ApiProperty({
+    type: CaliberDto,
+  })
+  caliber: CaliberDto;
 
-  @ApiProperty()
-  caliberId: number;
+  @ApiProperty({
+    type: FactoryDto,
+  })
+  factory: FactoryDto;
 }
 export class UpdateAmmunitionDto extends CreateAmmunitionDto {
   @ApiProperty()

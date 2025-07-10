@@ -8,9 +8,6 @@ import {
   UpdateAmmunitionDto,
 } from '../dto/ammunition.dto';
 import { CodeError } from '../enum/code-error.enum';
-import { FactoryService } from '../common/factory/factory.service';
-import { CaliberService } from '../common/caliber/caliber.service';
-import { AmmunitionHeadTypeService } from './ammunition-head-type/ammunition-head-type.service';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 
@@ -19,9 +16,6 @@ export class AmmunitionService {
   constructor(
     @InjectRepository(Ammunition)
     private readonly ammunitionRepository: Repository<Ammunition>,
-    private readonly factoryService: FactoryService,
-    private readonly caliberService: CaliberService,
-    private readonly ammunitionHeadTypeService: AmmunitionHeadTypeService,
   ) {}
 
   /**
@@ -31,7 +25,7 @@ export class AmmunitionService {
   public async insert(ammunition: CreateAmmunitionDto): Promise<AmmunitionDto> {
     const isExist = await this.verifyIfNotExist(
       ammunition.name,
-      ammunition.factoryId,
+      ammunition.factory.id,
       ammunition.packaging,
     );
     if (isExist) {
@@ -40,24 +34,12 @@ export class AmmunitionService {
     const entity = this.ammunitionRepository.create({
       name: ammunition.name,
       description: ammunition.description,
-      headType: {
-        id: ammunition.headTypeId,
-      },
-      bodyType: {
-        id: ammunition.bodyTypeId,
-      },
-      caliber: {
-        id: ammunition.caliberId,
-      },
-      category: {
-        id: ammunition.categoryId,
-      },
-      factory: {
-        id: ammunition.factoryId,
-      },
-      percussionType: {
-        id: ammunition.percussionTypeId,
-      },
+      headType: ammunition.headType,
+      bodyType: ammunition.bodyType,
+      caliber: ammunition.caliber,
+      category: ammunition.category,
+      factory: ammunition.factory,
+      percussionType: ammunition.percussionType,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: await this.createReference(ammunition),
@@ -115,29 +97,17 @@ export class AmmunitionService {
     ammunition: UpdateAmmunitionDto,
   ): Promise<AmmunitionDto> {
     const updatedResult = await this.ammunitionRepository.update(id, {
-      caliber: {
-        id: ammunition.caliberId,
-      },
-      factory: {
-        id: ammunition.factoryId,
-      },
-      headType: {
-        id: ammunition.headTypeId,
-      },
-      bodyType: {
-        id: ammunition.bodyTypeId,
-      },
+      caliber: ammunition.caliber,
+      factory: ammunition.factory,
+      headType: ammunition.headType,
+      bodyType: ammunition.bodyType,
       name: ammunition.name,
       description: ammunition.description,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: await this.createReference(ammunition),
-      category: {
-        id: ammunition.categoryId,
-      },
-      percussionType: {
-        id: ammunition.percussionTypeId,
-      },
+      category: ammunition.category,
+      percussionType: ammunition.percussionType,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
@@ -191,14 +161,7 @@ export class AmmunitionService {
   private async createReference(
     ammunition: CreateAmmunitionDto,
   ): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      ammunition.factoryId,
-    );
-    const caliber = await this.caliberService.findById(ammunition.caliberId);
-    const headType = await this.ammunitionHeadTypeService.findById(
-      ammunition.headTypeId,
-    );
-    return `${factoryRef.toUpperCase()}-${caliber.reference.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${headType.reference.toUpperCase()}`;
+    return `${ammunition.factory.reference.toUpperCase()}-${ammunition.caliber.reference.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${ammunition.headType.reference.toUpperCase()}`;
   }
 
   /**
