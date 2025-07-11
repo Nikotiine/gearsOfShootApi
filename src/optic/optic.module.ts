@@ -14,9 +14,11 @@ import { OpticUnitService } from './optic-unit/optic-unit.service';
 import { OpticCollarService } from './optic-collar/optic-collar.service';
 import { OpticCollarController } from './optic-collar/optic-collar.controller';
 import { OpticCollar } from '../database/entity/optic-collar.entity';
+import { OpticFocalPlaneController } from './optic-focal-plane/optic-focal-plane.controller';
+import { OpticUnitController } from './optic-unit/optic-unit.controller';
 
 @Module({
-  controllers: [OpticController, OpticTypeController, OpticCollarController],
+  controllers: [OpticController, OpticTypeController, OpticCollarController, OpticFocalPlaneController, OpticUnitController],
   providers: [
     OpticService,
     OpticTypeService,
