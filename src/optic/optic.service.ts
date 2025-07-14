@@ -6,31 +6,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
 import { Repository } from 'typeorm';
-import {
-  CreateOpticDto,
-  ListOfPrerequisitesOpticDto,
-  OpticDto,
-  UpdateOpticDto,
-} from '../dto/optic.dto';
+import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
-import { FactoryService } from '../common/factory/factory.service';
-import { OpticTypeService } from './optic-type/optic-type.service';
-import { OpticUnitService } from './optic-unit/optic-unit.service';
-import { OpticFocalPlaneService } from './optic-focal-plane/optic-focal-plane.service';
-import { OpticCollarService } from './optic-collar/optic-collar.service';
 
 @Injectable()
 export class OpticService {
   constructor(
     @InjectRepository(Optic)
     private readonly opticRepository: Repository<Optic>,
-    private readonly factoryService: FactoryService,
-    private readonly opticTypeService: OpticTypeService,
-    private readonly opticUnitService: OpticUnitService,
-    private readonly opticFocalPlaneService: OpticFocalPlaneService,
-    private readonly opticCollarService: OpticCollarService,
   ) {}
 
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
@@ -43,22 +28,14 @@ export class OpticService {
       maxElevation: optic.maxElevation,
       minZoom: optic.minZoom,
       description: optic.description,
-      factory: {
-        id: optic.factoryId,
-      },
+      factory: optic.factory,
       valueOfOneClick: optic.valueOfOneClick,
       lensDiameter: optic.lensDiameter,
       isParallax: optic.isParallax,
       bodyDiameter: optic.bodyDiameter,
-      focalPlane: {
-        id: optic.focalPlaneId,
-      },
-      opticUnit: {
-        id: optic.opticUnitId,
-      },
-      type: {
-        id: optic.opticTypeId,
-      },
+      focalPlane: optic.focalPlane,
+      opticUnit: optic.opticUnit,
+      type: optic.opticType,
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
@@ -88,18 +65,6 @@ export class OpticService {
     return this.mapOpticToOpticDto(optic);
   }
 
-  public async getListOfPrerequisitesOpticDto(): Promise<ListOfPrerequisitesOpticDto> {
-    const types = await this.opticTypeService.findAll();
-    const units = await this.opticUnitService.findAll();
-    const focalPlanes = await this.opticFocalPlaneService.findAll();
-
-    return {
-      types: types,
-      units: units,
-      focalPlanes: focalPlanes,
-    };
-  }
-
   public async findAll(): Promise<OpticDto[]> {
     const optics = await this.opticRepository.find({
       relations: {
@@ -124,22 +89,14 @@ export class OpticService {
       maxElevation: optic.maxElevation,
       minZoom: optic.minZoom,
       description: optic.description,
-      factory: {
-        id: optic.factoryId,
-      },
+      factory: optic.factory,
       valueOfOneClick: optic.valueOfOneClick,
       lensDiameter: optic.lensDiameter,
       isParallax: optic.isParallax,
       bodyDiameter: optic.bodyDiameter,
-      focalPlane: {
-        id: optic.focalPlaneId,
-      },
-      opticUnit: {
-        id: optic.opticUnitId,
-      },
-      type: {
-        id: optic.opticTypeId,
-      },
+      focalPlane: optic.focalPlane,
+      opticUnit: optic.opticUnit,
+      type: optic.opticType,
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
@@ -191,7 +148,7 @@ export class OpticService {
       opticUnit: optic.opticUnit,
       focalPlane: optic.focalPlane,
       isParallax: optic.isParallax,
-      type: optic.type,
+      opticType: optic.type,
       reference: optic.reference,
       length: optic.length,
       isCollarsProvided: optic.isCollarsProvided,
@@ -200,9 +157,6 @@ export class OpticService {
   }
 
   private async createReference(optic: CreateOpticDto): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      optic.factoryId,
-    );
-    return `${factoryRef.toUpperCase()}-${optic.name.substring(0 - 3)}/${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`;
+    return `${optic.factory.reference.toUpperCase()}-${optic.name.substring(0 - 3)}/${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`;
   }
 }

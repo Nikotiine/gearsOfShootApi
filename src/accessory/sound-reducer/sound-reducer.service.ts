@@ -9,9 +9,6 @@ import {
 } from '../../dto/sound-noise-reducer.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
-import { FactoryService } from '../../common/factory/factory.service';
-import { CaliberService } from '../../common/caliber/caliber.service';
-import { ThreadedSizeService } from '../../common/threaded-size/threaded-size.service';
 import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
@@ -19,9 +16,6 @@ export class SoundReducerService {
   constructor(
     @InjectRepository(SoundNoiseReducer)
     private readonly soundNoiseReducerRepository: Repository<SoundNoiseReducer>,
-    private readonly factoryService: FactoryService,
-    private readonly caliberService: CaliberService,
-    private readonly threadedSizeService: ThreadedSizeService,
   ) {}
 
   /**
@@ -44,15 +38,9 @@ export class SoundReducerService {
     await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
     const entity = this.soundNoiseReducerRepository.create({
       name: soundNoiseReducer.name,
-      caliber: {
-        id: soundNoiseReducer.caliberId,
-      },
-      factory: {
-        id: soundNoiseReducer.factoryId,
-      },
-      threadedSize: {
-        id: soundNoiseReducer.threadedSizeId,
-      },
+      caliber: soundNoiseReducer.caliber,
+      factory: soundNoiseReducer.factory,
+      threadedSize: soundNoiseReducer.threadedSize,
       diameter: soundNoiseReducer.diameter,
       description: soundNoiseReducer.description,
       reference: await this.createReference(soundNoiseReducer),
@@ -99,15 +87,9 @@ export class SoundReducerService {
     const updateResult = await this.soundNoiseReducerRepository.update(id, {
       name: soundNoiseReducer.name,
       length: soundNoiseReducer.length,
-      factory: {
-        id: soundNoiseReducer.factoryId,
-      },
-      threadedSize: {
-        id: soundNoiseReducer.threadedSizeId,
-      },
-      caliber: {
-        id: soundNoiseReducer.caliberId,
-      },
+      factory: soundNoiseReducer.factory,
+      threadedSize: soundNoiseReducer.threadedSize,
+      caliber: soundNoiseReducer.caliber,
       description: soundNoiseReducer.description,
       reference: await this.createReference(soundNoiseReducer),
       isCleanable: soundNoiseReducer.isCleanable,
@@ -175,32 +157,24 @@ export class SoundReducerService {
   private async createReference(
     rds: CreateSoundNoiseReducerDto,
   ): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      rds.factoryId,
-    );
-    const caliber = await this.caliberService.findById(rds.caliberId);
-    const threadSize = await this.threadedSizeService.findById(
-      rds.threadedSizeId,
-    );
-
-    return `${rds.name}-${factoryRef.substring(0, 3)}-${caliber.reference}/${threadSize.reference}`;
+    return `${rds.name}-${rds.factory.reference.substring(0, 3)}-${rds.caliber.reference}/${rds.threadedSize.reference}`;
   }
 
   /**
    * Vérifie si un réducteur de son avec les mêmes propriétés existe déjà.
    *
    * @private
-   * @param {CreateSoundNoiseReducerDto} dto - Données du réducteur à vérifier.
+   * @param {CreateSoundNoiseReducerDto} rds - Données du réducteur à vérifier.
    * @throws {BadRequestException} Si un réducteur avec le même nom, fabrique et filetage existe.
    */
   private async ensureSoundNoiseReducerDoesNotExist(
-    dto: CreateSoundNoiseReducerDto,
+    rds: CreateSoundNoiseReducerDto,
   ): Promise<void> {
     const isExist = await this.soundNoiseReducerRepository.findOne({
       where: {
-        name: dto.name,
-        factory: { id: dto.factoryId },
-        threadedSize: { id: dto.threadedSizeId },
+        name: rds.name,
+        factory: rds.factory,
+        threadedSize: rds.threadedSize,
       },
     });
 

@@ -25,70 +25,83 @@ export class OpticTypeDto extends CreateOpticTypeDto {
   @ApiProperty()
   id: number;
 }
-export class ListOfPrerequisitesOpticDto {
-  @ApiProperty({
-    type: [OpticTypeDto],
-  })
-  types: OpticTypeDto[];
-  @ApiProperty({
-    type: [OpticUnitDto],
-  })
-  units: OpticUnitDto[];
-  @ApiProperty({
-    type: [FocalPlaneDto],
-  })
-  focalPlanes: FocalPlaneDto[];
-}
+
 export class CreateOpticDto {
   @ApiProperty()
   name: string;
-  @ApiProperty()
-  factoryId: number;
+
+  @ApiProperty({
+    type: FactoryDto,
+  })
+  factory: FactoryDto;
+
   @ApiProperty({
     example: 'Une description de l optique ...',
     nullable: true,
   })
   @IsOptional()
   description: string;
+
   @ApiProperty()
   @IsNumber()
   maxZoom: number;
+
   @ApiProperty()
   @IsNumber()
   minZoom: number;
+
   @ApiProperty()
   @IsNumber()
   maxDrift: number;
+
   @ApiProperty()
   @IsNumber()
   maxElevation: number;
+
   @ApiProperty()
   @IsNumber()
   valueOfOneClick: number;
+
   @ApiProperty()
   @IsNumber()
   bodyDiameter: number;
+
   @ApiProperty()
   @IsNumber()
   lensDiameter: number;
+
   @ApiProperty()
   @IsNumber()
   minParallax: number;
+
   @ApiProperty()
   @IsNumber()
   maxParallax: number;
+
   @ApiProperty()
   isParallax: boolean;
-  @ApiProperty()
-  opticUnitId: number;
-  @ApiProperty()
-  focalPlaneId: number;
-  @ApiProperty()
-  opticTypeId: number;
+
+  @ApiProperty({
+    type: OpticUnitDto,
+  })
+  opticUnit: OpticUnitDto;
+
+  @ApiProperty({
+    type: FocalPlaneDto,
+  })
+  focalPlane: FocalPlaneDto;
+
+  @ApiProperty({
+    type: OpticTypeDto,
+  })
+  opticType: OpticTypeDto;
+
   @ApiProperty()
   length: number;
+
   @ApiProperty()
   eyeRelief: number;
+
   @ApiProperty()
   isCollarsProvided: boolean;
 }
@@ -98,68 +111,10 @@ export class UpdateOpticDto extends CreateOpticDto {
   id: number;
 }
 
-export class OpticDto {
+export class OpticDto extends CreateOpticDto {
   @ApiProperty()
   id: number;
-  @ApiProperty()
-  name: string;
-  @ApiProperty({
-    type: FactoryDto,
-  })
-  factory: FactoryDto;
-  @ApiProperty({
-    example: 'Une description de l optique ...',
-    nullable: true,
-  })
-  @IsOptional()
-  description: string;
-  @ApiProperty()
-  isCollarsProvided: boolean;
-  @ApiProperty()
-  @IsNumber()
-  maxZoom: number;
-  @ApiProperty()
-  length: number;
-  @ApiProperty()
-  @IsNumber()
-  minZoom: number;
-  @ApiProperty()
-  @IsNumber()
-  maxDrift: number;
-  @ApiProperty()
-  @IsNumber()
-  maxElevation: number;
-  @ApiProperty()
-  @IsNumber()
-  valueOfOneClick: number;
-  @ApiProperty()
-  @IsNumber()
-  bodyDiameter: number;
-  @ApiProperty()
-  @IsNumber()
-  lensDiameter: number;
-  @ApiProperty()
-  @IsNumber()
-  minParallax: number;
-  @ApiProperty()
-  @IsNumber()
-  maxParallax: number;
-  @ApiProperty()
-  isParallax: boolean;
-  @ApiProperty({
-    type: OpticUnitDto,
-  })
-  opticUnit: OpticUnitDto;
-  @ApiProperty({
-    type: FocalPlaneDto,
-  })
-  focalPlane: FocalPlaneDto;
-  @ApiProperty({
-    type: OpticTypeDto,
-  })
-  type: OpticTypeDto;
+
   @ApiProperty()
   reference: string;
-  @ApiProperty()
-  eyeRelief: number;
 }
