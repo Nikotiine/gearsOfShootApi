@@ -1,10 +1,11 @@
 import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Factory } from './factory.entity';
 import { OpticType } from './optic-type.entity';
 import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
 import { OpticCollar } from './optic-collar.entity';
+import { PriceHistory } from './price-history.entity';
 //TODO:Mettre l unicite en place
 @Entity()
 export class Optic extends BaseEntity {

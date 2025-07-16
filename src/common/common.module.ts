@@ -29,6 +29,8 @@ import { MaterialController } from './material/material.controller';
 import { RailSizeController } from './rail-size/rail-size.controller';
 import { PercussionTypeController } from './percussion-type/percussion-type.controller';
 import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate.controller';
+import { PriceHistoryService } from './price-history/price-history.service';
+import { PriceHistory } from '../database/entity/price-history.entity';
 
 @Module({
   controllers: [
@@ -53,6 +55,7 @@ import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate
     MaterialService,
     ColorService,
     OpticReadyPlateService,
+    PriceHistoryService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -66,6 +69,7 @@ import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate
       Material,
       Color,
       OpticReadyPlate,
+      PriceHistory,
     ]),
   ],
   exports: [
@@ -78,6 +82,7 @@ import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate
     MaterialService,
     ColorService,
     OpticReadyPlateService,
+    PriceHistoryService,
   ],
 })
 export class CommonModule {}

@@ -10,12 +10,20 @@ import {
 import { CodeError } from '../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
+import { PriceHistoryService } from '../common/price-history/price-history.service';
+import { PriceableObjectType } from '../enum/PriceableObjectType.enum';
+import {
+  CreatePriceHistoryDto,
+  PriceHistoryDto,
+  PriceHistoryFromEntity,
+} from '../dto/price-history.dto';
 
 @Injectable()
 export class AmmunitionService {
   constructor(
     @InjectRepository(Ammunition)
     private readonly ammunitionRepository: Repository<Ammunition>,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
   /**
@@ -45,7 +53,11 @@ export class AmmunitionService {
       reference: await this.createReference(ammunition),
     });
     const created = await this.ammunitionRepository.save(entity);
-    return this.findById(created.id);
+    const price = await this.addPriceHistory(
+      ammunition.priceHistory,
+      created.id,
+    );
+    return this.mapEntityToDto(created, price);
   }
 
   /**
@@ -137,7 +149,8 @@ export class AmmunitionService {
         percussionType: true,
       },
     });
-    return this.mapEntityArrayToDtoArray(ammunitions);
+
+    return await this.mapEntityArrayToDtoArray(ammunitions);
   }
 
   /**
@@ -188,7 +201,21 @@ export class AmmunitionService {
     return !!ammunition;
   }
 
-  private mapEntityToDto(ammunition: Ammunition): AmmunitionDto {
+  /**
+   * Transforme une entité `Ammunition` en un objet `AmmunitionDto`.
+   *
+   * Cette méthode extrait et mappe les propriétés pertinentes de l'entité `Ammunition`
+   * vers un objet conforme au DTO `AmmunitionDto`. Si des données externes sont requises
+   * (comme l'historique de prix), elles sont récupérées de manière asynchrone.
+   *
+   * @param {Ammunition} ammunition - L'entité `Ammunition` à transformer.
+   * @param price
+   * @returns {Promise<AmmunitionDto>} Une promesse résolue avec le DTO correspondant.
+   */
+  private async mapEntityToDto(
+    ammunition: Ammunition,
+    price?: PriceHistoryDto,
+  ): Promise<AmmunitionDto> {
     return {
       id: ammunition.id,
       name: ammunition.name,
@@ -202,31 +229,44 @@ export class AmmunitionService {
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: ammunition.reference,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            ammunition.id,
+            PriceableObjectType.AMMUNITION,
+          ),
     };
   }
 
-  private mapEntityArrayToDtoArray(ammunitions: Ammunition[]): AmmunitionDto[] {
-    return ammunitions.map((ammunition) => {
-      return {
-        id: ammunition.id,
-        name: ammunition.name,
-        description: ammunition.description,
-        headType: ammunition.headType,
-        bodyType: ammunition.bodyType,
-        caliber: ammunition.caliber,
-        category: ammunition.category,
-        factory: {
-          id: ammunition.factory.id,
-          type: ammunition.factory.type,
-          name: ammunition.factory.name,
-          description: ammunition.factory.description,
-          reference: ammunition.factory.reference,
-        },
-        percussionType: ammunition.percussionType,
-        packaging: ammunition.packaging,
-        initialSpeed: ammunition.initialSpeed,
-        reference: ammunition.reference,
-      };
+  /**
+   * Convertit un tableau d'entités `Ammunition` en un tableau de DTOs `AmmunitionDto`.
+   *
+   * Cette méthode utilise la méthode `mapEntityToDto` pour transformer chaque entité
+   * de type `Ammunition` en son équivalent `AmmunitionDto`. Elle exécute ces transformations
+   * de manière asynchrone et attend que toutes soient terminées avant de renvoyer le résultat.
+   *
+   * @param {Ammunition[]} ammunitions - Le tableau d'entités `Ammunition` à transformer.
+   * @returns {Promise<AmmunitionDto[]>} Une promesse résolue avec le tableau de DTOs correspondants.
+   */
+  private async mapEntityArrayToDtoArray(
+    ammunitions: Ammunition[],
+  ): Promise<AmmunitionDto[]> {
+    const dtoPromises = ammunitions.map(async (ammunition) => {
+      return this.mapEntityToDto(ammunition);
     });
+    return await Promise.all(dtoPromises);
+  }
+
+  private async addPriceHistory(
+    dto: CreatePriceHistoryDto,
+    id: number,
+  ): Promise<PriceHistoryDto> {
+    const priceHistory: PriceHistoryFromEntity =
+      this.priceHistoryService.generateCreatePriceHistoryDto(
+        dto,
+        id,
+        PriceableObjectType.AMMUNITION,
+      );
+    return await this.priceHistoryService.insert(priceHistory);
   }
 }
