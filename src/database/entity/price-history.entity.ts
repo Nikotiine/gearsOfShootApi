@@ -1,7 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity } from 'typeorm';
 
-import { PriceableObjectType } from '../../enum/PriceableObjectType.enum';
+import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 @Entity()
 export class PriceHistory extends BaseEntity {
   @Column()

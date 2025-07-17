@@ -11,12 +11,8 @@ import { CodeError } from '../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { PriceHistoryService } from '../common/price-history/price-history.service';
-import { PriceableObjectType } from '../enum/PriceableObjectType.enum';
-import {
-  CreatePriceHistoryDto,
-  PriceHistoryDto,
-  PriceHistoryFromEntity,
-} from '../dto/price-history.dto';
+import { PriceableObjectType } from '../enum/priceable-object-type.enum';
+import { PriceHistoryDto } from '../dto/price-history.dto';
 
 @Injectable()
 export class AmmunitionService {
@@ -53,9 +49,10 @@ export class AmmunitionService {
       reference: await this.createReference(ammunition),
     });
     const created = await this.ammunitionRepository.save(entity);
-    const price = await this.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistory(
       ammunition.priceHistory,
       created.id,
+      PriceableObjectType.AMMUNITION,
     );
     return this.mapEntityToDto(created, price);
   }
@@ -255,18 +252,5 @@ export class AmmunitionService {
       return this.mapEntityToDto(ammunition);
     });
     return await Promise.all(dtoPromises);
-  }
-
-  private async addPriceHistory(
-    dto: CreatePriceHistoryDto,
-    id: number,
-  ): Promise<PriceHistoryDto> {
-    const priceHistory: PriceHistoryFromEntity =
-      this.priceHistoryService.generateCreatePriceHistoryDto(
-        dto,
-        id,
-        PriceableObjectType.AMMUNITION,
-      );
-    return await this.priceHistoryService.insert(priceHistory);
   }
 }

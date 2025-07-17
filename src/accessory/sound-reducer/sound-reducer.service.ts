@@ -10,12 +10,16 @@ import {
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { CodeError } from '../../enum/code-error.enum';
+import { PriceHistoryDto } from '../../dto/price-history.dto';
+import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 
 @Injectable()
 export class SoundReducerService {
   constructor(
     @InjectRepository(SoundNoiseReducer)
     private readonly soundNoiseReducerRepository: Repository<SoundNoiseReducer>,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
   /**
@@ -50,7 +54,12 @@ export class SoundReducerService {
       estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     });
     const created = await this.soundNoiseReducerRepository.save(entity);
-    return this.findById(created.id);
+    const price = await this.priceHistoryService.addPriceHistory(
+      soundNoiseReducer.priceHistory,
+      created.id,
+      PriceableObjectType.RDS,
+    );
+    return await this.mapEntityToDto(created, price);
   }
 
   public async findById(id: number): Promise<SoundNoiseReducerDto> {
@@ -118,11 +127,13 @@ export class SoundReducerService {
    * en un Data Transfer Object (DTO)
    * @private
    * @param {SoundNoiseReducer} soundNoiseReducer - L'entité représentant un réducteur de son.
+   * @param price
    * @returns {SoundNoiseReducerDto} L'objet DTO contenant les données du réducteur de son.
    */
-  private mapEntityToDto(
+  private async mapEntityToDto(
     soundNoiseReducer: SoundNoiseReducer,
-  ): SoundNoiseReducerDto {
+    price?: PriceHistoryDto,
+  ): Promise<SoundNoiseReducerDto> {
     return {
       id: soundNoiseReducer.id,
       factory: soundNoiseReducer.factory,
@@ -136,6 +147,12 @@ export class SoundReducerService {
       reference: soundNoiseReducer.reference,
       chicane: soundNoiseReducer.chicane,
       estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            soundNoiseReducer.id,
+            PriceableObjectType.RDS,
+          ),
     };
   }
 
