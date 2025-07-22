@@ -53,6 +53,17 @@ export class PriceHistoryService {
     return price;
   }
 
+  public async findAllByObjectId(
+    objectId: number,
+    object: PriceableObjectType,
+  ): Promise<PriceHistoryDto[]> {
+    const price = await this.priceHistoryRepository.find({
+      where: { objectId: objectId, object: object },
+    });
+
+    return price;
+  }
+
   private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
     return {
       objectId: 0,
