@@ -14,14 +14,16 @@ import {
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
-import { WeaponService } from '../weapon.service';
+import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { PriceHistoryDto } from '../../dto/price-history.dto';
 
 @Injectable()
 export class HandGunService {
   constructor(
     @InjectRepository(HandGun)
     private readonly handGunRepository: Repository<HandGun>,
-    private readonly weaponService: WeaponService,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
   public async insert(handgun: CreateHandGunDto): Promise<HandGunDto> {
@@ -33,12 +35,7 @@ export class HandGunService {
       name: handgun.name,
       description: handgun.description,
       variation: handgun.variation,
-      reference: await this.weaponService.createReference(
-        handgun.factory,
-        handgun.caliber,
-        handgun.name,
-        handgun.variation,
-      ),
+      reference: this.createReference(handgun),
       factory: handgun.factory,
       isThreadedBarrel: handgun.isThreadedBarrel,
       isAdjustableTrigger: handgun.isAdjustableTrigger,
@@ -67,9 +64,15 @@ export class HandGunService {
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
     });
     const created = await this.handGunRepository.save(entity);
-    return this.findById(created.id);
+    const price = await this.priceHistoryService.addPriceHistory(
+      handgun.priceHistory,
+      created.id,
+      PriceableObjectType.HANDGUN,
+    );
+    return this.mapEntityToDto(created, price);
   }
 
+  //TODO:Verifier si update ou preload est mieux
   public async update(
     id: number,
     handgun: UpdateHandGunDto,
@@ -86,12 +89,7 @@ export class HandGunService {
       category: handgun.category,
       factory: handgun.factory,
       percussionType: handgun.percussionType,
-      reference: await this.weaponService.createReference(
-        handgun.factory,
-        handgun.caliber,
-        handgun.name,
-        handgun.variation,
-      ),
+      reference: this.createReference(handgun),
       slideColor: handgun.slideColor,
       slideMaterial: handgun.slideMaterial,
       threadedSize: handgun.threadedSize,
@@ -208,7 +206,10 @@ export class HandGunService {
     return !!handGun;
   }
 
-  private mapEntityToDto(handGun: HandGun): HandGunDto {
+  private async mapEntityToDto(
+    handGun: HandGun,
+    price?: PriceHistoryDto,
+  ): Promise<HandGunDto> {
     return {
       id: handGun.id,
       barrelLength: handGun.barrelLength,
@@ -241,13 +242,26 @@ export class HandGunService {
       slideMaterial: handGun.slideMaterial,
       barrelColor: handGun.barrelColor,
       isExternalHammer: handGun.isExternalHammer,
-      opticReadyPlates: handGun.providedOpticReadyPlate,
+      providedOpticReadyPlates: handGun.providedOpticReadyPlate,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            handGun.id,
+            PriceableObjectType.HANDGUN,
+          ),
     };
   }
 
-  public mapEntityArrayToDtoArray(handGuns: HandGun[]): HandGunDto[] {
-    return handGuns.map((handGun) => {
+  public async mapEntityArrayToDtoArray(
+    handGuns: HandGun[],
+  ): Promise<HandGunDto[]> {
+    const dtoPromises = handGuns.map(async (handGun) => {
       return this.mapEntityToDto(handGun);
     });
+    return await Promise.all(dtoPromises);
+  }
+
+  private createReference(dto: CreateHandGunDto): string {
+    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
 }

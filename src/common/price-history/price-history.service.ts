@@ -37,17 +37,32 @@ export class PriceHistoryService {
    *
    * @param {number} objectId - L'identifiant de l'objet concerné.
    * @param {PriceableObjectType} object - Le type de l'objet concerné (par exemple : véhicule, bien immobilier, etc.).
-   * @returns {Promise<PriceHistoryDto | null>} Une promesse qui résout avec le dernier enregistrement trouvé,
-   * ou `null` s'il n'existe aucun historique pour cet objet.
+   * @returns {Promise<PriceHistoryDto>} Une promesse qui résout avec le dernier enregistrement trouvé,
    */
   public async findLastByObjectId(
     objectId: number,
     object: PriceableObjectType,
-  ): Promise<PriceHistoryDto | null> {
-    return await this.priceHistoryRepository.findOne({
+  ): Promise<PriceHistoryDto> {
+    const price = await this.priceHistoryRepository.findOne({
       where: { objectId: objectId, object: object },
       order: { createdAt: 'DESC' },
     });
+    if (!price) {
+      return this.createEmptyPrice(object);
+    }
+    return price;
+  }
+
+  private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
+    return {
+      objectId: 0,
+      object: object,
+      supplierPrice: 0,
+      recommendedSalePrice: 0,
+      createdAt: new Date(),
+      currentSalePrice: 0,
+      id: 0,
+    };
   }
 
   /**

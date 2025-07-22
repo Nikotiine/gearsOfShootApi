@@ -119,17 +119,18 @@ export class MagazineService {
    * @param magazines
    * @private
    */
-  private mapEntityArrayToDtoArray(
+  private async mapEntityArrayToDtoArray(
     magazines: WeaponMagazine[],
-  ): WeaponMagazineDto[] {
-    const array: WeaponMagazineDto[] = [];
-    for (const magazine of magazines) {
-      array.push(this.mapEntityToDto(magazine));
-    }
-    return array;
+  ): Promise<WeaponMagazineDto[]> {
+    const dtoPromises = magazines.map(async (magazine) => {
+      return this.mapEntityToDto(magazine);
+    });
+    return await Promise.all(dtoPromises);
   }
 
-  private mapEntityToDto(magazine: WeaponMagazine): WeaponMagazineDto {
+  private async mapEntityToDto(
+    magazine: WeaponMagazine,
+  ): Promise<WeaponMagazineDto> {
     return {
       id: magazine.id,
       body: magazine.body,
@@ -142,10 +143,10 @@ export class MagazineService {
       capacity: magazine.capacity,
       category: magazine.category,
       riffles: magazine.riffles
-        ? this.riffleService.mapEntityArrayToDtoArray(magazine.riffles)
+        ? await this.riffleService.mapEntityArrayToDtoArray(magazine.riffles)
         : [],
       handguns: magazine.handguns
-        ? this.handGunService.mapEntityArrayToDtoArray(magazine.handguns)
+        ? await this.handGunService.mapEntityArrayToDtoArray(magazine.handguns)
         : [],
       forWeaponType: magazine.forWeaponType,
       description: magazine.description,

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ammunition } from '../database/entity/ammunition.entity';
 import { Repository } from 'typeorm';
@@ -98,9 +102,17 @@ export class AmmunitionService {
         percussionType: true,
       },
     });
-    return this.mapEntityToDto(ammunition);
+    if (!ammunition) {
+      throw new NotFoundException(CodeError.AMMUNITION_NOT_FOUND);
+    }
+    const price = await this.priceHistoryService.findLastByObjectId(
+      ammunition.id,
+      PriceableObjectType.AMMUNITION,
+    );
+    return this.mapEntityToDto(ammunition, price);
   }
 
+  //TODO:Verifier si update ou preload est mieux
   public async edit(
     id: number,
     ammunition: UpdateAmmunitionDto,

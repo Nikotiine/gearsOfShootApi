@@ -13,6 +13,7 @@ import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
+import { CreatePriceHistoryDto } from './price-history.dto';
 
 export class CreateHandGunDto {
   @ApiProperty({
@@ -209,166 +210,19 @@ export class CreateHandGunDto {
   @ApiProperty({ description: 'Rail picatiny' })
   @IsBoolean()
   isPicatinyRailSlop: boolean;
+
+  @ApiProperty({
+    type: CreatePriceHistoryDto,
+  })
+  priceHistory: CreatePriceHistoryDto;
 }
 export class UpdateHandGunDto extends CreateHandGunDto {
   @ApiProperty()
   id: number;
 }
-export class HandGunDto {
-  @ApiProperty()
-  id: number;
+export class HandGunDto extends UpdateHandGunDto {
   @ApiProperty({
     example: 'CZ-457-VAR-22LR',
   })
   reference: string;
-  @ApiProperty({
-    example: 'CZ 457',
-  })
-  name: string;
-
-  @ApiProperty({
-    example: 'Une description de l arme son histoire ...',
-  })
-  @IsOptional()
-  description: string;
-
-  @ApiProperty({
-    example: 'Varmint ou Luxe',
-    nullable: true,
-  })
-  @IsOptional()
-  variation: string;
-
-  @ApiProperty({
-    type: LegislationCategoryDto,
-    example: 'C',
-  })
-  category: LegislationCategoryDto;
-
-  @ApiProperty({
-    type: CaliberDto,
-  })
-  caliber: CaliberDto;
-
-  @ApiProperty({
-    type: FactoryDto,
-  })
-  factory: FactoryDto;
-
-  @ApiProperty({
-    type: WeaponTypeDto,
-  })
-  type: WeaponTypeDto;
-
-  @ApiProperty({
-    example: 51,
-  })
-  barrelLength: number;
-
-  @ApiProperty({
-    example: false,
-  })
-  @IsBoolean()
-  isAdjustableTrigger: boolean;
-
-  @ApiProperty({
-    example: false,
-  })
-  @IsBoolean()
-  isThreadedBarrel: boolean;
-
-  @ApiProperty({
-    type: WeaponBarrelTypeDto,
-    example: 'Lourd',
-  })
-  barrelType: WeaponBarrelTypeDto;
-
-  @ApiProperty({
-    type: ThreadedSizeDto,
-  })
-  threadedSize: ThreadedSizeDto;
-
-  @ApiProperty({
-    nullable: true,
-    description: 'les valeurs de poids depart de la detente',
-    example: 'Entre 1 et 2kg',
-  })
-  @IsOptional()
-  adjustableTriggerMinWeight: number;
-
-  @ApiProperty({
-    nullable: true,
-    description: 'les valeurs de poids depart de la detente',
-    example: 'Entre 1 et 2kg',
-  })
-  @IsOptional()
-  adjustableTriggerMaxWeight: number;
-
-  @ApiProperty({
-    type: PercussionTypeDto,
-  })
-  percussionType: PercussionTypeDto;
-
-  @ApiProperty()
-  providedMagazineQuantity: number;
-
-  @ApiProperty()
-  barrelSize: number;
-
-  @ApiProperty({
-    type: MaterialDto,
-  })
-  buttMaterial: MaterialDto;
-
-  @ApiProperty({ description: 'Guidon reglable' })
-  isAdjustableFrontSight: boolean;
-
-  @ApiProperty({ description: 'Hausse reglable' })
-  isAdjustableBackSight: boolean;
-
-  @ApiProperty({
-    type: ColorDto,
-  })
-  buttColor: ColorDto;
-
-  @ApiProperty({
-    type: ColorDto,
-  })
-  barrelColor: ColorDto;
-  @ApiProperty({
-    example: true,
-  })
-  @IsBoolean()
-  isOpticReady: boolean;
-
-  @ApiProperty()
-  @IsBoolean()
-  decocking: boolean;
-
-  @ApiProperty({
-    type: WeaponTriggerTypeDto,
-  })
-  triggerType: WeaponTriggerTypeDto;
-
-  @ApiProperty({
-    type: ColorDto,
-  })
-  slideColor: ColorDto;
-
-  @ApiProperty({
-    type: MaterialDto,
-  })
-  slideMaterial: MaterialDto;
-
-  @ApiProperty()
-  isExternalHammer: boolean;
-
-  @ApiProperty({
-    type: [OpticReadyPlateDto],
-  })
-  opticReadyPlates: OpticReadyPlateDto[];
-
-  @ApiProperty({ description: 'Rail picatiny' })
-  @IsBoolean()
-  isPicatinyRailSlop: boolean;
 }

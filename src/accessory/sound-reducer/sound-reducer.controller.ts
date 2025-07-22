@@ -91,7 +91,7 @@ export class SoundReducerController {
   })
   public async edit(
     @Param(SwaggerDescription.ID_PARAM) id: number,
-    rds: UpdateSoundNoiseReducerDto,
+    @Body() rds: UpdateSoundNoiseReducerDto,
   ): Promise<SoundNoiseReducerDto> {
     return await this.soundNoiseReducerService.edit(id, rds);
   }

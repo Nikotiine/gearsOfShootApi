@@ -11,17 +11,19 @@ import {
   OpticCollarDto,
   UpdateOpticCollarDto,
 } from '../../dto/optic-collar.dto';
-import { FactoryService } from '../../common/factory/factory.service';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { CodeError } from '../../enum/code-error.enum';
+import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { PriceHistoryDto } from '../../dto/price-history.dto';
 
 @Injectable()
 export class OpticCollarService {
   constructor(
     @InjectRepository(OpticCollar)
     private readonly opticCollarRepository: Repository<OpticCollar>,
-    private readonly factoryService: FactoryService,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
   public async findAll(): Promise<OpticCollarDto[]> {
@@ -39,18 +41,19 @@ export class OpticCollarService {
       diameter: collar.diameter,
       name: collar.name,
       height: collar.height,
-      railSize: {
-        id: collar.railSizeId,
-      },
-      factory: {
-        id: collar.factoryId,
-      },
+      factory: collar.factory,
+      railSize: collar.railSize,
       reference: await this.createReference(collar),
       description: collar.description,
     });
 
     const created = await this.opticCollarRepository.save(entity);
-    return this.mapEntityToDto(created);
+    const price = await this.priceHistoryService.addPriceHistory(
+      collar.priceHistory,
+      created.id,
+      PriceableObjectType.OPTIC_COLLAR,
+    );
+    return this.mapEntityToDto(created, price);
   }
 
   public async findById(id: number): Promise<OpticCollarDto> {
@@ -66,7 +69,11 @@ export class OpticCollarService {
     if (!collar) {
       throw new NotFoundException(CodeError.OPTIC_COLLAR_NOT_FOUND);
     }
-    return this.mapEntityToDto(collar);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      collar.id,
+      PriceableObjectType.OPTIC_COLLAR,
+    );
+    return this.mapEntityToDto(collar, price);
   }
 
   public async edit(
@@ -78,10 +85,8 @@ export class OpticCollarService {
       height: collar.height,
       description: collar.description,
       diameter: collar.diameter,
-      factory: { id: collar.factoryId },
-      railSize: {
-        id: collar.railSizeId,
-      },
+      factory: collar.factory,
+      railSize: collar.railSize,
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_COLLAR_UPDATE_FAILED);
@@ -89,13 +94,19 @@ export class OpticCollarService {
     return this.findById(id);
   }
 
-  private mapOpticCollarArrayToDtoArray(
+  private async mapOpticCollarArrayToDtoArray(
     collars: OpticCollar[],
-  ): OpticCollarDto[] {
-    return collars.map((collar) => this.mapEntityToDto(collar));
+  ): Promise<OpticCollarDto[]> {
+    const dtoPromises = collars.map(async (collar) =>
+      this.mapEntityToDto(collar),
+    );
+    return await Promise.all(dtoPromises);
   }
 
-  private mapEntityToDto(collar: OpticCollar): OpticCollarDto {
+  private async mapEntityToDto(
+    collar: OpticCollar,
+    price?: PriceHistoryDto,
+  ): Promise<OpticCollarDto> {
     return {
       id: collar.id,
       diameter: collar.diameter,
@@ -105,14 +116,17 @@ export class OpticCollarService {
       description: collar.description,
       reference: collar.reference,
       name: collar.name,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            collar.id,
+            PriceableObjectType.OPTIC_COLLAR,
+          ),
     };
   }
 
   private async createReference(collar: CreateOpticCollarDto): Promise<string> {
-    const factoryRef = await this.factoryService.findFactoryReferenceById(
-      collar.factoryId,
-    );
-    return `${factoryRef.substring(0, 3)}-${collar.name}-${collar.diameter}-${collar.height}`;
+    return `${collar.factory.reference.substring(0, 3)}-${collar.name}-${collar.diameter}-${collar.height}`;
   }
 
   /**

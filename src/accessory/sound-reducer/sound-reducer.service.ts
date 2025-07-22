@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SoundNoiseReducer } from '../../database/entity/sound-noise-reducer.entity';
 import { Repository } from 'typeorm';
@@ -73,6 +77,9 @@ export class SoundReducerService {
         threadedSize: true,
       },
     });
+    if (!soundNoiseReducer) {
+      throw new NotFoundException(CodeError.SOUND_NOISE_REDUCER_NOT_FOUND);
+    }
     return this.mapEntityToDto(soundNoiseReducer);
   }
   /**
@@ -114,10 +121,13 @@ export class SoundReducerService {
     return await this.findById(id);
   }
 
-  private mapArrayEntityToArrayDto(
+  private async mapArrayEntityToArrayDto(
     soundNoiseReducers: SoundNoiseReducer[],
-  ): SoundNoiseReducerDto[] {
-    return soundNoiseReducers.map(this.mapEntityToDto.bind(this));
+  ): Promise<SoundNoiseReducerDto[]> {
+    const dtoPromises = soundNoiseReducers.map(async (rds) => {
+      return this.mapEntityToDto(rds);
+    });
+    return await Promise.all(dtoPromises);
   }
 
   /**

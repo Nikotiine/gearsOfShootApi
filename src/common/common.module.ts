@@ -31,6 +31,7 @@ import { PercussionTypeController } from './percussion-type/percussion-type.cont
 import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate.controller';
 import { PriceHistoryService } from './price-history/price-history.service';
 import { PriceHistory } from '../database/entity/price-history.entity';
+import { PriceHistoryController } from './price-history/price-history.controller';
 
 @Module({
   controllers: [
@@ -43,6 +44,7 @@ import { PriceHistory } from '../database/entity/price-history.entity';
     RailSizeController,
     PercussionTypeController,
     OpticReadyPlateController,
+    PriceHistoryController,
   ],
   providers: [
     FactoryService,
