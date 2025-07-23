@@ -5,4 +5,5 @@ export enum PriceableObjectType {
   OPTIC_COLLAR = 'OPTIC_COLLAR',
   RIFFLE = 'RIFFLE',
   RDS = 'RDS',
+  MAGAZINE = 'MAGAZINE',
 }

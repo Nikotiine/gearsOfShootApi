@@ -80,7 +80,11 @@ export class SoundReducerService {
     if (!soundNoiseReducer) {
       throw new NotFoundException(CodeError.SOUND_NOISE_REDUCER_NOT_FOUND);
     }
-    return this.mapEntityToDto(soundNoiseReducer);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      id,
+      PriceableObjectType.RDS,
+    );
+    return this.mapEntityToDto(soundNoiseReducer, price);
   }
   /**
    * Soft delete de l arme
@@ -88,6 +92,12 @@ export class SoundReducerService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.soundNoiseReducerRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.RDS,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,
@@ -118,6 +128,11 @@ export class SoundReducerService {
         CodeError.SOUND_NOISE_REDUCER_UPDATE_FAILED,
       );
     }
+    await this.priceHistoryService.addPriceHistory(
+      soundNoiseReducer.priceHistory,
+      id,
+      PriceableObjectType.RDS,
+    );
     return await this.findById(id);
   }
 

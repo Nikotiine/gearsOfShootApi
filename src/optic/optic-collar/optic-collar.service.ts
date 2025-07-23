@@ -91,6 +91,11 @@ export class OpticCollarService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_COLLAR_UPDATE_FAILED);
     }
+    await this.priceHistoryService.addPriceHistory(
+      collar.priceHistory,
+      id,
+      PriceableObjectType.OPTIC_COLLAR,
+    );
     return this.findById(id);
   }
 
@@ -135,6 +140,12 @@ export class OpticCollarService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.opticCollarRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.OPTIC_COLLAR,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,

@@ -7,62 +7,88 @@ import { LegislationCategoryDto } from './legislation-category.dto';
 import { RiffleDto } from './riffle.dto';
 import { HandGunDto } from './hand-gun.dto';
 import { WeaponTypeDto } from './weapon.dto';
-
-export class WeaponMagazineDto {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
+import { IsOptional } from 'class-validator';
+import { CreatePriceHistoryDto } from './price-history.dto';
+export class CreateWeaponMagazineDto {
+  @ApiProperty({
+    description: 'Capacite en munition',
+  })
   capacity: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'longeur du chargeur',
+  })
   length: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'hauteur du chargeur',
+  })
   height: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'largeur du chargeur',
+  })
   width: number;
 
-  @ApiProperty()
-  reference: string;
-
   @ApiProperty({
+    description: 'matiere du chargeur',
     type: MaterialDto,
   })
   body: MaterialDto;
 
   @ApiProperty({
+    description: 'marque du chargeur',
     type: FactoryDto,
   })
   factory: FactoryDto;
 
   @ApiProperty({
+    description: 'calibre des munitions du chargeur',
     type: CaliberDto,
   })
   caliber: CaliberDto;
 
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  description: string;
+
   @ApiProperty({
+    description: 'La categorie de l arme en france',
     type: LegislationCategoryDto,
-    example: 'C',
   })
   category: LegislationCategoryDto;
 
   @ApiProperty({
-    type: [RiffleDto],
+    description: 'Le type de l arme',
+    type: WeaponTypeDto,
   })
-  riffles: RiffleDto[];
+  weaponType: WeaponTypeDto;
+
+  @ApiProperty({
+    type: [RiffleDto],
+    nullable: true,
+  })
+  @IsOptional()
+  compatibleRiffle: RiffleDto[];
 
   @ApiProperty({
     type: [HandGunDto],
+    nullable: true,
   })
-  handguns: HandGunDto[];
+  @IsOptional()
+  compatibleHandGun: HandGunDto[];
 
   @ApiProperty({
-    type: WeaponTypeDto,
+    type: CreatePriceHistoryDto,
+    description: 'Historique des prix',
   })
-  forWeaponType: WeaponTypeDto;
-
+  priceHistory: CreatePriceHistoryDto;
+}
+export class UpdateWeaponMagazineDto extends CreateWeaponMagazineDto {
   @ApiProperty()
-  description: string;
+  id: number;
+}
+export class WeaponMagazineDto extends UpdateWeaponMagazineDto {
+  @ApiProperty()
+  reference: string;
 }

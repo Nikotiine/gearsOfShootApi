@@ -74,7 +74,11 @@ export class OpticService {
     if (!optic) {
       throw new NotFoundException(CodeError.OPTIC_NOT_FOUND);
     }
-    return this.mapEntityToDto(optic);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      optic.id,
+      PriceableObjectType.OPTIC,
+    );
+    return this.mapEntityToDto(optic, price);
   }
 
   public async findAll(): Promise<OpticDto[]> {
@@ -119,11 +123,22 @@ export class OpticService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
     }
+    await this.priceHistoryService.addPriceHistory(
+      optic.priceHistory,
+      id,
+      PriceableObjectType.OPTIC,
+    );
     return this.findById(id);
   }
 
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.opticRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.OPTIC,
+      );
+    }
     return {
       id: id,
       message: CodeSuccess.OPTIC_SOFT_DELETE,

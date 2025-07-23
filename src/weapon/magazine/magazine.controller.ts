@@ -16,13 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { MagazineService } from './magazine.service';
-import { WeaponMagazineDto } from '../../dto/weapon-magazine.dto';
-import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
-import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import {
   CreateWeaponMagazineDto,
   UpdateWeaponMagazineDto,
-} from '../../dto/create-magazine.dto';
+  WeaponMagazineDto,
+} from '../../dto/weapon-magazine.dto';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { SwaggerDescription } from '../../enum/swagger-description.enum';
 
 @Controller('magazine')
 @ApiTags('Magazine')

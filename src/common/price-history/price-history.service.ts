@@ -8,6 +8,8 @@ import {
   PriceHistoryFromEntity,
 } from '../../dto/price-history.dto';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { CodeSuccess } from '../../enum/code-success.enum';
 
 @Injectable()
 export class PriceHistoryService {
@@ -22,7 +24,7 @@ export class PriceHistoryService {
    * @param {PriceHistoryFromEntity} priceHistoryDto - Les données à insérer, conformes à l'entité PriceHistory.
    * @returns {Promise<PriceHistoryDto>} Une promesse qui résout avec le DTO de l'enregistrement créé.
    */
-  public async insert(
+  private async insert(
     priceHistoryDto: PriceHistoryFromEntity,
   ): Promise<PriceHistoryDto> {
     const entity = this.priceHistoryRepository.create({
@@ -57,11 +59,10 @@ export class PriceHistoryService {
     objectId: number,
     object: PriceableObjectType,
   ): Promise<PriceHistoryDto[]> {
-    const price = await this.priceHistoryRepository.find({
+    return await this.priceHistoryRepository.find({
       where: { objectId: objectId, object: object },
+      order: { createdAt: 'DESC' },
     });
-
-    return price;
   }
 
   private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
@@ -84,7 +85,7 @@ export class PriceHistoryService {
    * @param {PriceableObjectType} object - Le type de l'objet concerné.
    * @returns {PriceHistoryFromEntity} L'objet prêt à être utilisé pour la création dans la base de données.
    */
-  public generateCreatePriceHistoryDto(
+  private generateCreatePriceHistoryDto(
     dto: CreatePriceHistoryDto,
     objectId: number,
     object: PriceableObjectType,
@@ -95,6 +96,21 @@ export class PriceHistoryService {
       recommendedSalePrice: dto.recommendedSalePrice,
       objectId: objectId,
       object: object,
+    };
+  }
+
+  public async deletePriceHistory(
+    objectId: number,
+    object: PriceableObjectType,
+  ): Promise<ApiDeleteResponseDto> {
+    const deleted = await this.priceHistoryRepository.softDelete({
+      objectId: objectId,
+      object: object,
+    });
+    return {
+      id: 0,
+      isSuccess: deleted.affected > 0,
+      message: CodeSuccess.MAGAZINE_DELETE,
     };
   }
 

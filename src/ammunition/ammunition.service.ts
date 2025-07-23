@@ -133,6 +133,11 @@ export class AmmunitionService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
     }
+    await this.priceHistoryService.addPriceHistory(
+      ammunition.priceHistory,
+      ammunition.id,
+      PriceableObjectType.AMMUNITION,
+    );
     return this.findById(id);
   }
 
@@ -168,6 +173,12 @@ export class AmmunitionService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.ammunitionRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.AMMUNITION,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,
