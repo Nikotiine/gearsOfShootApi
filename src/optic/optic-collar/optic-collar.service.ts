@@ -48,7 +48,7 @@ export class OpticCollarService {
     });
 
     const created = await this.opticCollarRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       collar.priceHistory,
       created.id,
       PriceableObjectType.OPTIC_COLLAR,
@@ -76,6 +76,7 @@ export class OpticCollarService {
     return this.mapEntityToDto(collar, price);
   }
 
+  // TODO : Mettre en preload + save
   public async edit(
     id: number,
     collar: UpdateOpticCollarDto,
@@ -91,7 +92,7 @@ export class OpticCollarService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_COLLAR_UPDATE_FAILED);
     }
-    await this.priceHistoryService.addPriceHistory(
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       collar.priceHistory,
       id,
       PriceableObjectType.OPTIC_COLLAR,

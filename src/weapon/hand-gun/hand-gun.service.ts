@@ -64,7 +64,7 @@ export class HandGunService {
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
     });
     const created = await this.handGunRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       handgun.priceHistory,
       created.id,
       PriceableObjectType.HANDGUN,
@@ -72,7 +72,6 @@ export class HandGunService {
     return this.mapEntityToDto(created, price);
   }
 
-  //TODO:Verifier si update ou preload est mieux
   public async update(
     id: number,
     handgun: UpdateHandGunDto,
@@ -97,8 +96,13 @@ export class HandGunService {
       type: handgun.type,
     });
 
-    await this.handGunRepository.save(updateResult);
-    return this.findById(id);
+    const updated = await this.handGunRepository.save(updateResult);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      handgun.priceHistory,
+      updated.id,
+      PriceableObjectType.HANDGUN,
+    );
+    return this.mapEntityToDto(updated, price);
   }
 
   public async findById(id: number): Promise<HandGunDto> {
@@ -182,6 +186,12 @@ export class HandGunService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.handGunRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.HANDGUN,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,

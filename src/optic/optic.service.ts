@@ -48,7 +48,7 @@ export class OpticService {
       reference: await this.createReference(optic),
     });
     const created = await this.opticRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       optic.priceHistory,
       created.id,
       PriceableObjectType.OPTIC,
@@ -96,6 +96,7 @@ export class OpticService {
     return this.mapOpticsArrayToOpticsDtoArray(optics);
   }
 
+  // TODO : Mettre en preload + save
   public async edit(id: number, optic: UpdateOpticDto): Promise<OpticDto> {
     const updatedResult = await this.opticRepository.update(id, {
       name: optic.name,
@@ -123,7 +124,7 @@ export class OpticService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
     }
-    await this.priceHistoryService.addPriceHistory(
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       optic.priceHistory,
       id,
       PriceableObjectType.OPTIC,

@@ -65,6 +65,41 @@ export class PriceHistoryService {
     });
   }
 
+  /**
+   * Ajoute un nouvel historique de prix pour un objet donné si :
+   * - aucun historique n'existe encore, ou
+   * - le prix fourni est différent du dernier enregistré.
+   *
+   * Cela permet d'éviter d'insérer des doublons de prix identiques en base.
+   *
+   * @param dto - Données du nouveau prix à insérer
+   * @param id - Identifiant de l'objet concerné
+   * @param object - Type d'objet auquel le prix est rattaché (ex: arme, accessoire, etc.)
+   * @returns Le nouvel historique de prix s'il a été inséré, sinon `null`
+   */
+  public async addPriceHistoryIfNewOrUpdated(
+    dto: CreatePriceHistoryDto,
+    id: number,
+    object: PriceableObjectType,
+  ): Promise<PriceHistoryDto> {
+    const priceHistory = await this.priceHistoryRepository.findOne({
+      where: { objectId: id, object },
+      order: { createdAt: 'DESC' },
+    });
+
+    const isSamePrice =
+      priceHistory &&
+      dto.supplierPrice === priceHistory.supplierPrice &&
+      dto.currentSalePrice === priceHistory.currentSalePrice &&
+      dto.recommendedSalePrice === priceHistory.recommendedSalePrice;
+
+    if (!priceHistory || !isSamePrice) {
+      return await this.addPriceHistory(dto, id, object);
+    }
+
+    return priceHistory; //
+  }
+
   private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
     return {
       objectId: 0,
@@ -122,7 +157,7 @@ export class PriceHistoryService {
    * @param {PriceableObjectType} object - Le type de l'objet concerné.
    * @returns {Promise<PriceHistoryDto>} Une promesse qui résout avec le DTO de l'historique de prix créé.
    */
-  public async addPriceHistory(
+  private async addPriceHistory(
     dto: CreatePriceHistoryDto,
     id: number,
     object: PriceableObjectType,

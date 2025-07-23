@@ -58,7 +58,7 @@ export class SoundReducerService {
       estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     });
     const created = await this.soundNoiseReducerRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       soundNoiseReducer.priceHistory,
       created.id,
       PriceableObjectType.RDS,
@@ -128,7 +128,7 @@ export class SoundReducerService {
         CodeError.SOUND_NOISE_REDUCER_UPDATE_FAILED,
       );
     }
-    await this.priceHistoryService.addPriceHistory(
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       soundNoiseReducer.priceHistory,
       id,
       PriceableObjectType.RDS,

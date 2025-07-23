@@ -53,7 +53,7 @@ export class AmmunitionService {
       reference: await this.createReference(ammunition),
     });
     const created = await this.ammunitionRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       ammunition.priceHistory,
       created.id,
       PriceableObjectType.AMMUNITION,
@@ -133,7 +133,7 @@ export class AmmunitionService {
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
     }
-    await this.priceHistoryService.addPriceHistory(
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       ammunition.priceHistory,
       ammunition.id,
       PriceableObjectType.AMMUNITION,

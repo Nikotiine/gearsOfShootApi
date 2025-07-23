@@ -56,7 +56,7 @@ export class MagazineService {
       forWeaponType: magazine.weaponType,
     });
     const created = await this.weaponMagazineRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       magazine.priceHistory,
       created.id,
       PriceableObjectType.MAGAZINE,
@@ -94,13 +94,19 @@ export class MagazineService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.weaponMagazineRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.MAGAZINE,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.MAGAZINE_DELETE,
     };
   }
-
+  // TODO: Changer en preload + save
   public async edit(
     id: number,
     magazine: UpdateWeaponMagazineDto,
@@ -120,6 +126,11 @@ export class MagazineService {
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
     }
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      magazine.priceHistory,
+      id,
+      PriceableObjectType.MAGAZINE,
+    );
     return this.findById(id);
   }
 

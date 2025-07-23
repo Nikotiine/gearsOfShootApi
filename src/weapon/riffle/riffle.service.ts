@@ -67,7 +67,7 @@ export class RiffleService {
       buttColor: riffle.buttColor,
     });
     const created = await this.riffleRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistory(
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       riffle.priceHistory,
       created.id,
       PriceableObjectType.RIFFLE,
@@ -92,8 +92,13 @@ export class RiffleService {
       reference: this.createReference(riffle),
     });
 
-    await this.riffleRepository.save(entity);
-    return this.findById(id);
+    const updated = await this.riffleRepository.save(entity);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      riffle.priceHistory,
+      updated.id,
+      PriceableObjectType.RIFFLE,
+    );
+    return this.mapEntityToDto(updated, price);
   }
 
   public async findById(id: number): Promise<RiffleDto> {
@@ -171,6 +176,12 @@ export class RiffleService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.riffleRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.RIFFLE,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,
