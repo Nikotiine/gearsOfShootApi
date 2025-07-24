@@ -4,6 +4,7 @@ import { FactoryDto } from './factory.dto';
 import { CaliberDto } from './caliber.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
+import { CreatePriceHistoryDto } from './price-history.dto';
 
 export class CreateAmmunitionBodyTypeDto {
   @ApiProperty({
@@ -86,71 +87,18 @@ export class CreateAmmunitionDto {
     type: FactoryDto,
   })
   factory: FactoryDto;
+
+  @ApiProperty({
+    type: CreatePriceHistoryDto,
+  })
+  priceHistory: CreatePriceHistoryDto;
 }
 export class UpdateAmmunitionDto extends CreateAmmunitionDto {
   @ApiProperty()
   id: number;
 }
 
-export class AmmunitionDto {
-  @ApiProperty()
-  id: number;
+export class AmmunitionDto extends UpdateAmmunitionDto {
   @ApiProperty()
   reference: string;
-  @ApiProperty({
-    example: 'Sk Standard',
-  })
-  name: string;
-
-  @ApiProperty({
-    example:
-      'Une description de la munition, qualite / origine / conseil d utilisation',
-    nullable: true,
-  })
-  @IsOptional()
-  description: string;
-
-  @ApiProperty({
-    type: LegislationCategoryDto,
-    example: 'C',
-  })
-  category: LegislationCategoryDto;
-
-  @ApiProperty({
-    example: 320,
-  })
-  @IsNumber()
-  initialSpeed: number;
-
-  @ApiProperty({
-    type: PercussionTypeDto,
-  })
-  percussionType: PercussionTypeDto;
-
-  @ApiProperty({
-    example: 50,
-  })
-  @IsPositive()
-  @IsNumber()
-  packaging: number;
-
-  @ApiProperty({
-    type: AmmunitionHeadTypeDto,
-  })
-  headType: AmmunitionHeadTypeDto;
-
-  @ApiProperty({
-    type: AmmunitionBodyTypeDto,
-  })
-  bodyType: AmmunitionBodyTypeDto;
-
-  @ApiProperty({
-    type: FactoryDto,
-  })
-  factory: FactoryDto;
-
-  @ApiProperty({
-    type: CaliberDto,
-  })
-  caliber: CaliberDto;
 }

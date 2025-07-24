@@ -13,15 +13,19 @@ import {
 } from '../../dto/riffle.dto';
 
 import { CodeError } from '../../enum/code-error.enum';
-import { WeaponService } from '../weapon.service';
+
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
+import { PriceHistoryDto } from '../../dto/price-history.dto';
+import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+
 @Injectable()
 export class RiffleService {
   constructor(
     @InjectRepository(Riffle)
     private readonly riffleRepository: Repository<Riffle>,
-    private readonly weaponService: WeaponService,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
   public async insert(riffle: CreateRiffleDto): Promise<RiffleDto> {
@@ -44,12 +48,7 @@ export class RiffleService {
       threadedSize: riffle.threadedSize,
       adjustableTriggerMaxWeight: riffle.adjustableTriggerMaxWeight,
       adjustableTriggerMinWeight: riffle.adjustableTriggerMinWeight,
-      reference: await this.weaponService.createReference(
-        riffle.factory,
-        riffle.caliber,
-        riffle.name,
-        riffle.variation,
-      ),
+      reference: this.createReference(riffle),
       percussionType: riffle.percussionType,
       providedMagazineQuantity: riffle.providedMagazineQuantity,
       barrelSize: riffle.barrelSize,
@@ -68,9 +67,15 @@ export class RiffleService {
       buttColor: riffle.buttColor,
     });
     const created = await this.riffleRepository.save(entity);
-    return this.findById(created.id);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      riffle.priceHistory,
+      created.id,
+      PriceableObjectType.RIFFLE,
+    );
+    return this.mapEntityToDto(created, price);
   }
 
+  //TODO:Verifier si update ou preload est mieux
   public async update(id: number, riffle: UpdateRiffleDto): Promise<RiffleDto> {
     const entity = await this.riffleRepository.preload({
       id: id,
@@ -84,17 +89,16 @@ export class RiffleService {
       percussionType: riffle.percussionType,
       barrelType: riffle.barrelType,
       threadedSize: riffle.threadedSize,
-
-      reference: await this.weaponService.createReference(
-        riffle.factory,
-        riffle.caliber,
-        riffle.name,
-        riffle.variation,
-      ),
+      reference: this.createReference(riffle),
     });
 
-    await this.riffleRepository.save(entity);
-    return this.findById(id);
+    const updated = await this.riffleRepository.save(entity);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      riffle.priceHistory,
+      updated.id,
+      PriceableObjectType.RIFFLE,
+    );
+    return this.mapEntityToDto(updated, price);
   }
 
   public async findById(id: number): Promise<RiffleDto> {
@@ -140,8 +144,7 @@ export class RiffleService {
         railSize: true,
       },
     });
-    return riffles.length === 0 ? [] : this.mapEntityArrayToDtoArray(riffles);
-    // return this.mapEntityArrayToDtoArray(riffles);
+    return this.mapEntityArrayToDtoArray(riffles);
   }
 
   public async findAllByCategory(category: string): Promise<RiffleDto[]> {
@@ -173,6 +176,12 @@ export class RiffleService {
    */
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.riffleRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.RIFFLE,
+      );
+    }
     return {
       id: id,
       isSuccess: deleted.affected > 0,
@@ -197,7 +206,10 @@ export class RiffleService {
     return !!handGun;
   }
 
-  private mapEntityToDto(riffle: Riffle): RiffleDto {
+  private async mapEntityToDto(
+    riffle: Riffle,
+    price?: PriceHistoryDto,
+  ): Promise<RiffleDto> {
     return {
       id: riffle.id,
       barrelLength: riffle.barrelLength,
@@ -238,12 +250,25 @@ export class RiffleService {
         : [],
       buttColor: riffle.buttColor,
       barrelColor: riffle.barrelColor,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            riffle.id,
+            PriceableObjectType.RIFFLE,
+          ),
     };
   }
 
-  public mapEntityArrayToDtoArray(riffles: Riffle[]): RiffleDto[] {
-    return riffles.map((riffle) => {
+  public async mapEntityArrayToDtoArray(
+    riffles: Riffle[],
+  ): Promise<RiffleDto[]> {
+    const dtoPromises = riffles.map(async (riffle) => {
       return this.mapEntityToDto(riffle);
     });
+    return await Promise.all(dtoPromises);
+  }
+
+  private createReference(dto: CreateRiffleDto): string {
+    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
 }

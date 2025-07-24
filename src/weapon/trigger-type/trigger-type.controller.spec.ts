@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TriggerTypeController } from './trigger-type.controller';
+import { TriggerTypeService } from './trigger-type.service';
 
 describe('TriggerTypeController', () => {
   let controller: TriggerTypeController;
@@ -7,6 +8,14 @@ describe('TriggerTypeController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TriggerTypeController],
+      providers: [
+        {
+          provide: TriggerTypeService,
+          useValue: {
+            findAll: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TriggerTypeController>(TriggerTypeController);

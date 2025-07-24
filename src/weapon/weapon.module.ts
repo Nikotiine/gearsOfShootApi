@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { WeaponController } from './weapon.controller';
-import { WeaponService } from './weapon.service';
 import { WeaponTypeController } from './weapon-type/weapon-type.controller';
 import { WeaponTypeService } from './weapon-type/weapon-type.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -30,7 +28,6 @@ import { MLockOptionController } from './m-lock-option/m-lock-option.controller'
 
 @Module({
   controllers: [
-    WeaponController,
     WeaponTypeController,
     MagazineController,
     HandGunController,
@@ -41,7 +38,6 @@ import { MLockOptionController } from './m-lock-option/m-lock-option.controller'
     MLockOptionController,
   ],
   providers: [
-    WeaponService,
     WeaponTypeService,
     MagazineService,
     BarrelTypeService,

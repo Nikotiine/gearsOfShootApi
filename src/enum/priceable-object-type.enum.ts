@@ -1,0 +1,9 @@
+export enum PriceableObjectType {
+  AMMUNITION = 'AMMUNITION',
+  HANDGUN = 'HANDGUN',
+  OPTIC = 'OPTIC',
+  OPTIC_COLLAR = 'OPTIC_COLLAR',
+  RIFFLE = 'RIFFLE',
+  RDS = 'RDS',
+  MAGAZINE = 'MAGAZINE',
+}

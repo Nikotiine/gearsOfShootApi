@@ -10,14 +10,19 @@ import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
+import { PriceHistoryDto } from '../dto/price-history.dto';
+import { PriceHistoryService } from '../common/price-history/price-history.service';
+import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 
 @Injectable()
 export class OpticService {
   constructor(
     @InjectRepository(Optic)
     private readonly opticRepository: Repository<Optic>,
+    private readonly priceHistoryService: PriceHistoryService,
   ) {}
 
+  //TODO: Mettre la contrainte d unicite
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
     const entity = this.opticRepository.create({
       name: optic.name,
@@ -39,10 +44,16 @@ export class OpticService {
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
+      providedOpticCollarSize: optic.providedOpticCollarSize,
       reference: await this.createReference(optic),
     });
     const created = await this.opticRepository.save(entity);
-    return await this.findById(created.id);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      optic.priceHistory,
+      created.id,
+      PriceableObjectType.OPTIC,
+    );
+    return await this.mapEntityToDto(created, price);
   }
 
   public async findById(id: number): Promise<OpticDto> {
@@ -57,12 +68,17 @@ export class OpticService {
         focalPlane: true,
         opticUnit: true,
         type: true,
+        providedOpticCollarSize: true,
       },
     });
     if (!optic) {
       throw new NotFoundException(CodeError.OPTIC_NOT_FOUND);
     }
-    return this.mapOpticToOpticDto(optic);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      optic.id,
+      PriceableObjectType.OPTIC,
+    );
+    return this.mapEntityToDto(optic, price);
   }
 
   public async findAll(): Promise<OpticDto[]> {
@@ -74,11 +90,13 @@ export class OpticService {
         focalPlane: true,
         opticUnit: true,
         type: true,
+        providedOpticCollarSize: true,
       },
     });
     return this.mapOpticsArrayToOpticsDtoArray(optics);
   }
 
+  // TODO : Mettre en preload + save
   public async edit(id: number, optic: UpdateOpticDto): Promise<OpticDto> {
     const updatedResult = await this.opticRepository.update(id, {
       name: optic.name,
@@ -100,16 +118,28 @@ export class OpticService {
       length: optic.length,
       eyeRelief: optic.eyeRelief,
       isCollarsProvided: optic.isCollarsProvided,
+      providedOpticCollarSize: optic.providedOpticCollarSize,
       reference: await this.createReference(optic),
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
     }
+    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      optic.priceHistory,
+      id,
+      PriceableObjectType.OPTIC,
+    );
     return this.findById(id);
   }
 
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
     const deleted = await this.opticRepository.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.priceHistoryService.deletePriceHistory(
+        id,
+        PriceableObjectType.OPTIC,
+      );
+    }
     return {
       id: id,
       message: CodeSuccess.OPTIC_SOFT_DELETE,
@@ -117,20 +147,25 @@ export class OpticService {
     };
   }
 
-  private mapOpticsArrayToOpticsDtoArray(optics: Optic[]): OpticDto[] {
-    const opticsDtoArray: OpticDto[] = [];
-    for (const optic of optics) {
-      opticsDtoArray.push(this.mapOpticToOpticDto(optic));
-    }
-    return opticsDtoArray;
+  private async mapOpticsArrayToOpticsDtoArray(
+    optics: Optic[],
+  ): Promise<OpticDto[]> {
+    const dtoPromises = optics.map(async (optic) => {
+      return this.mapEntityToDto(optic);
+    });
+    return await Promise.all(dtoPromises);
   }
 
   /**
    * Transforme l objet Optic en {OpticDto}
    * @param optic {Optic}
+   * @param price
    * @private
    */
-  private mapOpticToOpticDto(optic: Optic): OpticDto {
+  private async mapEntityToDto(
+    optic: Optic,
+    price?: PriceHistoryDto,
+  ): Promise<OpticDto> {
     return {
       id: optic.id,
       name: optic.name,
@@ -153,6 +188,13 @@ export class OpticService {
       length: optic.length,
       isCollarsProvided: optic.isCollarsProvided,
       eyeRelief: optic.eyeRelief,
+      providedOpticCollarSize: optic.providedOpticCollarSize,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            optic.id,
+            PriceableObjectType.OPTIC,
+          ),
     };
   }
 

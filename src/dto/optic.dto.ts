@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { FactoryDto } from './factory.dto';
+import { CreatePriceHistoryDto } from './price-history.dto';
+import { RailSizeDto } from './rail-size.dto';
 
 export class FocalPlaneDto {
   @ApiProperty()
@@ -28,6 +36,8 @@ export class OpticTypeDto extends CreateOpticTypeDto {
 
 export class CreateOpticDto {
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty({
@@ -79,6 +89,7 @@ export class CreateOpticDto {
   maxParallax: number;
 
   @ApiProperty()
+  @IsBoolean()
   isParallax: boolean;
 
   @ApiProperty({
@@ -97,13 +108,28 @@ export class CreateOpticDto {
   opticType: OpticTypeDto;
 
   @ApiProperty()
+  @IsNumber()
   length: number;
 
   @ApiProperty()
+  @IsNumber()
   eyeRelief: number;
 
   @ApiProperty()
+  @IsBoolean()
   isCollarsProvided: boolean;
+
+  @ApiProperty({
+    type: CreatePriceHistoryDto,
+  })
+  priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty({
+    type: RailSizeDto,
+    nullable: true,
+  })
+  @IsOptional()
+  providedOpticCollarSize: RailSizeDto;
 }
 
 export class UpdateOpticDto extends CreateOpticDto {

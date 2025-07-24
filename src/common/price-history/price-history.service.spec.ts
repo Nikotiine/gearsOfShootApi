@@ -1,30 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MaterialService } from './material.service';
+import { PriceHistoryService } from './price-history.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Material } from '../../database/entity/material.entity';
+import { PriceHistory } from '../../database/entity/price-history.entity';
 
-describe('MaterialService', () => {
-  let service: MaterialService;
+describe('PriceHistoryService', () => {
+  let service: PriceHistoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MaterialService,
+        PriceHistoryService,
         {
-          provide: getRepositoryToken(Material),
+          provide: getRepositoryToken(PriceHistory),
           useValue: {
-            find: jest.fn(),
-            save: jest.fn(),
             create: jest.fn(),
-            softDelete: jest.fn(),
+            save: jest.fn(),
             findOne: jest.fn(),
-            update: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    service = module.get<MaterialService>(MaterialService);
+    service = module.get<PriceHistoryService>(PriceHistoryService);
   });
 
   it('should be defined', () => {

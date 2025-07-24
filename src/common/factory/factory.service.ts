@@ -86,6 +86,7 @@ export class FactoryService {
     if (isExist) {
       throw new BadRequestException(CodeError.FACTORY_NAME_IS_USED);
     }
+    //TODO: changer DTO
     const entity = this.factoryRepository.create({
       name: factory.name,
       description: factory.description,

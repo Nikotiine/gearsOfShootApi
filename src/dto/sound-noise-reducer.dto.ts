@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
+import { CreatePriceHistoryDto } from './price-history.dto';
 
 export class CreateSoundNoiseReducerDto {
   @ApiProperty({
@@ -48,6 +49,12 @@ export class CreateSoundNoiseReducerDto {
     description: 'Demontable pour nettoyage',
   })
   isCleanable: boolean;
+
+  @ApiProperty({
+    type: CreatePriceHistoryDto,
+    description: 'Historique des prix',
+  })
+  priceHistory: CreatePriceHistoryDto;
 }
 
 export class UpdateSoundNoiseReducerDto extends CreateSoundNoiseReducerDto {
