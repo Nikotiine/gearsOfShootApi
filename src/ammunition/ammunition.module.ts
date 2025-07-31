@@ -10,9 +10,14 @@ import { AmmunitionHeadType } from '../database/entity/ammunition-head-type.enti
 import { CommonModule } from '../common/common.module';
 import { AmmunitionHeadTypeController } from './ammunition-head-type/ammunition-head-type.controller';
 import { AmmunitionBodyTypeController } from './ammunition-body-type/ammunition-body-type.controller';
+import { SaleModule } from '../sale/sale.module';
 
 @Module({
-  controllers: [AmmunitionController, AmmunitionHeadTypeController, AmmunitionBodyTypeController],
+  controllers: [
+    AmmunitionController,
+    AmmunitionHeadTypeController,
+    AmmunitionBodyTypeController,
+  ],
   providers: [
     AmmunitionService,
     AmmunitionHeadTypeService,
@@ -25,6 +30,7 @@ import { AmmunitionBodyTypeController } from './ammunition-body-type/ammunition-
       AmmunitionHeadType,
     ]),
     CommonModule,
+    SaleModule,
   ],
 })
 export class AmmunitionModule {}

@@ -17,6 +17,9 @@ import { CodeSuccess } from '../enum/code-success.enum';
 import { PriceHistoryService } from '../common/price-history/price-history.service';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../dto/price-history.dto';
+import { StockService } from '../sale/stock/stock.service';
+import { StockableObject } from '../enum/stock-item.enum';
+import { StockDto } from '../dto/stock.dto';
 
 @Injectable()
 export class AmmunitionService {
@@ -24,6 +27,7 @@ export class AmmunitionService {
     @InjectRepository(Ammunition)
     private readonly ammunitionRepository: Repository<Ammunition>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   /**
@@ -52,13 +56,19 @@ export class AmmunitionService {
       initialSpeed: ammunition.initialSpeed,
       reference: await this.createReference(ammunition),
     });
-    const created = await this.ammunitionRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      ammunition.priceHistory,
+    const created: Ammunition = await this.ammunitionRepository.save(entity);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        ammunition.priceHistory,
+        created.id,
+        PriceableObjectType.AMMUNITION,
+      );
+    const stock: StockDto = await this.stockService.initStock(
+      ammunition.inStock,
+      StockableObject.AMMUNITION,
       created.id,
-      PriceableObjectType.AMMUNITION,
     );
-    return this.mapEntityToDto(created, price);
+    return this.mapEntityToDto(created, price, stock);
   }
 
   /**
@@ -109,7 +119,11 @@ export class AmmunitionService {
       ammunition.id,
       PriceableObjectType.AMMUNITION,
     );
-    return this.mapEntityToDto(ammunition, price);
+    const stock = await this.stockService.findLastByObjectId(
+      ammunition.id,
+      StockableObject.AMMUNITION,
+    );
+    return this.mapEntityToDto(ammunition, price, stock);
   }
 
   //TODO:Verifier si update ou preload est mieux
@@ -230,11 +244,13 @@ export class AmmunitionService {
    *
    * @param {Ammunition} ammunition - L'entité `Ammunition` à transformer.
    * @param price
+   * @param stock
    * @returns {Promise<AmmunitionDto>} Une promesse résolue avec le DTO correspondant.
    */
   private async mapEntityToDto(
     ammunition: Ammunition,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<AmmunitionDto> {
     return {
       id: ammunition.id,
@@ -254,6 +270,12 @@ export class AmmunitionService {
         : await this.priceHistoryService.findLastByObjectId(
             ammunition.id,
             PriceableObjectType.AMMUNITION,
+          ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            ammunition.id,
+            StockableObject.AMMUNITION,
           ),
     };
   }
