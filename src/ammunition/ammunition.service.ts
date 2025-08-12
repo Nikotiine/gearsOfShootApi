@@ -277,6 +277,7 @@ export class AmmunitionService {
             ammunition.id,
             StockableObject.AMMUNITION,
           ),
+      stock: stock,
     };
   }
 

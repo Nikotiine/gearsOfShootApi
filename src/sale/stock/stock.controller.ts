@@ -1,13 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { StockService } from './stock.service';
 import { CreateStockDto, StockDto } from '../../dto/stock.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { StockableObject } from '../../enum/stock-item.enum';
 
 @Controller('stock')
 @ApiTags('Stock')
@@ -27,5 +30,26 @@ export class StockController {
   })
   public async updateStock(@Body() stock: CreateStockDto): Promise<StockDto> {
     return this.stockService.insert(stock);
+  }
+
+  @Get('/by/:object/:objectId')
+  @ApiOkResponse({
+    type: StockDto,
+  })
+  @ApiParam({
+    name: 'object',
+  })
+  @ApiParam({
+    name: 'objectId',
+  })
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_BY_ID,
+    description: 'Stock par id d objet',
+  })
+  public async findByStockableObjectAndId(
+    @Param('object') object: StockableObject,
+    @Param('objectId') objectId: number,
+  ): Promise<StockDto> {
+    return this.stockService.findLastByObjectId(objectId, object);
   }
 }

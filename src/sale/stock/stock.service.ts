@@ -115,7 +115,7 @@ export class StockService {
     object: StockableObject,
   ): Promise<number> {
     const current = await this.findLastByObjectId(objectId, object);
-    return current.quantity;
+    return current ? current.quantity : 0;
   }
 
   private mapEntityToDto(entity: Stock): StockDto {

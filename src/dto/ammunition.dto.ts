@@ -105,4 +105,11 @@ export class UpdateAmmunitionDto extends CreateAmmunitionDto {
 export class AmmunitionDto extends UpdateAmmunitionDto {
   @ApiProperty()
   reference: string;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
 }
