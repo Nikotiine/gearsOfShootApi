@@ -25,6 +25,7 @@ import { BarrelTypeController } from './barrel-type/barrel-type.controller';
 import { ReloadModeController } from './reload-mode/reload-mode.controller';
 import { TriggerTypeController } from './trigger-type/trigger-type.controller';
 import { MLockOptionController } from './m-lock-option/m-lock-option.controller';
+import { SaleModule } from '../sale/sale.module';
 
 @Module({
   controllers: [
@@ -59,6 +60,7 @@ import { MLockOptionController } from './m-lock-option/m-lock-option.controller'
       MLockOption,
     ]),
     CommonModule,
+    SaleModule,
   ],
 })
 export class WeaponModule {}

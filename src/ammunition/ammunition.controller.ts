@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { AmmunitionService } from './ammunition.service';
@@ -23,6 +25,7 @@ import {
 } from '../dto/ammunition.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { SwaggerDescription } from '../enum/swagger-description.enum';
+import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 
 @Controller('ammunition')
 @ApiTags('Ammunition')
@@ -45,6 +48,7 @@ export class AmmunitionController {
   ): Promise<AmmunitionDto[]> {
     return this.ammunitionService.findByCaliber(caliberId);
   }
+
   @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
@@ -80,6 +84,8 @@ export class AmmunitionController {
   }
 
   @Post('')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Creation d une nouvelle munition en base de donnée',
@@ -97,6 +103,8 @@ export class AmmunitionController {
   }
 
   @Put(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -118,6 +126,8 @@ export class AmmunitionController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })

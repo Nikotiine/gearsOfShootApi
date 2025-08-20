@@ -1,9 +1,10 @@
-import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Stock } from './stock.entity';
 import { MovementType } from '../../enum/stock-item.enum';
+import { BaseAuditEntity } from './base-audit.entity';
+
 @Entity()
-export class StockHistory extends BaseEntity {
+export class StockHistory extends BaseAuditEntity {
   @ManyToOne(() => Stock, (stock) => stock.histories)
   stock: Stock;
 

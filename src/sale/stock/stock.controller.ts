@@ -1,16 +1,18 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { StockService } from './stock.service';
 import { CreateStockDto, StockDto } from '../../dto/stock.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { StockableObject } from '../../enum/stock-item.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 
 @Controller('stock')
 @ApiTags('Stock')
@@ -18,6 +20,8 @@ export class StockController {
   constructor(private readonly stockService: StockService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiBody({
     type: CreateStockDto,
   })

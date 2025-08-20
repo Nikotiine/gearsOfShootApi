@@ -5,6 +5,7 @@ import {
 
 import * as process from 'process';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuditSubscriber } from '../subscriber/audit.subscriber';
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
@@ -23,6 +24,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       },
       synchronize: false,
       logging: true,
+      subscribers: [AuditSubscriber],
     };
   },
 };
@@ -41,4 +43,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   },
   synchronize: false,
   logging: true,
+  subscribers: [AuditSubscriber],
 };

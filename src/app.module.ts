@@ -13,6 +13,9 @@ import { NodemailerModule } from './nodemailer/nodemailer.module';
 import { OpticModule } from './optic/optic.module';
 import { AccessoryModule } from './accessory/accessory.module';
 import { SaleModule } from './sale/sale.module';
+import { RequestContextService } from './request-context/request-context.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestContextInterceptor } from './request-context/request-context.interceptor';
 
 @Module({
   imports: [
@@ -29,6 +32,13 @@ import { SaleModule } from './sale/sale.module';
     SaleModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    RequestContextService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestContextInterceptor,
+    },
+  ],
 })
 export class AppModule {}

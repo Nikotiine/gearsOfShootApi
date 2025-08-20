@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OpticService } from './optic.service';
 import {
@@ -14,11 +15,13 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { SwaggerDescription } from '../enum/swagger-description.enum';
+import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 
 @Controller('optic')
 @ApiTags('Optic')
@@ -53,6 +56,8 @@ export class OpticController {
   }
 
   @Post('')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiCreatedResponse({
     type: OpticDto,
   })
@@ -68,6 +73,8 @@ export class OpticController {
   }
 
   @Put(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition de l optique',
@@ -89,6 +96,8 @@ export class OpticController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Suppression logique de l optique',

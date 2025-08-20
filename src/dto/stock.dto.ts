@@ -2,6 +2,7 @@ import { MovementType, StockableObject } from '../enum/stock-item.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Column } from 'typeorm';
 import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { UserDto } from './user.dto';
 
 export class CreateStockDto {
   @ApiProperty()
@@ -46,6 +47,18 @@ export class StockHistoriesDto {
 
   @ApiProperty()
   movement: MovementType;
+
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  reason: string;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
 }
 
 export class StockDto {

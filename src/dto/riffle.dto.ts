@@ -12,6 +12,8 @@ import { PercussionTypeDto } from './percussion-type.dto';
 import { MaterialDto } from './material.dto';
 import { ColorDto } from './color.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { StockDto } from './stock.dto';
+import { UserDto } from './user.dto';
 
 export class CreateRiffleDto {
   @ApiProperty({
@@ -199,6 +201,9 @@ export class CreateRiffleDto {
     type: CreatePriceHistoryDto,
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 export class UpdateRiffleDto extends CreateRiffleDto {
   @ApiProperty()
@@ -209,4 +214,27 @@ export class RiffleDto extends UpdateRiffleDto {
     example: 'CZ-457-VAR-22LR',
   })
   reference: string;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }

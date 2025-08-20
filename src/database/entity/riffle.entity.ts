@@ -16,11 +16,12 @@ import { WeaponBarrelType } from './weapon-barrel-type.entity';
 import { ThreadedSize } from './threaded-size.entity';
 import { PercussionType } from './percussion-type.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
-import { BaseEntity } from './base.entity';
 import { Material } from './material.entity';
 import { MLockOption } from './m-lock-option.entity';
+import { BaseAuditEntity } from './base-audit.entity';
+
 @Entity()
-export class Riffle extends BaseEntity {
+export class Riffle extends BaseAuditEntity {
   // Crosse reglable
   @Column()
   isAdjustableButt: boolean;

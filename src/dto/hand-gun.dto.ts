@@ -14,6 +14,8 @@ import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { StockDto } from './stock.dto';
+import { UserDto } from './user.dto';
 
 export class CreateHandGunDto {
   @ApiProperty({
@@ -215,6 +217,9 @@ export class CreateHandGunDto {
     type: CreatePriceHistoryDto,
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 export class UpdateHandGunDto extends CreateHandGunDto {
   @ApiProperty()
@@ -225,4 +230,26 @@ export class HandGunDto extends UpdateHandGunDto {
     example: 'CZ-457-VAR-22LR',
   })
   reference: string;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+  @ApiProperty()
+  updatedAt: Date;
 }

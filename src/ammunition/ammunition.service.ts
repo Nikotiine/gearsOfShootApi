@@ -54,7 +54,7 @@ export class AmmunitionService {
       percussionType: ammunition.percussionType,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
-      reference: await this.createReference(ammunition),
+      reference: this.createReference(ammunition),
     });
     const created: Ammunition = await this.ammunitionRepository.save(entity);
     const price: PriceHistoryDto =
@@ -91,6 +91,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(ammunitions);
@@ -110,6 +112,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!ammunition) {
@@ -126,33 +130,28 @@ export class AmmunitionService {
     return this.mapEntityToDto(ammunition, price, stock);
   }
 
-  //TODO:Verifier si update ou preload est mieux
   public async edit(
     id: number,
     ammunition: UpdateAmmunitionDto,
   ): Promise<AmmunitionDto> {
-    const updatedResult = await this.ammunitionRepository.update(id, {
+    const updatedResult = await this.ammunitionRepository.preload({
+      id,
+      ...ammunition,
+      reference: this.createReference(ammunition),
       caliber: ammunition.caliber,
       factory: ammunition.factory,
       headType: ammunition.headType,
       bodyType: ammunition.bodyType,
-      name: ammunition.name,
-      description: ammunition.description,
-      packaging: ammunition.packaging,
-      initialSpeed: ammunition.initialSpeed,
-      reference: await this.createReference(ammunition),
-      category: ammunition.category,
       percussionType: ammunition.percussionType,
     });
-    if (updatedResult.affected === 0) {
-      throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+    const updated: Ammunition =
+      await this.ammunitionRepository.save(updatedResult);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       ammunition.priceHistory,
       ammunition.id,
       PriceableObjectType.AMMUNITION,
     );
-    return this.findById(id);
+    return this.mapEntityToDto(updated, price);
   }
 
   /**
@@ -175,6 +174,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
 
@@ -205,9 +206,7 @@ export class AmmunitionService {
    * @private
    * @param ammunition {CreateAmmunitionDto}
    */
-  private async createReference(
-    ammunition: CreateAmmunitionDto,
-  ): Promise<string> {
+  private createReference(ammunition: CreateAmmunitionDto): string {
     return `${ammunition.factory.reference.toUpperCase()}-${ammunition.caliber.reference.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${ammunition.headType.reference.toUpperCase()}`;
   }
 
@@ -278,6 +277,10 @@ export class AmmunitionService {
             StockableObject.AMMUNITION,
           ),
       stock: stock,
+      createdBy: ammunition.createdBy,
+      updatedBy: ammunition.updatedBy,
+      createdAt: ammunition.createdAt,
+      updatedAt: ammunition.updatedAt,
     };
   }
 

@@ -19,7 +19,7 @@ export class StockService {
     private readonly stockHistoryRepository: Repository<StockHistory>,
   ) {}
 
-  public async insert(dto: CreateStockDto): Promise<Stock> {
+  public async insert(dto: CreateStockDto): Promise<StockDto> {
     let stock = await this.verifyIfExist(dto);
     if (!stock) {
       stock = this.stockRepository.create({
@@ -39,7 +39,7 @@ export class StockService {
     stock.quantity = newQuantity;
     const stockSaved = await this.stockRepository.save(stock);
     await this.saveHistory(stockSaved, dto, previousQuantity);
-    return stockSaved;
+    return this.mapEntityToDto(stockSaved);
   }
 
   private async verifyIfExist(dto: CreateStockDto): Promise<Stock | null> {
@@ -103,9 +103,15 @@ export class StockService {
         objectId: objectId,
       },
       relations: {
-        histories: true,
+        histories: {
+          createdBy: true,
+        },
       },
-      order: { createdAt: 'DESC' },
+      order: {
+        histories: {
+          createdAt: 'DESC',
+        },
+      },
     });
     return this.mapEntityToDto(entity);
   }
@@ -125,7 +131,9 @@ export class StockService {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       objectId: entity.objectId,
-      histories: this.mapHistoryEntityArrayToArrayDto(entity.histories),
+      histories: entity.histories
+        ? this.mapHistoryEntityArrayToArrayDto(entity.histories)
+        : [],
     };
   }
 
@@ -137,6 +145,8 @@ export class StockService {
       newQuantity: entity.newQuantity,
       previousQuantity: entity.previousQuantity,
       movement: entity.movement,
+      reason: entity.reason,
+      createdBy: entity.createdBy,
     };
   }
 

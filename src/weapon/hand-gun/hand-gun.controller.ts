@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { HandGunService } from './hand-gun.service';
@@ -23,6 +25,7 @@ import {
   UpdateHandGunDto,
 } from '../../dto/hand-gun.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 
 @Controller('hand-gun')
 @ApiTags('Hand-Gun')
@@ -76,6 +79,8 @@ export class HandGunController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d une nouvelle arme de poing',
@@ -91,6 +96,8 @@ export class HandGunController {
   }
 
   @Put(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d une arme de poing',
@@ -112,6 +119,8 @@ export class HandGunController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
