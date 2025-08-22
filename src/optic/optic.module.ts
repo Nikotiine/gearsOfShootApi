@@ -16,9 +16,16 @@ import { OpticCollarController } from './optic-collar/optic-collar.controller';
 import { OpticCollar } from '../database/entity/optic-collar.entity';
 import { OpticFocalPlaneController } from './optic-focal-plane/optic-focal-plane.controller';
 import { OpticUnitController } from './optic-unit/optic-unit.controller';
+import { SaleModule } from '../sale/sale.module';
 
 @Module({
-  controllers: [OpticController, OpticTypeController, OpticCollarController, OpticFocalPlaneController, OpticUnitController],
+  controllers: [
+    OpticController,
+    OpticTypeController,
+    OpticCollarController,
+    OpticFocalPlaneController,
+    OpticUnitController,
+  ],
   providers: [
     OpticService,
     OpticTypeService,
@@ -35,6 +42,7 @@ import { OpticUnitController } from './optic-unit/optic-unit.controller';
       OpticCollar,
     ]),
     CommonModule,
+    SaleModule,
   ],
 })
 export class OpticModule {}

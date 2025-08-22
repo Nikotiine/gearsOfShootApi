@@ -2,8 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { RailSizeDto } from './rail-size.dto';
 import { FactoryDto } from './factory.dto';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { UserDto } from './user.dto';
+import { StockDto } from './stock.dto';
 
 export class CreateOpticCollarDto {
   @ApiProperty()
@@ -38,6 +40,9 @@ export class CreateOpticCollarDto {
     type: CreatePriceHistoryDto,
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 
 export class UpdateOpticCollarDto extends CreateOpticCollarDto {
@@ -47,4 +52,26 @@ export class UpdateOpticCollarDto extends CreateOpticCollarDto {
 export class OpticCollarDto extends UpdateOpticCollarDto {
   @ApiProperty()
   reference: string;
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
 }

@@ -126,6 +126,7 @@ export class AmmunitionDto extends UpdateAmmunitionDto {
 
   @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   updatedAt: Date;
 }

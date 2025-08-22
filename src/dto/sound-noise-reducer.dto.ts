@@ -3,6 +3,9 @@ import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
 import { ThreadedSizeDto } from './threaded-size.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { UserDto } from './user.dto';
+import { StockDto } from './stock.dto';
+import { IsOptional } from 'class-validator';
 
 export class CreateSoundNoiseReducerDto {
   @ApiProperty({
@@ -55,6 +58,9 @@ export class CreateSoundNoiseReducerDto {
     description: 'Historique des prix',
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 
 export class UpdateSoundNoiseReducerDto extends CreateSoundNoiseReducerDto {
@@ -62,10 +68,30 @@ export class UpdateSoundNoiseReducerDto extends CreateSoundNoiseReducerDto {
   id: number;
 }
 
-export class SoundNoiseReducerDto extends CreateSoundNoiseReducerDto {
-  @ApiProperty()
-  id: number;
-
+export class SoundNoiseReducerDto extends UpdateSoundNoiseReducerDto {
   @ApiProperty()
   reference: string;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
 }

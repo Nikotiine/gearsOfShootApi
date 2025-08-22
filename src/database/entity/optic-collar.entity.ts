@@ -1,4 +1,3 @@
-import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Factory } from './factory.entity';

@@ -73,7 +73,7 @@ export class Optic extends BaseAuditEntity {
   @Column()
   isCollarsProvided: boolean;
 
-  @ManyToOne(() => RailSize, (size) => size.opticsWithProvidedCollar)
+  @ManyToOne(() => RailSize, { nullable: true })
   providedOpticCollarSize: RailSize;
 
   // Reference de l'objet

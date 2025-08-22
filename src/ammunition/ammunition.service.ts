@@ -146,11 +146,12 @@ export class AmmunitionService {
     });
     const updated: Ammunition =
       await this.ammunitionRepository.save(updatedResult);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      ammunition.priceHistory,
-      ammunition.id,
-      PriceableObjectType.AMMUNITION,
-    );
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        ammunition.priceHistory,
+        ammunition.id,
+        PriceableObjectType.AMMUNITION,
+      );
     return this.mapEntityToDto(updated, price);
   }
 
