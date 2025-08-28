@@ -47,6 +47,10 @@ export class PriceHistoryService {
   ): Promise<PriceHistoryDto> {
     const price = await this.priceHistoryRepository.findOne({
       where: { objectId: objectId, object: object },
+      relations: {
+        createdBy: true,
+        updatedBy: true,
+      },
       order: { createdAt: 'DESC' },
     });
     if (!price) {
@@ -61,6 +65,10 @@ export class PriceHistoryService {
   ): Promise<PriceHistoryDto[]> {
     return await this.priceHistoryRepository.find({
       where: { objectId: objectId, object: object },
+      relations: {
+        createdBy: true,
+        updatedBy: true,
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -84,6 +92,10 @@ export class PriceHistoryService {
   ): Promise<PriceHistoryDto> {
     const priceHistory = await this.priceHistoryRepository.findOne({
       where: { objectId: id, object },
+      relations: {
+        createdBy: true,
+        updatedBy: true,
+      },
       order: { createdAt: 'DESC' },
     });
 
@@ -109,6 +121,8 @@ export class PriceHistoryService {
       createdAt: new Date(),
       currentSalePrice: 0,
       id: 0,
+      createdBy: null,
+      updatedBy: null,
     };
   }
 
@@ -185,6 +199,8 @@ export class PriceHistoryService {
       objectId: entity.objectId,
       object: entity.object,
       createdAt: entity.createdAt,
+      updatedBy: entity.updatedBy,
+      createdBy: entity.createdBy,
     };
   }
 }

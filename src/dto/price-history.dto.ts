@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
+import { UserDto } from './user.dto';
 
 export class CreatePriceHistoryDto {
   @ApiProperty()
@@ -28,4 +29,18 @@ export class PriceHistoryDto extends PriceHistoryFromEntity {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty({
+    type: UserDto,
+    nullable: true,
+  })
+  @IsOptional()
+  createdBy?: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+    nullable: true,
+  })
+  @IsOptional()
+  updatedBy?: UserDto;
 }
