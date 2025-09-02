@@ -1,9 +1,10 @@
-import { BaseEntity } from './base.entity';
 import { Column, Entity } from 'typeorm';
 
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { BaseAuditEntity } from './base-audit.entity';
+
 @Entity()
-export class PriceHistory extends BaseEntity {
+export class PriceHistory extends BaseAuditEntity {
   @Column()
   supplierPrice: number;
 

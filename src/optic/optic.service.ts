@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
 import { Repository } from 'typeorm';
@@ -13,6 +9,9 @@ import { CodeError } from '../enum/code-error.enum';
 import { PriceHistoryDto } from '../dto/price-history.dto';
 import { PriceHistoryService } from '../common/price-history/price-history.service';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
+import { StockService } from '../sale/stock/stock.service';
+import { StockDto } from '../dto/stock.dto';
+import { StockableObject } from '../enum/stock-item.enum';
 
 @Injectable()
 export class OpticService {
@@ -20,6 +19,7 @@ export class OpticService {
     @InjectRepository(Optic)
     private readonly opticRepository: Repository<Optic>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   //TODO: Mettre la contrainte d unicite
@@ -53,7 +53,12 @@ export class OpticService {
       created.id,
       PriceableObjectType.OPTIC,
     );
-    return await this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      optic.inStock,
+      StockableObject.OPTIC,
+      created.id,
+    );
+    return await this.mapEntityToDto(created, price, stock);
   }
 
   public async findById(id: number): Promise<OpticDto> {
@@ -69,6 +74,8 @@ export class OpticService {
         opticUnit: true,
         type: true,
         providedOpticCollarSize: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!optic) {
@@ -96,40 +103,26 @@ export class OpticService {
     return this.mapOpticsArrayToOpticsDtoArray(optics);
   }
 
-  // TODO : Mettre en preload + save
   public async edit(id: number, optic: UpdateOpticDto): Promise<OpticDto> {
-    const updatedResult = await this.opticRepository.update(id, {
-      name: optic.name,
-      maxParallax: optic.maxParallax,
-      minParallax: optic.minParallax,
-      maxZoom: optic.maxZoom,
-      maxDrift: optic.maxDrift,
-      maxElevation: optic.maxElevation,
-      minZoom: optic.minZoom,
-      description: optic.description,
+    const updatedResult = await this.opticRepository.preload({
+      id,
+      ...optic,
       factory: optic.factory,
       valueOfOneClick: optic.valueOfOneClick,
-      lensDiameter: optic.lensDiameter,
-      isParallax: optic.isParallax,
-      bodyDiameter: optic.bodyDiameter,
       focalPlane: optic.focalPlane,
       opticUnit: optic.opticUnit,
       type: optic.opticType,
-      length: optic.length,
-      eyeRelief: optic.eyeRelief,
-      isCollarsProvided: optic.isCollarsProvided,
       providedOpticCollarSize: optic.providedOpticCollarSize,
       reference: await this.createReference(optic),
     });
-    if (updatedResult.affected === 0) {
-      throw new BadRequestException(CodeError.OPTIC_UPDATE_FAILED);
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      optic.priceHistory,
-      id,
-      PriceableObjectType.OPTIC,
-    );
-    return this.findById(id);
+    const updated: Optic = await this.opticRepository.save(updatedResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        optic.priceHistory,
+        id,
+        PriceableObjectType.OPTIC,
+      );
+    return this.mapEntityToDto(updated, price);
   }
 
   public async delete(id: number): Promise<ApiDeleteResponseDto> {
@@ -160,11 +153,13 @@ export class OpticService {
    * Transforme l objet Optic en {OpticDto}
    * @param optic {Optic}
    * @param price
+   * @param stock
    * @private
    */
   private async mapEntityToDto(
     optic: Optic,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<OpticDto> {
     return {
       id: optic.id,
@@ -195,6 +190,17 @@ export class OpticService {
             optic.id,
             PriceableObjectType.OPTIC,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            optic.id,
+            StockableObject.OPTIC,
+          ),
+      stock: stock,
+      createdBy: optic.createdBy,
+      updatedBy: optic.updatedBy,
+      createdAt: optic.createdAt,
+      updatedAt: optic.updatedAt,
     };
   }
 

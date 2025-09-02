@@ -17,6 +17,9 @@ import { CodeSuccess } from '../enum/code-success.enum';
 import { PriceHistoryService } from '../common/price-history/price-history.service';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../dto/price-history.dto';
+import { StockService } from '../sale/stock/stock.service';
+import { StockableObject } from '../enum/stock-item.enum';
+import { StockDto } from '../dto/stock.dto';
 
 @Injectable()
 export class AmmunitionService {
@@ -24,6 +27,7 @@ export class AmmunitionService {
     @InjectRepository(Ammunition)
     private readonly ammunitionRepository: Repository<Ammunition>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   /**
@@ -50,15 +54,21 @@ export class AmmunitionService {
       percussionType: ammunition.percussionType,
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
-      reference: await this.createReference(ammunition),
+      reference: this.createReference(ammunition),
     });
-    const created = await this.ammunitionRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      ammunition.priceHistory,
+    const created: Ammunition = await this.ammunitionRepository.save(entity);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        ammunition.priceHistory,
+        created.id,
+        PriceableObjectType.AMMUNITION,
+      );
+    const stock: StockDto = await this.stockService.initStock(
+      ammunition.inStock,
+      StockableObject.AMMUNITION,
       created.id,
-      PriceableObjectType.AMMUNITION,
     );
-    return this.mapEntityToDto(created, price);
+    return this.mapEntityToDto(created, price, stock);
   }
 
   /**
@@ -81,6 +91,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(ammunitions);
@@ -100,6 +112,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!ammunition) {
@@ -109,47 +123,47 @@ export class AmmunitionService {
       ammunition.id,
       PriceableObjectType.AMMUNITION,
     );
-    return this.mapEntityToDto(ammunition, price);
+    const stock = await this.stockService.findLastByObjectId(
+      ammunition.id,
+      StockableObject.AMMUNITION,
+    );
+    return this.mapEntityToDto(ammunition, price, stock);
   }
 
-  //TODO:Verifier si update ou preload est mieux
   public async edit(
     id: number,
     ammunition: UpdateAmmunitionDto,
   ): Promise<AmmunitionDto> {
-    const updatedResult = await this.ammunitionRepository.update(id, {
+    const updatedResult = await this.ammunitionRepository.preload({
+      id,
+      ...ammunition,
+      reference: this.createReference(ammunition),
       caliber: ammunition.caliber,
       factory: ammunition.factory,
       headType: ammunition.headType,
       bodyType: ammunition.bodyType,
-      name: ammunition.name,
-      description: ammunition.description,
-      packaging: ammunition.packaging,
-      initialSpeed: ammunition.initialSpeed,
-      reference: await this.createReference(ammunition),
-      category: ammunition.category,
       percussionType: ammunition.percussionType,
     });
-    if (updatedResult.affected === 0) {
-      throw new BadRequestException(CodeError.AMMUNITION_UPDATE_FAILED);
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      ammunition.priceHistory,
-      ammunition.id,
-      PriceableObjectType.AMMUNITION,
-    );
-    return this.findById(id);
+    const updated: Ammunition =
+      await this.ammunitionRepository.save(updatedResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        ammunition.priceHistory,
+        ammunition.id,
+        PriceableObjectType.AMMUNITION,
+      );
+    return this.mapEntityToDto(updated, price);
   }
 
   /**
    * Retourne les munition suivant leurs categorisation
    * @param category
    */
-  public async findByCategory(category: number): Promise<AmmunitionDto[]> {
+  public async findByCategory(category: string): Promise<AmmunitionDto[]> {
     const ammunitions: Ammunition[] = await this.ammunitionRepository.find({
       where: {
         category: {
-          id: category,
+          name: category,
         },
       },
       relations: {
@@ -161,6 +175,8 @@ export class AmmunitionService {
         headType: true,
         category: true,
         percussionType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
 
@@ -191,9 +207,7 @@ export class AmmunitionService {
    * @private
    * @param ammunition {CreateAmmunitionDto}
    */
-  private async createReference(
-    ammunition: CreateAmmunitionDto,
-  ): Promise<string> {
+  private createReference(ammunition: CreateAmmunitionDto): string {
     return `${ammunition.factory.reference.toUpperCase()}-${ammunition.caliber.reference.toUpperCase()}-${ammunition.name.substring(0, 4).toUpperCase()}-${ammunition.headType.reference.toUpperCase()}`;
   }
 
@@ -230,11 +244,13 @@ export class AmmunitionService {
    *
    * @param {Ammunition} ammunition - L'entité `Ammunition` à transformer.
    * @param price
+   * @param stock
    * @returns {Promise<AmmunitionDto>} Une promesse résolue avec le DTO correspondant.
    */
   private async mapEntityToDto(
     ammunition: Ammunition,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<AmmunitionDto> {
     return {
       id: ammunition.id,
@@ -255,6 +271,17 @@ export class AmmunitionService {
             ammunition.id,
             PriceableObjectType.AMMUNITION,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            ammunition.id,
+            StockableObject.AMMUNITION,
+          ),
+      stock: stock,
+      createdBy: ammunition.createdBy,
+      updatedBy: ammunition.updatedBy,
+      createdAt: ammunition.createdAt,
+      updatedAt: ammunition.updatedAt,
     };
   }
 

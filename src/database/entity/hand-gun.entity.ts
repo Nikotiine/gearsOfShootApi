@@ -1,10 +1,10 @@
 import {
-  Entity,
   Column,
-  ManyToOne,
-  ManyToMany,
+  Entity,
   JoinColumn,
   JoinTable,
+  ManyToMany,
+  ManyToOne,
 } from 'typeorm';
 import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Material } from './material.entity';
@@ -18,10 +18,10 @@ import { WeaponBarrelType } from './weapon-barrel-type.entity';
 import { ThreadedSize } from './threaded-size.entity';
 import { PercussionType } from './percussion-type.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
-import { BaseEntity } from './base.entity';
+import { BaseAuditEntity } from './base-audit.entity';
 
 @Entity()
-export class HandGun extends BaseEntity {
+export class HandGun extends BaseAuditEntity {
   // Optic Ready ( arme de poing )
   @Column({ default: false })
   isOpticReady: boolean;

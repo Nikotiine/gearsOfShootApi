@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpticCollar } from '../../database/entity/optic-collar.entity';
 import { Repository } from 'typeorm';
@@ -17,6 +13,9 @@ import { CodeError } from '../../enum/code-error.enum';
 import { PriceHistoryService } from '../../common/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
+import { StockableObject } from '../../enum/stock-item.enum';
+import { StockDto } from '../../dto/stock.dto';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class OpticCollarService {
@@ -24,6 +23,7 @@ export class OpticCollarService {
     @InjectRepository(OpticCollar)
     private readonly opticCollarRepository: Repository<OpticCollar>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   public async findAll(): Promise<OpticCollarDto[]> {
@@ -36,6 +36,7 @@ export class OpticCollarService {
     return this.mapOpticCollarArrayToDtoArray(collars);
   }
 
+  //TODO: Mettre la contrainte d unicite
   public async insert(collar: CreateOpticCollarDto): Promise<OpticCollarDto> {
     const entity = this.opticCollarRepository.create({
       diameter: collar.diameter,
@@ -53,7 +54,12 @@ export class OpticCollarService {
       created.id,
       PriceableObjectType.OPTIC_COLLAR,
     );
-    return this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      collar.inStock,
+      StockableObject.OPTIC_COLLAR,
+      created.id,
+    );
+    return this.mapEntityToDto(created, price, stock);
   }
 
   public async findById(id: number): Promise<OpticCollarDto> {
@@ -64,6 +70,8 @@ export class OpticCollarService {
       relations: {
         factory: true,
         railSize: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!collar) {
@@ -76,28 +84,26 @@ export class OpticCollarService {
     return this.mapEntityToDto(collar, price);
   }
 
-  // TODO : Mettre en preload + save
   public async edit(
     id: number,
     collar: UpdateOpticCollarDto,
   ): Promise<OpticCollarDto> {
-    const updatedResult = await this.opticCollarRepository.update(id, {
-      name: collar.name,
-      height: collar.height,
-      description: collar.description,
-      diameter: collar.diameter,
+    const updatedResult = await this.opticCollarRepository.preload({
+      id,
+      ...collar,
       factory: collar.factory,
       railSize: collar.railSize,
     });
-    if (updatedResult.affected === 0) {
-      throw new BadRequestException(CodeError.OPTIC_COLLAR_UPDATE_FAILED);
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      collar.priceHistory,
-      id,
-      PriceableObjectType.OPTIC_COLLAR,
-    );
-    return this.findById(id);
+    const updated: OpticCollar =
+      await this.opticCollarRepository.save(updatedResult);
+
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        collar.priceHistory,
+        id,
+        PriceableObjectType.OPTIC_COLLAR,
+      );
+    return this.mapEntityToDto(updated, price);
   }
 
   private async mapOpticCollarArrayToDtoArray(
@@ -112,6 +118,7 @@ export class OpticCollarService {
   private async mapEntityToDto(
     collar: OpticCollar,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<OpticCollarDto> {
     return {
       id: collar.id,
@@ -128,6 +135,17 @@ export class OpticCollarService {
             collar.id,
             PriceableObjectType.OPTIC_COLLAR,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            collar.id,
+            StockableObject.OPTIC_COLLAR,
+          ),
+      stock: stock,
+      createdBy: collar.createdBy,
+      updatedBy: collar.updatedBy,
+      createdAt: collar.createdAt,
+      updatedAt: collar.updatedAt,
     };
   }
 

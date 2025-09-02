@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { MagazineService } from './magazine.service';
@@ -23,6 +25,7 @@ import {
 } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 
 @Controller('magazine')
 @ApiTags('Magazine')
@@ -85,12 +88,14 @@ export class MagazineController {
     name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   public async findByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: number,
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
   ): Promise<WeaponMagazineDto[]> {
     return await this.magzineService.findByCategory(category);
   }
 
   @Post('')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajoute un nouveau chargeur en bdd et le retoune',
@@ -107,9 +112,11 @@ export class MagazineController {
     return await this.magzineService.insert(magazine);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiCreatedResponse({
     type: WeaponMagazineDto,
@@ -122,15 +129,17 @@ export class MagazineController {
     type: UpdateWeaponMagazineDto,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() magazine: UpdateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
     return await this.magzineService.edit(id, magazine);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
@@ -139,7 +148,9 @@ export class MagazineController {
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.magzineService.delete(id);
   }
 }

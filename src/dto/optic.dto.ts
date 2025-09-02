@@ -9,6 +9,8 @@ import {
 import { FactoryDto } from './factory.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
 import { RailSizeDto } from './rail-size.dto';
+import { UserDto } from './user.dto';
+import { StockDto } from './stock.dto';
 
 export class FocalPlaneDto {
   @ApiProperty()
@@ -130,6 +132,9 @@ export class CreateOpticDto {
   })
   @IsOptional()
   providedOpticCollarSize: RailSizeDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 
 export class UpdateOpticDto extends CreateOpticDto {
@@ -137,9 +142,29 @@ export class UpdateOpticDto extends CreateOpticDto {
   id: number;
 }
 
-export class OpticDto extends CreateOpticDto {
+export class OpticDto extends UpdateOpticDto {
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
   @ApiProperty()
-  id: number;
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
 
   @ApiProperty()
   reference: string;

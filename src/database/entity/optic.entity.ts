@@ -1,15 +1,21 @@
-import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { Factory } from './factory.entity';
 import { OpticType } from './optic-type.entity';
 import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
-import { OpticCollar } from './optic-collar.entity';
-import { PriceHistory } from './price-history.entity';
 import { RailSize } from './rail-size.entity';
-//TODO:Mettre l unicite en place
+import { BaseAuditEntity } from './base-audit.entity';
+
 @Entity()
-export class Optic extends BaseEntity {
+@Unique([
+  'name',
+  'factory',
+  'minZoom',
+  'maxZoom',
+  'bodyDiameter',
+  'lensDiameter',
+])
+export class Optic extends BaseAuditEntity {
   @Column()
   name: string;
 
@@ -67,7 +73,7 @@ export class Optic extends BaseEntity {
   @Column()
   isCollarsProvided: boolean;
 
-  @ManyToOne(() => RailSize, (size) => size.opticsWithProvidedCollar)
+  @ManyToOne(() => RailSize, { nullable: true })
   providedOpticCollarSize: RailSize;
 
   // Reference de l'objet

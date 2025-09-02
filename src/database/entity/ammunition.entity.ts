@@ -1,16 +1,15 @@
-import { BaseEntity } from './base.entity';
-import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { Factory } from './factory.entity';
 import { Caliber } from './caliber.entity';
 import { AmmunitionHeadType } from './ammunition-head-type.entity';
 import { AmmunitionBodyType } from './ammunition-body-type.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { PercussionType } from './percussion-type.entity';
-import { PriceHistory } from './price-history.entity';
+import { BaseAuditEntity } from './base-audit.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'packaging'])
-export class Ammunition extends BaseEntity {
+export class Ammunition extends BaseAuditEntity {
   @Column()
   name: string;
 

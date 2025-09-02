@@ -19,6 +19,9 @@ import { CodeSuccess } from '../../enum/code-success.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { PriceHistoryService } from '../../common/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { StockDto } from '../../dto/stock.dto';
+import { StockableObject } from '../../enum/stock-item.enum';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class RiffleService {
@@ -26,6 +29,7 @@ export class RiffleService {
     @InjectRepository(Riffle)
     private readonly riffleRepository: Repository<Riffle>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   public async insert(riffle: CreateRiffleDto): Promise<RiffleDto> {
@@ -72,10 +76,14 @@ export class RiffleService {
       created.id,
       PriceableObjectType.RIFFLE,
     );
-    return this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      riffle.inStock,
+      StockableObject.RIFFLE,
+      created.id,
+    );
+    return this.mapEntityToDto(created, price, stock);
   }
 
-  //TODO:Verifier si update ou preload est mieux
   public async update(id: number, riffle: UpdateRiffleDto): Promise<RiffleDto> {
     const entity = await this.riffleRepository.preload({
       id: id,
@@ -102,7 +110,7 @@ export class RiffleService {
   }
 
   public async findById(id: number): Promise<RiffleDto> {
-    const riffleEntity = await this.riffleRepository.findOne({
+    const riffle = await this.riffleRepository.findOne({
       where: {
         id: id,
       },
@@ -121,12 +129,22 @@ export class RiffleService {
         railSize: true,
         mLockOptions: true,
         barrelColor: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
-    if (!riffleEntity) {
+    if (!riffle) {
       throw new NotFoundException(CodeError.WEAPON_NOT_FOUND);
     }
-    return this.mapEntityToDto(riffleEntity);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      riffle.id,
+      PriceableObjectType.RIFFLE,
+    );
+    const stock = await this.stockService.findLastByObjectId(
+      riffle.id,
+      StockableObject.RIFFLE,
+    );
+    return this.mapEntityToDto(riffle, price, stock);
   }
 
   public async findAll(): Promise<RiffleDto[]> {
@@ -142,6 +160,8 @@ export class RiffleService {
         type: true,
         barrelType: true,
         railSize: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(riffles);
@@ -165,6 +185,8 @@ export class RiffleService {
         type: true,
         barrelType: true,
         railSize: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(riffles);
@@ -209,6 +231,7 @@ export class RiffleService {
   private async mapEntityToDto(
     riffle: Riffle,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<RiffleDto> {
     return {
       id: riffle.id,
@@ -256,6 +279,17 @@ export class RiffleService {
             riffle.id,
             PriceableObjectType.RIFFLE,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            riffle.id,
+            StockableObject.RIFFLE,
+          ),
+      stock: stock,
+      createdBy: riffle.createdBy,
+      updatedBy: riffle.updatedBy,
+      createdAt: riffle.createdAt,
+      updatedAt: riffle.updatedAt,
     };
   }
 

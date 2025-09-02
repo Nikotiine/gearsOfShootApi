@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponMagazine } from '../../database/entity/weapon-magazine.entity';
 import { Repository } from 'typeorm';
@@ -9,12 +9,14 @@ import {
 } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
-import { CodeError } from '../../enum/code-error.enum';
 import { RiffleService } from '../riffle/riffle.service';
 import { HandGunService } from '../hand-gun/hand-gun.service';
 import { PriceHistoryService } from '../../common/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
+import { StockableObject } from '../../enum/stock-item.enum';
+import { StockDto } from '../../dto/stock.dto';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class MagazineService {
@@ -24,6 +26,7 @@ export class MagazineService {
     private readonly riffleService: RiffleService,
     private readonly handGunService: HandGunService,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   /**
@@ -61,7 +64,12 @@ export class MagazineService {
       created.id,
       PriceableObjectType.MAGAZINE,
     );
-    return this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      magazine.inStock,
+      StockableObject.MAGAZINE,
+      created.id,
+    );
+    return this.mapEntityToDto(created, price, stock);
   }
 
   public async findById(id: number): Promise<WeaponMagazineDto> {
@@ -74,6 +82,8 @@ export class MagazineService {
         caliber: true,
         factory: true,
         category: true,
+        createdBy: true,
+        updatedBy: true,
         handguns: {
           factory: true,
           type: true,
@@ -106,12 +116,14 @@ export class MagazineService {
       message: CodeSuccess.MAGAZINE_DELETE,
     };
   }
-  // TODO: Changer en preload + save
+
   public async edit(
     id: number,
     magazine: UpdateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
-    const updateResult = await this.weaponMagazineRepository.update(id, {
+    const updateResult = await this.weaponMagazineRepository.preload({
+      id,
+      ...magazine,
       caliber: magazine.caliber,
       factory: magazine.factory,
       body: magazine.body,
@@ -123,15 +135,15 @@ export class MagazineService {
       category: magazine.category,
       forWeaponType: magazine.weaponType,
     });
-    if (updateResult.affected === 0) {
-      throw new BadRequestException(CodeError.WEAPON_MAGAZINE_UPDATE_FAILED);
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      magazine.priceHistory,
-      id,
-      PriceableObjectType.MAGAZINE,
-    );
-    return this.findById(id);
+    const updated: WeaponMagazine =
+      await this.weaponMagazineRepository.save(updateResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        magazine.priceHistory,
+        id,
+        PriceableObjectType.MAGAZINE,
+      );
+    return this.mapEntityToDto(updated, price);
   }
 
   /**
@@ -151,6 +163,7 @@ export class MagazineService {
   private async mapEntityToDto(
     magazine: WeaponMagazine,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<WeaponMagazineDto> {
     return {
       id: magazine.id,
@@ -177,6 +190,17 @@ export class MagazineService {
             magazine.id,
             PriceableObjectType.MAGAZINE,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            magazine.id,
+            StockableObject.MAGAZINE,
+          ),
+      stock: stock,
+      createdBy: magazine.createdBy,
+      updatedBy: magazine.updatedBy,
+      createdAt: magazine.createdAt,
+      updatedAt: magazine.updatedAt,
     };
   }
 
@@ -197,6 +221,8 @@ export class MagazineService {
         handguns: true,
         riffles: true,
         forWeaponType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
@@ -219,16 +245,18 @@ export class MagazineService {
         handguns: true,
         riffles: true,
         forWeaponType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
   }
 
-  public async findByCategory(category: number): Promise<WeaponMagazineDto[]> {
+  public async findByCategory(category: string): Promise<WeaponMagazineDto[]> {
     const magazines = await this.weaponMagazineRepository.find({
       where: {
         category: {
-          id: category,
+          name: category,
         },
       },
       relations: {
@@ -239,6 +267,8 @@ export class MagazineService {
         handguns: true,
         riffles: true,
         forWeaponType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);

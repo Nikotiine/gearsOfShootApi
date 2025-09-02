@@ -1,11 +1,10 @@
-import { BaseEntity } from './base.entity';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
+  Unique,
 } from 'typeorm';
 
 import { Factory } from './factory.entity';
@@ -15,8 +14,11 @@ import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { WeaponType } from './weapon-type.entity';
+import { BaseAuditEntity } from './base-audit.entity';
+
 @Entity()
-export class WeaponMagazine extends BaseEntity {
+@Unique(['factory', 'category', 'body', 'capacity', 'caliber'])
+export class WeaponMagazine extends BaseAuditEntity {
   @ManyToOne(() => LegislationCategory, (category) => category.magazines)
   category: LegislationCategory;
 

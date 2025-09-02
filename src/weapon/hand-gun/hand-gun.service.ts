@@ -17,6 +17,9 @@ import { CodeSuccess } from '../../enum/code-success.enum';
 import { PriceHistoryService } from '../../common/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
+import { StockService } from '../../sale/stock/stock.service';
+import { StockDto } from '../../dto/stock.dto';
+import { StockableObject } from '../../enum/stock-item.enum';
 
 @Injectable()
 export class HandGunService {
@@ -24,6 +27,7 @@ export class HandGunService {
     @InjectRepository(HandGun)
     private readonly handGunRepository: Repository<HandGun>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   public async insert(handgun: CreateHandGunDto): Promise<HandGunDto> {
@@ -69,7 +73,13 @@ export class HandGunService {
       created.id,
       PriceableObjectType.HANDGUN,
     );
-    return this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      handgun.inStock,
+      StockableObject.HANDGUN,
+      created.id,
+    );
+
+    return this.mapEntityToDto(created, price, stock);
   }
 
   public async update(
@@ -127,12 +137,22 @@ export class HandGunService {
         barrelType: true,
         providedOpticReadyPlate: true,
         barrelColor: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!handGunEntity) {
       throw new NotFoundException(CodeError.WEAPON_NOT_FOUND);
     }
-    return this.mapEntityToDto(handGunEntity);
+    const price = await this.priceHistoryService.findLastByObjectId(
+      handGunEntity.id,
+      PriceableObjectType.HANDGUN,
+    );
+    const stock = await this.stockService.findLastByObjectId(
+      handGunEntity.id,
+      StockableObject.HANDGUN,
+    );
+    return this.mapEntityToDto(handGunEntity, price, stock);
   }
 
   public async findAll(): Promise<HandGunDto[]> {
@@ -150,6 +170,8 @@ export class HandGunService {
         caliber: true,
         type: true,
         barrelType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(handGuns);
@@ -175,6 +197,8 @@ export class HandGunService {
         caliber: true,
         type: true,
         barrelType: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     return this.mapEntityArrayToDtoArray(handGuns);
@@ -219,6 +243,7 @@ export class HandGunService {
   private async mapEntityToDto(
     handGun: HandGun,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<HandGunDto> {
     return {
       id: handGun.id,
@@ -259,6 +284,17 @@ export class HandGunService {
             handGun.id,
             PriceableObjectType.HANDGUN,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            handGun.id,
+            StockableObject.HANDGUN,
+          ),
+      stock: stock,
+      createdBy: handGun.createdBy,
+      updatedBy: handGun.updatedBy,
+      createdAt: handGun.createdAt,
+      updatedAt: handGun.updatedAt,
     };
   }
 

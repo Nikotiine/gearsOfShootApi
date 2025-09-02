@@ -5,6 +5,8 @@ import { CaliberDto } from './caliber.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
 import { PercussionTypeDto } from './percussion-type.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { StockDto } from './stock.dto';
+import { UserDto } from './user.dto';
 
 export class CreateAmmunitionBodyTypeDto {
   @ApiProperty({
@@ -92,6 +94,9 @@ export class CreateAmmunitionDto {
     type: CreatePriceHistoryDto,
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 export class UpdateAmmunitionDto extends CreateAmmunitionDto {
   @ApiProperty()
@@ -101,4 +106,27 @@ export class UpdateAmmunitionDto extends CreateAmmunitionDto {
 export class AmmunitionDto extends UpdateAmmunitionDto {
   @ApiProperty()
   reference: string;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }

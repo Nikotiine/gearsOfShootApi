@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OpticCollarService } from './optic-collar.service';
 import {
@@ -14,6 +15,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import {
@@ -23,6 +25,7 @@ import {
 } from '../../dto/optic-collar.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 
 @Controller('optic-collar')
 @ApiTags('Optic-Collar')
@@ -35,7 +38,7 @@ export class OpticCollarController {
   })
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
-    description: 'Liste complete des collier d optique',
+    description: 'Liste complete des colliers d optique',
   })
   public async findAll(): Promise<OpticCollarDto[]> {
     return this.opticCollarService.findAll();
@@ -44,7 +47,7 @@ export class OpticCollarController {
   @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
-    description: 'Retourne le detail de l optique',
+    description: 'Retourne le detail du collier optique',
   })
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
@@ -57,6 +60,8 @@ export class OpticCollarController {
   }
 
   @Post('')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiBody({
     type: CreateOpticCollarDto,
   })
@@ -74,9 +79,11 @@ export class OpticCollarController {
   }
 
   @Put(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
-    description: 'Edition de l optique',
+    description: 'Edition du collier optique',
   })
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
@@ -95,9 +102,11 @@ export class OpticCollarController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
-    description: 'Suppression logique de l optique',
+    description: 'Suppression logique du collier optique',
   })
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,

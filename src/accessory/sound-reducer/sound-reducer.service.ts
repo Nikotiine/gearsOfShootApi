@@ -17,6 +17,9 @@ import { CodeError } from '../../enum/code-error.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { PriceHistoryService } from '../../common/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
+import { StockService } from '../../sale/stock/stock.service';
+import { StockDto } from '../../dto/stock.dto';
+import { StockableObject } from '../../enum/stock-item.enum';
 
 @Injectable()
 export class SoundReducerService {
@@ -24,6 +27,7 @@ export class SoundReducerService {
     @InjectRepository(SoundNoiseReducer)
     private readonly soundNoiseReducerRepository: Repository<SoundNoiseReducer>,
     private readonly priceHistoryService: PriceHistoryService,
+    private readonly stockService: StockService,
   ) {}
 
   /**
@@ -63,7 +67,12 @@ export class SoundReducerService {
       created.id,
       PriceableObjectType.RDS,
     );
-    return await this.mapEntityToDto(created, price);
+    const stock: StockDto = await this.stockService.initStock(
+      soundNoiseReducer.inStock,
+      StockableObject.RDS,
+      created.id,
+    );
+    return await this.mapEntityToDto(created, price, stock);
   }
 
   public async findById(id: number): Promise<SoundNoiseReducerDto> {
@@ -75,6 +84,8 @@ export class SoundReducerService {
         caliber: true,
         factory: true,
         threadedSize: true,
+        createdBy: true,
+        updatedBy: true,
       },
     });
     if (!soundNoiseReducer) {
@@ -110,30 +121,23 @@ export class SoundReducerService {
     soundNoiseReducer: UpdateSoundNoiseReducerDto,
   ): Promise<SoundNoiseReducerDto> {
     await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
-    const updateResult = await this.soundNoiseReducerRepository.update(id, {
-      name: soundNoiseReducer.name,
-      length: soundNoiseReducer.length,
+    const updateResult = await this.soundNoiseReducerRepository.preload({
+      id,
+      ...soundNoiseReducer,
       factory: soundNoiseReducer.factory,
       threadedSize: soundNoiseReducer.threadedSize,
       caliber: soundNoiseReducer.caliber,
       description: soundNoiseReducer.description,
       reference: await this.createReference(soundNoiseReducer),
-      isCleanable: soundNoiseReducer.isCleanable,
-      diameter: soundNoiseReducer.diameter,
-      chicane: soundNoiseReducer.chicane,
-      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
     });
-    if (updateResult.affected === 0) {
-      throw new BadRequestException(
-        CodeError.SOUND_NOISE_REDUCER_UPDATE_FAILED,
-      );
-    }
-    await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+    const updated: SoundNoiseReducer =
+      await this.soundNoiseReducerRepository.save(updateResult);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
       soundNoiseReducer.priceHistory,
       id,
       PriceableObjectType.RDS,
     );
-    return await this.findById(id);
+    return this.mapEntityToDto(updated, price);
   }
 
   private async mapArrayEntityToArrayDto(
@@ -153,11 +157,13 @@ export class SoundReducerService {
    * @private
    * @param {SoundNoiseReducer} soundNoiseReducer - L'entité représentant un réducteur de son.
    * @param price
+   * @param stock
    * @returns {SoundNoiseReducerDto} L'objet DTO contenant les données du réducteur de son.
    */
   private async mapEntityToDto(
     soundNoiseReducer: SoundNoiseReducer,
     price?: PriceHistoryDto,
+    stock?: StockDto,
   ): Promise<SoundNoiseReducerDto> {
     return {
       id: soundNoiseReducer.id,
@@ -178,6 +184,17 @@ export class SoundReducerService {
             soundNoiseReducer.id,
             PriceableObjectType.RDS,
           ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            soundNoiseReducer.id,
+            StockableObject.RDS,
+          ),
+      stock: stock,
+      createdBy: soundNoiseReducer.createdBy,
+      updatedBy: soundNoiseReducer.updatedBy,
+      createdAt: soundNoiseReducer.createdAt,
+      updatedAt: soundNoiseReducer.updatedAt,
     };
   }
 

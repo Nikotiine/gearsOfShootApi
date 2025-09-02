@@ -9,6 +9,8 @@ import { HandGunDto } from './hand-gun.dto';
 import { WeaponTypeDto } from './weapon.dto';
 import { IsOptional } from 'class-validator';
 import { CreatePriceHistoryDto } from './price-history.dto';
+import { UserDto } from './user.dto';
+import { StockDto } from './stock.dto';
 export class CreateWeaponMagazineDto {
   @ApiProperty({
     description: 'Capacite en munition',
@@ -83,6 +85,9 @@ export class CreateWeaponMagazineDto {
     description: 'Historique des prix',
   })
   priceHistory: CreatePriceHistoryDto;
+
+  @ApiProperty()
+  inStock: number;
 }
 export class UpdateWeaponMagazineDto extends CreateWeaponMagazineDto {
   @ApiProperty()
@@ -91,4 +96,27 @@ export class UpdateWeaponMagazineDto extends CreateWeaponMagazineDto {
 export class WeaponMagazineDto extends UpdateWeaponMagazineDto {
   @ApiProperty()
   reference: string;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  createdBy: UserDto;
+
+  @ApiProperty({
+    type: UserDto,
+  })
+  updatedBy: UserDto;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty({
+    nullable: true,
+    type: StockDto,
+  })
+  @IsOptional()
+  stock?: StockDto;
 }
