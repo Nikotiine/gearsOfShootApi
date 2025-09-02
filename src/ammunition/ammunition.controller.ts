@@ -78,7 +78,7 @@ export class AmmunitionController {
     type: [AmmunitionDto],
   })
   public async findByCategory(
-    @Param('category') category: number,
+    @Param('category') category: string,
   ): Promise<AmmunitionDto[]> {
     return this.ammunitionService.findByCategory(category);
   }

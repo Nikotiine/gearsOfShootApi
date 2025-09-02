@@ -88,7 +88,7 @@ export class MagazineController {
     name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
   })
   public async findByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: number,
+    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
   ): Promise<WeaponMagazineDto[]> {
     return await this.magzineService.findByCategory(category);
   }
