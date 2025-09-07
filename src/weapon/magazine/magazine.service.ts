@@ -11,7 +11,7 @@ import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { RiffleService } from '../riffle/riffle.service';
 import { HandGunService } from '../hand-gun/hand-gun.service';
-import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceHistoryService } from '../../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { StockableObject } from '../../enum/stock-item.enum';

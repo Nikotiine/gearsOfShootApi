@@ -50,6 +50,7 @@ export class PriceHistoryService {
       relations: {
         createdBy: true,
         updatedBy: true,
+        supplier: true,
       },
       order: { createdAt: 'DESC' },
     });
@@ -68,6 +69,7 @@ export class PriceHistoryService {
       relations: {
         createdBy: true,
         updatedBy: true,
+        supplier: true,
       },
       order: { createdAt: 'DESC' },
     });
@@ -95,6 +97,7 @@ export class PriceHistoryService {
       relations: {
         createdBy: true,
         updatedBy: true,
+        supplier: true,
       },
       order: { createdAt: 'DESC' },
     });
@@ -103,7 +106,8 @@ export class PriceHistoryService {
       priceHistory &&
       dto.supplierPrice === priceHistory.supplierPrice &&
       dto.currentSalePrice === priceHistory.currentSalePrice &&
-      dto.recommendedSalePrice === priceHistory.recommendedSalePrice;
+      dto.recommendedSalePrice === priceHistory.recommendedSalePrice &&
+      dto.supplier.id === priceHistory.supplier.id;
 
     if (!priceHistory || !isSamePrice) {
       return await this.addPriceHistory(dto, id, object);
@@ -123,6 +127,7 @@ export class PriceHistoryService {
       id: 0,
       createdBy: null,
       updatedBy: null,
+      supplier: null,
     };
   }
 
@@ -145,6 +150,7 @@ export class PriceHistoryService {
       recommendedSalePrice: dto.recommendedSalePrice,
       objectId: objectId,
       object: object,
+      supplier: dto.supplier,
     };
   }
 
@@ -201,6 +207,7 @@ export class PriceHistoryService {
       createdAt: entity.createdAt,
       updatedBy: entity.updatedBy,
       createdBy: entity.createdBy,
+      supplier: entity.supplier ? entity.supplier : null,
     };
   }
 }

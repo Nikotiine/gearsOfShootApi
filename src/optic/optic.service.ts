@@ -7,7 +7,7 @@ import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
 import { PriceHistoryDto } from '../dto/price-history.dto';
-import { PriceHistoryService } from '../common/price-history/price-history.service';
+import { PriceHistoryService } from '../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 import { StockService } from '../sale/stock/stock.service';
 import { StockDto } from '../dto/stock.dto';
