@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SupplierDto } from './supplier.dto';
-import { ItemInvoiceSupplierDto } from './item-invoice-supplier.dto';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from './item-invoice-supplier.dto';
+import { IsString } from 'class-validator';
+import { UserDto } from './user.dto';
 
-export class InvoiceSupplierDto {
+export class CreateInvoiceSupplierDto {
   @ApiProperty()
+  @IsString()
   comment: string;
 
   @ApiProperty({
@@ -15,10 +21,56 @@ export class InvoiceSupplierDto {
   dueDate: Date;
 
   @ApiProperty()
-  supplierPriceHT: number;
+  shippingCost: number;
 
   @ApiProperty({
-    type: [ItemInvoiceSupplierDto],
+    type: [CreateItemInvoiceSupplierDto],
   })
-  items: ItemInvoiceSupplierDto[];
+  items: CreateItemInvoiceSupplierDto[];
+}
+export class UpdateInvoiceSupplierDto extends CreateInvoiceSupplierDto {
+  @ApiProperty()
+  invoiceSupplierReference: string;
+
+  @ApiProperty()
+  id: number;
+}
+export class InvoiceSupplierDto {
+  @ApiProperty()
+  @IsString()
+  comment: string;
+
+  @ApiProperty({
+    type: SupplierDto,
+  })
+  supplier: SupplierDto;
+
+  @ApiProperty()
+  dueDate: Date;
+
+  @ApiProperty()
+  shippingCost: number;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty()
+  createdBy: UserDto;
+
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  internalInvoiceReference: string;
+
+  @ApiProperty()
+  invoiceSupplierReference: string;
+
+  @ApiProperty({
+    type: [ItemInvoice],
+  })
+  items: ItemInvoice[];
 }

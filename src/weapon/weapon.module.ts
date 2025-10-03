@@ -62,5 +62,6 @@ import { SaleModule } from '../sale/sale.module';
     CommonModule,
     SaleModule,
   ],
+  exports: [HandGunService, RiffleService, MagazineService],
 })
 export class WeaponModule {}

@@ -1,6 +1,8 @@
-import { BaseEntity, Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceSupplier } from './invoice-supplier.entity';
+import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
+import { BaseEntity } from './base.entity';
 @Entity()
 export class ItemInvoiceSupplier extends BaseEntity {
   @Column({ enum: StockableObject })
@@ -19,7 +21,7 @@ export class ItemInvoiceSupplier extends BaseEntity {
   totalPriceHT: number;
 
   @Column()
-  accountHR: number;
+  accountHT: number;
 
   @Column()
   internalInvoiceReference: string;
@@ -29,4 +31,10 @@ export class ItemInvoiceSupplier extends BaseEntity {
 
   @ManyToOne(() => InvoiceSupplier, (invoice) => invoice.items)
   invoice: InvoiceSupplier;
+
+  @Column({ default: 'IN_ORDER' })
+  status: InvoiceOrderStatus;
+
+  @Column()
+  shipmentNumber: string;
 }

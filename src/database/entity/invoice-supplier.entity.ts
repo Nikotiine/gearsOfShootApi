@@ -28,4 +28,14 @@ export class InvoiceSupplier extends BaseAuditEntity {
 
   @OneToMany(() => ItemInvoiceSupplier, (item) => item.invoice)
   items: ItemInvoiceSupplier[];
+
+  // TVA
+  @Column()
+  vat: number;
+
+  @Column()
+  shippingCost: number;
+
+  @Column()
+  invoiceSupplierReference: string;
 }

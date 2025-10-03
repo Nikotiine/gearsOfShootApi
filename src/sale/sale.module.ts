@@ -10,20 +10,11 @@ import { PriceHistoryController } from './price-history/price-history.controller
 import { SupplierController } from './supplier/supplier.controller';
 import { SupplierService } from './supplier/supplier.service';
 import { Supplier } from '../database/entity/supplier.entity';
-import { InvoiceSupplier } from '../database/entity/invoice-supplier.entity';
-import { ItemInvoiceSupplier } from '../database/entity/item-invoice-supplier.entity';
 
 @Module({
   providers: [StockService, PriceHistoryService, SupplierService],
   imports: [
-    TypeOrmModule.forFeature([
-      Stock,
-      StockHistory,
-      PriceHistory,
-      Supplier,
-      InvoiceSupplier,
-      ItemInvoiceSupplier,
-    ]),
+    TypeOrmModule.forFeature([Stock, StockHistory, PriceHistory, Supplier]),
   ],
   exports: [StockService, PriceHistoryService],
   controllers: [StockController, PriceHistoryController, SupplierController],
