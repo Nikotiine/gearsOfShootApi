@@ -14,12 +14,17 @@ import {
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
-import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceHistoryService } from '../../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { StockService } from '../../sale/stock/stock.service';
 import { StockDto } from '../../dto/stock.dto';
 import { StockableObject } from '../../enum/stock-item.enum';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from '../../dto/item-invoice-supplier.dto';
+import { AmmunitionDto } from '../../dto/ammunition.dto';
 
 @Injectable()
 export class HandGunService {
@@ -202,6 +207,30 @@ export class HandGunService {
       },
     });
     return this.mapEntityArrayToDtoArray(handGuns);
+  }
+
+  /**
+   * Convertie le dto pour l'affichage des factures/commandes
+   * @param item CreateItemInvoiceSupplierDto
+   */
+  public async convertToInvoiceDto(
+    item: CreateItemInvoiceSupplierDto,
+  ): Promise<ItemInvoice> {
+    const handgun: HandGunDto = await this.findById(item.objectId);
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      status: item.status,
+      unitPriceHt: item.supplierPriceHT,
+      totalPriceHT: item.supplierPriceHT * item.quantity,
+      caliber: handgun.caliber,
+      category: handgun.category,
+      factory: handgun.factory,
+      name: handgun.name,
+      reference: handgun.reference,
+      colors: `Crosse: ${handgun.buttColor.name}| Cullasse: ${handgun.slideColor.name}| Cannon: ${handgun.barrelColor.name}`,
+      description: `Variante: ${handgun.variation ?? ''} | Type percussion: ${handgun.percussionType.name} | Type: ${handgun.type.name} | Description: ${handgun.description}`,
+    };
   }
 
   /**

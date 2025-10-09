@@ -7,11 +7,16 @@ import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
 import { CodeError } from '../enum/code-error.enum';
 import { PriceHistoryDto } from '../dto/price-history.dto';
-import { PriceHistoryService } from '../common/price-history/price-history.service';
+import { PriceHistoryService } from '../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 import { StockService } from '../sale/stock/stock.service';
 import { StockDto } from '../dto/stock.dto';
 import { StockableObject } from '../enum/stock-item.enum';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from '../dto/item-invoice-supplier.dto';
+import { WeaponMagazineDto } from '../dto/weapon-magazine.dto';
 
 @Injectable()
 export class OpticService {
@@ -137,6 +142,27 @@ export class OpticService {
       id: id,
       message: CodeSuccess.OPTIC_SOFT_DELETE,
       isSuccess: deleted.affected > 0,
+    };
+  }
+
+  /**
+   * Convertie le dto pour l'affichage des factures/commandes
+   * @param item CreateItemInvoiceSupplierDto
+   */
+  public async convertToInvoiceDto(
+    item: CreateItemInvoiceSupplierDto,
+  ): Promise<ItemInvoice> {
+    const optic: OpticDto = await this.findById(item.objectId);
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      status: item.status,
+      unitPriceHt: item.supplierPriceHT,
+      totalPriceHT: item.supplierPriceHT * item.quantity,
+      factory: optic.factory,
+      name: `${optic.name} | ${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`,
+      reference: optic.reference,
+      description: `Plan focal: ${optic.focalPlane.name ?? ''} | Type: ${optic.opticType.name} | Description: ${optic.description}`,
     };
   }
 

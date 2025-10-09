@@ -44,5 +44,6 @@ import { SaleModule } from '../sale/sale.module';
     CommonModule,
     SaleModule,
   ],
+  exports: [OpticService, OpticCollarService],
 })
 export class OpticModule {}

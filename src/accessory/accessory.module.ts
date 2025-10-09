@@ -14,5 +14,6 @@ import { SaleModule } from '../sale/sale.module';
     CommonModule,
     SaleModule,
   ],
+  exports: [SoundReducerService],
 })
 export class AccessoryModule {}

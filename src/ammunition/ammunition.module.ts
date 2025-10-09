@@ -32,5 +32,6 @@ import { SaleModule } from '../sale/sale.module';
     CommonModule,
     SaleModule,
   ],
+  exports: [AmmunitionService],
 })
 export class AmmunitionModule {}

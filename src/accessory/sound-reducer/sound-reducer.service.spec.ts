@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SoundReducerService } from './sound-reducer.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SoundNoiseReducer } from '../../database/entity/sound-noise-reducer.entity';
-import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceHistoryService } from '../../sale/price-history/price-history.service';
 
 describe('SoundReducerService', () => {
   let service: SoundReducerService;

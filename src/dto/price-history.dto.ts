@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
 import { PriceableObjectType } from '../enum/priceable-object-type.enum';
 import { UserDto } from './user.dto';
+import { SupplierDto } from './supplier.dto';
 
 export class CreatePriceHistoryDto {
   @ApiProperty()
@@ -12,6 +13,9 @@ export class CreatePriceHistoryDto {
 
   @ApiProperty()
   currentSalePrice: number;
+
+  @ApiProperty()
+  supplier: SupplierDto;
 }
 
 export class PriceHistoryFromEntity extends CreatePriceHistoryDto {

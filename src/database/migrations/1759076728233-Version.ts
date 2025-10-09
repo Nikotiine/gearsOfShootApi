@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Version1755763809398 implements MigrationInterface {
-    name = 'Version1755763809398'
+export class Version1759076728233 implements MigrationInterface {
+    name = 'Version1759076728233'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "email" character varying NOT NULL, "password" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "address" character varying NOT NULL, "phone" character varying NOT NULL, "city" character varying NOT NULL, "zipCode" character varying NOT NULL, "state" character varying NOT NULL, "role" character varying NOT NULL DEFAULT 'USER', "costumerRole" character varying NOT NULL DEFAULT 'Sans licence', CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "verification_code" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "code" integer NOT NULL, "expireAt" TIMESTAMP NOT NULL, "userId" integer, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "optic_ready_plate" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, "description" character varying, "factoryId" integer, CONSTRAINT "PK_1b97130486dd3f9058c62675c49" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "legislation_category" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_da190f512ee9b869a96dc58d78a" UNIQUE ("name"), CONSTRAINT "PK_d765af78ed0066afbc3d2e89f82" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "weapon_reload_mode" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_ad28ddaa125ecf736bd0fece8c6" UNIQUE ("name"), CONSTRAINT "PK_13e4b263480ba86ce6401cb2708" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "weapon_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "type" character varying NOT NULL DEFAULT 'riffle', "reference" character varying NOT NULL, "modeId" integer, CONSTRAINT "UQ_d157be3fda9adaaec6c30e7042a" UNIQUE ("name"), CONSTRAINT "PK_41a9c64ef5dfc5c5c24107a0d1a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "verification_code" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "code" integer NOT NULL, "expireAt" TIMESTAMP NOT NULL, "userId" integer, CONSTRAINT "PK_d702c086da466e5d25974512d46" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "email" character varying NOT NULL, "password" character varying NOT NULL, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "address" character varying NOT NULL, "phone" character varying NOT NULL, "city" character varying NOT NULL, "zipCode" character varying NOT NULL, "state" character varying NOT NULL, "role" character varying NOT NULL DEFAULT 'USER', "costumerRole" character varying NOT NULL DEFAULT 'Sans licence', CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "weapon_magazine" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "capacity" integer NOT NULL, "length" integer NOT NULL, "height" integer NOT NULL, "width" integer NOT NULL, "reference" character varying NOT NULL, "description" character varying, "created_by" integer, "updated_by" integer, "deleted_by" integer, "categoryId" integer, "bodyId" integer, "factoryId" integer, "caliberId" integer, "forWeaponTypeId" integer, CONSTRAINT "UQ_eb747bb912f05ec358bf3c3fbaf" UNIQUE ("factoryId", "categoryId", "bodyId", "capacity", "caliberId"), CONSTRAINT "PK_4b3911fc7c13e3633b47419f14f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "material" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "PK_0343d0d577f3effc2054cbaca7f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "color" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "reference" character varying NOT NULL, CONSTRAINT "PK_d15e531d60a550fbf23e1832343" PRIMARY KEY ("id"))`);
@@ -35,8 +35,10 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "weapon_barrel_type" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_76fec1fbdd6eb369ab3973505a1" UNIQUE ("name"), CONSTRAINT "PK_6f478763e0e4e1d120838c63c7f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "stock_history" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "movement" character varying NOT NULL, "movementQuantity" integer NOT NULL, "previousQuantity" integer NOT NULL, "newQuantity" integer NOT NULL, "reason" character varying, "created_by" integer, "updated_by" integer, "deleted_by" integer, "stockId" integer, CONSTRAINT "PK_16924caa54ac1fa49162ea3afca" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "stock" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "object" character varying NOT NULL, "objectId" integer NOT NULL, "quantity" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_092bc1fc7d860426a1dec5aa8e9" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "supplier" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, CONSTRAINT "UQ_05290e39dd1ef4fbbcfe329f7bd" UNIQUE ("name"), CONSTRAINT "PK_2bc0d2cab6276144d2ff98a2828" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "price_history" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "supplierPrice" integer NOT NULL, "recommendedSalePrice" integer, "currentSalePrice" integer, "objectId" integer NOT NULL, "object" character varying NOT NULL, CONSTRAINT "PK_e41e25472373d4b574b153229e9" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "item_invoice_supplier" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "object" character varying NOT NULL, "objectId" integer NOT NULL, "quantity" integer NOT NULL DEFAULT '0', "supplierPriceHT" integer NOT NULL, "totalPriceHT" integer NOT NULL, "accountHT" integer NOT NULL, "internalInvoiceReference" character varying NOT NULL, "comment" character varying NOT NULL, "status" character varying NOT NULL DEFAULT 'IN_ORDER', "shipmentNumber" character varying NOT NULL, "invoiceId" integer, CONSTRAINT "PK_c41c2b56f1baa74b50f807b8e0a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "invoice_supplier" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "totalPriceHt" integer NOT NULL, "internalInvoiceReference" character varying NOT NULL, "comment" character varying NOT NULL, "totalInvoiceItems" integer NOT NULL, "dueDate" TIMESTAMP NOT NULL, "totalAccountHT" integer NOT NULL, "vat" integer NOT NULL, "shippingCost" integer NOT NULL, "created_by" integer, "updated_by" integer, "deleted_by" integer, "supplierId" integer, CONSTRAINT "PK_8d86c7034ecfb05a14e541b5b67" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "supplier" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "name" character varying NOT NULL, "address" character varying NOT NULL, "phoneNumber" character varying NOT NULL, "city" character varying NOT NULL, "country" character varying NOT NULL, "zipCode" character varying NOT NULL, "siret" character varying NOT NULL, CONSTRAINT "UQ_05290e39dd1ef4fbbcfe329f7bd" UNIQUE ("name"), CONSTRAINT "PK_2bc0d2cab6276144d2ff98a2828" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "price_history" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "supplierPrice" integer NOT NULL, "recommendedSalePrice" integer, "currentSalePrice" integer, "objectId" integer NOT NULL, "object" character varying NOT NULL, "created_by" integer, "updated_by" integer, "deleted_by" integer, "supplierId" integer, CONSTRAINT "PK_e41e25472373d4b574b153229e9" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "riffle_magazines" ("weaponMagazineId" integer NOT NULL, "riffleId" integer NOT NULL, CONSTRAINT "PK_ab77b22e469811b7029dbfe17ea" PRIMARY KEY ("weaponMagazineId", "riffleId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_c1ab8bccc4add0d3e7b1f47978" ON "riffle_magazines" ("weaponMagazineId") `);
         await queryRunner.query(`CREATE INDEX "IDX_9160dcb0a545387d4da30286ab" ON "riffle_magazines" ("riffleId") `);
@@ -49,9 +51,9 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "riffle_m_lock_options_m_lock_option" ("riffleId" integer NOT NULL, "mLockOptionId" integer NOT NULL, CONSTRAINT "PK_c890f21cc0805f610f94c5fb287" PRIMARY KEY ("riffleId", "mLockOptionId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_a80d357704c3cf298dce095d9a" ON "riffle_m_lock_options_m_lock_option" ("riffleId") `);
         await queryRunner.query(`CREATE INDEX "IDX_0dd64d7b733a3ddb4b4f68e642" ON "riffle_m_lock_options_m_lock_option" ("mLockOptionId") `);
-        await queryRunner.query(`ALTER TABLE "verification_code" ADD CONSTRAINT "FK_9d714363703b95d7bb9a9be0248" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "optic_ready_plate" ADD CONSTRAINT "FK_dec33e01b6a0c937e57c69f5483" FOREIGN KEY ("factoryId") REFERENCES "factory"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_type" ADD CONSTRAINT "FK_069fd876fa82df582506fda4468" FOREIGN KEY ("modeId") REFERENCES "weapon_reload_mode"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "verification_code" ADD CONSTRAINT "FK_9d714363703b95d7bb9a9be0248" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_864f3f677b88b06116f377fdeeb" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_d451375aa2aa0435b6f1fa3e2d3" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" ADD CONSTRAINT "FK_eba77a20f80d926693f53c024c7" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -123,6 +125,15 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "stock_history" ADD CONSTRAINT "FK_6e548404062528264da966029bf" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "stock_history" ADD CONSTRAINT "FK_5838598dead485585025d5b2b48" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "stock_history" ADD CONSTRAINT "FK_b910dfd033ccb6d561d0390858c" FOREIGN KEY ("stockId") REFERENCES "stock"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "item_invoice_supplier" ADD CONSTRAINT "FK_cae9c79c9b0ef6e457f824aee73" FOREIGN KEY ("invoiceId") REFERENCES "invoice_supplier"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" ADD CONSTRAINT "FK_7811de6cf61dd4dde913b8bc094" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" ADD CONSTRAINT "FK_62080af039da77420409400cff6" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" ADD CONSTRAINT "FK_7d66242da1e37d8c02805325316" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" ADD CONSTRAINT "FK_346a6bb7f45da1fc2e6c828d629" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "price_history" ADD CONSTRAINT "FK_b3f18b63aa85b88196a48777375" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "price_history" ADD CONSTRAINT "FK_8db901e8074a15c3326df51a889" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "price_history" ADD CONSTRAINT "FK_3daf6e6d11d91bae053cceaf34d" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "price_history" ADD CONSTRAINT "FK_eff6ceee3b0d438f47b78ee0cc6" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" ADD CONSTRAINT "FK_c1ab8bccc4add0d3e7b1f479786" FOREIGN KEY ("weaponMagazineId") REFERENCES "weapon_magazine"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" ADD CONSTRAINT "FK_9160dcb0a545387d4da30286abc" FOREIGN KEY ("riffleId") REFERENCES "riffle"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "handgun_magazines" ADD CONSTRAINT "FK_461668d4a5887fbbbf16f7c991e" FOREIGN KEY ("weaponMagazineId") REFERENCES "weapon_magazine"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
@@ -142,6 +153,15 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "handgun_magazines" DROP CONSTRAINT "FK_461668d4a5887fbbbf16f7c991e"`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" DROP CONSTRAINT "FK_9160dcb0a545387d4da30286abc"`);
         await queryRunner.query(`ALTER TABLE "riffle_magazines" DROP CONSTRAINT "FK_c1ab8bccc4add0d3e7b1f479786"`);
+        await queryRunner.query(`ALTER TABLE "price_history" DROP CONSTRAINT "FK_eff6ceee3b0d438f47b78ee0cc6"`);
+        await queryRunner.query(`ALTER TABLE "price_history" DROP CONSTRAINT "FK_3daf6e6d11d91bae053cceaf34d"`);
+        await queryRunner.query(`ALTER TABLE "price_history" DROP CONSTRAINT "FK_8db901e8074a15c3326df51a889"`);
+        await queryRunner.query(`ALTER TABLE "price_history" DROP CONSTRAINT "FK_b3f18b63aa85b88196a48777375"`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" DROP CONSTRAINT "FK_346a6bb7f45da1fc2e6c828d629"`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" DROP CONSTRAINT "FK_7d66242da1e37d8c02805325316"`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" DROP CONSTRAINT "FK_62080af039da77420409400cff6"`);
+        await queryRunner.query(`ALTER TABLE "invoice_supplier" DROP CONSTRAINT "FK_7811de6cf61dd4dde913b8bc094"`);
+        await queryRunner.query(`ALTER TABLE "item_invoice_supplier" DROP CONSTRAINT "FK_cae9c79c9b0ef6e457f824aee73"`);
         await queryRunner.query(`ALTER TABLE "stock_history" DROP CONSTRAINT "FK_b910dfd033ccb6d561d0390858c"`);
         await queryRunner.query(`ALTER TABLE "stock_history" DROP CONSTRAINT "FK_5838598dead485585025d5b2b48"`);
         await queryRunner.query(`ALTER TABLE "stock_history" DROP CONSTRAINT "FK_6e548404062528264da966029bf"`);
@@ -213,9 +233,9 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_eba77a20f80d926693f53c024c7"`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_d451375aa2aa0435b6f1fa3e2d3"`);
         await queryRunner.query(`ALTER TABLE "weapon_magazine" DROP CONSTRAINT "FK_864f3f677b88b06116f377fdeeb"`);
+        await queryRunner.query(`ALTER TABLE "verification_code" DROP CONSTRAINT "FK_9d714363703b95d7bb9a9be0248"`);
         await queryRunner.query(`ALTER TABLE "weapon_type" DROP CONSTRAINT "FK_069fd876fa82df582506fda4468"`);
         await queryRunner.query(`ALTER TABLE "optic_ready_plate" DROP CONSTRAINT "FK_dec33e01b6a0c937e57c69f5483"`);
-        await queryRunner.query(`ALTER TABLE "verification_code" DROP CONSTRAINT "FK_9d714363703b95d7bb9a9be0248"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_0dd64d7b733a3ddb4b4f68e642"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_a80d357704c3cf298dce095d9a"`);
         await queryRunner.query(`DROP TABLE "riffle_m_lock_options_m_lock_option"`);
@@ -230,6 +250,8 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "riffle_magazines"`);
         await queryRunner.query(`DROP TABLE "price_history"`);
         await queryRunner.query(`DROP TABLE "supplier"`);
+        await queryRunner.query(`DROP TABLE "invoice_supplier"`);
+        await queryRunner.query(`DROP TABLE "item_invoice_supplier"`);
         await queryRunner.query(`DROP TABLE "stock"`);
         await queryRunner.query(`DROP TABLE "stock_history"`);
         await queryRunner.query(`DROP TABLE "weapon_barrel_type"`);
@@ -255,12 +277,12 @@ export class Version1755763809398 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "color"`);
         await queryRunner.query(`DROP TABLE "material"`);
         await queryRunner.query(`DROP TABLE "weapon_magazine"`);
+        await queryRunner.query(`DROP TABLE "users"`);
+        await queryRunner.query(`DROP TABLE "verification_code"`);
         await queryRunner.query(`DROP TABLE "weapon_type"`);
         await queryRunner.query(`DROP TABLE "weapon_reload_mode"`);
         await queryRunner.query(`DROP TABLE "legislation_category"`);
         await queryRunner.query(`DROP TABLE "optic_ready_plate"`);
-        await queryRunner.query(`DROP TABLE "verification_code"`);
-        await queryRunner.query(`DROP TABLE "users"`);
     }
 
 }

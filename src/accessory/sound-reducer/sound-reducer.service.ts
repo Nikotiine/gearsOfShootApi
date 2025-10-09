@@ -15,11 +15,16 @@ import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { CodeError } from '../../enum/code-error.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
-import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceHistoryService } from '../../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { StockService } from '../../sale/stock/stock.service';
 import { StockDto } from '../../dto/stock.dto';
 import { StockableObject } from '../../enum/stock-item.enum';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from '../../dto/item-invoice-supplier.dto';
+import { HandGunDto } from '../../dto/hand-gun.dto';
 
 @Injectable()
 export class SoundReducerService {
@@ -240,5 +245,27 @@ export class SoundReducerService {
     if (isExist) {
       throw new BadRequestException(CodeError.SOUND_NOISE_EXIST);
     }
+  }
+
+  /**
+   * Convertie le dto pour l'affichage des factures/commandes
+   * @param item CreateItemInvoiceSupplierDto
+   */
+  public async convertToInvoiceDto(
+    item: CreateItemInvoiceSupplierDto,
+  ): Promise<ItemInvoice> {
+    const rds: SoundNoiseReducerDto = await this.findById(item.objectId);
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      status: item.status,
+      unitPriceHt: item.supplierPriceHT,
+      totalPriceHT: item.supplierPriceHT * item.quantity,
+      caliber: rds.caliber,
+      factory: rds.factory,
+      name: rds.name,
+      reference: rds.reference,
+      description: `Pas de vis: ${rds.threadedSize.size} | Diametre: ${rds.diameter} | Demontable: ${rds.isCleanable ? 'oui' : 'non'} | Description: ${rds.description}`,
+    };
   }
 }

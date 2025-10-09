@@ -10,12 +10,17 @@ import {
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { CodeError } from '../../enum/code-error.enum';
-import { PriceHistoryService } from '../../common/price-history/price-history.service';
+import { PriceHistoryService } from '../../sale/price-history/price-history.service';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { StockDto } from '../../dto/stock.dto';
 import { StockService } from '../../sale/stock/stock.service';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from '../../dto/item-invoice-supplier.dto';
+import { HandGunDto } from '../../dto/hand-gun.dto';
 
 @Injectable()
 export class OpticCollarService {
@@ -169,6 +174,27 @@ export class OpticCollarService {
       id: id,
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.OPTIC_COLLAR_SOFT_DELETE,
+    };
+  }
+
+  /**
+   * Convertie le dto pour l'affichage des factures/commandes
+   * @param item CreateItemInvoiceSupplierDto
+   */
+  public async convertToInvoiceDto(
+    item: CreateItemInvoiceSupplierDto,
+  ): Promise<ItemInvoice> {
+    const collar: OpticCollarDto = await this.findById(item.objectId);
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      status: item.status,
+      unitPriceHt: item.supplierPriceHT,
+      totalPriceHT: item.supplierPriceHT * item.quantity,
+      factory: collar.factory,
+      name: collar.name,
+      reference: collar.reference,
+      description: `Pour rail: ${collar.railSize.name ?? ''} | Diametre: ${collar.diameter} | Description: ${collar.description}`,
     };
   }
 }
