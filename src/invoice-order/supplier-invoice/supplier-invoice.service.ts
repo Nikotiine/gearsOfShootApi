@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InvoiceSupplier } from '../../database/entity/invoice-supplier.entity';
 import { Repository } from 'typeorm';
@@ -22,6 +22,7 @@ import { MagazineService } from '../../weapon/magazine/magazine.service';
 import { OpticService } from '../../optic/optic.service';
 import { OpticCollarService } from '../../optic/optic-collar/optic-collar.service';
 import { SoundReducerService } from '../../accessory/sound-reducer/sound-reducer.service';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class SupplierInvoiceService {
@@ -59,6 +60,19 @@ export class SupplierInvoiceService {
     } catch (err) {
       console.log(err);
     }
+  }
+  public async findById(id: number): Promise<InvoiceSupplierDto> {
+    const invoice: InvoiceSupplier = await this.invoiceRepository.findOne({
+      where: { id: id },
+      relations: {
+        supplier: true,
+        items: true,
+      },
+    });
+    if (!invoice) {
+      throw new NotFoundException(CodeError.INVOICE_NOT_FOUND);
+    }
+    return this.mapEntityToDto(invoice);
   }
 
   public async update(
