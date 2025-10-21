@@ -31,6 +31,18 @@ export class SupplierInvoiceController {
     private readonly supplierInvoiceService: SupplierInvoiceService,
   ) {}
 
+  @Get(SwaggerDescription.FIND_ALL)
+  @ApiOperation({
+    summary: SwaggerDescription.FIND_ALL_SUMMARY,
+    description: 'Retourne la liste de tous les commandes',
+  })
+  @ApiOkResponse({
+    type: [InvoiceSupplierDto],
+  })
+  public async findAll(): Promise<InvoiceSupplierDto[]> {
+    return await this.supplierInvoiceService.findAll();
+  }
+
   @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_ID_SUMMARY,

@@ -75,6 +75,16 @@ export class SupplierInvoiceService {
     return this.mapEntityToDto(invoice);
   }
 
+  public async findAll(): Promise<InvoiceSupplierDto[]> {
+    const invoices: InvoiceSupplier[] = await this.invoiceRepository.find({
+      relations: {
+        supplier: true,
+        items: true,
+      },
+    });
+    return this.mapArrayEntityToArrayDto(invoices);
+  }
+
   public async update(
     id: number,
     invoice: UpdateInvoiceSupplierDto,
@@ -100,6 +110,14 @@ export class SupplierInvoiceService {
     } catch (err) {
       console.log(err);
     }
+  }
+  private async mapArrayEntityToArrayDto(
+    invoices: InvoiceSupplier[],
+  ): Promise<InvoiceSupplierDto[]> {
+    const dtoPromises = invoices.map(async (rds) => {
+      return this.mapEntityToDto(rds);
+    });
+    return await Promise.all(dtoPromises);
   }
 
   private async mapEntityToDto(

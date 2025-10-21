@@ -40,7 +40,9 @@ export class CreateItemInvoiceSupplierDto {
   @IsString()
   status: InvoiceOrderStatus;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsOptional()
   id?: number;
 }

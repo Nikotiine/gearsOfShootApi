@@ -4,7 +4,7 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from './item-invoice-supplier.dto';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { UserDto } from './user.dto';
 
 export class CreateInvoiceSupplierDto {
@@ -27,11 +27,13 @@ export class CreateInvoiceSupplierDto {
     type: [CreateItemInvoiceSupplierDto],
   })
   items: CreateItemInvoiceSupplierDto[];
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  invoiceSupplierReference?: string;
 }
 export class UpdateInvoiceSupplierDto extends CreateInvoiceSupplierDto {
-  @ApiProperty()
-  invoiceSupplierReference: string;
-
   @ApiProperty()
   id: number;
 }
