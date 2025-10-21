@@ -32,6 +32,10 @@ export class CreateItemInvoiceSupplierDto {
   comment: string;
 
   @ApiProperty()
+  @IsString()
+  description: string;
+
+  @ApiProperty()
   @IsNumber()
   @IsPositive()
   supplierPriceHT: number;

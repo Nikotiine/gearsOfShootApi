@@ -11,7 +11,7 @@ export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   internalInvoiceReference: string;
 
-  @Column()
+  @Column({ nullable: true })
   comment: string;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.invoices)
@@ -23,19 +23,19 @@ export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   dueDate: Date;
 
-  @Column()
+  @Column({ default: 0 })
   totalAccountHT: number;
 
   @OneToMany(() => ItemInvoiceSupplier, (item) => item.invoice)
   items: ItemInvoiceSupplier[];
 
   // TVA
-  @Column()
+  @Column({ default: 20 })
   vat: number;
 
-  @Column()
+  @Column({ default: 0 })
   shippingCost: number;
 
-  @Column()
+  @Column({ nullable: true })
   invoiceSupplierReference: string;
 }

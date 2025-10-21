@@ -16,6 +16,7 @@ export class InvoiceItemService {
     item: CreateItemInvoiceSupplierDto,
     invoice: InvoiceSupplier,
   ): Promise<ItemInvoiceSupplier> {
+    console.log('INSERT', item);
     const entity: ItemInvoiceSupplier = this.itemRepository.create({
       object: item.object,
       objectId: item.objectId,
@@ -27,6 +28,7 @@ export class InvoiceItemService {
       totalPriceHT: item.supplierPriceHT * item.quantity,
       invoice: invoice,
       internalInvoiceReference: invoice.internalInvoiceReference,
+      description: item.description,
     });
     return await this.itemRepository.save(entity);
   }

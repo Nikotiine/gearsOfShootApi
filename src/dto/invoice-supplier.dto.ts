@@ -23,6 +23,9 @@ export class CreateInvoiceSupplierDto {
   @ApiProperty()
   shippingCost: number;
 
+  @ApiProperty()
+  vat: number;
+
   @ApiProperty({
     type: [CreateItemInvoiceSupplierDto],
   })

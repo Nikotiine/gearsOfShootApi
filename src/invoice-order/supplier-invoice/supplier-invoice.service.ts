@@ -40,19 +40,23 @@ export class SupplierInvoiceService {
   ) {}
 
   public async insert(invoice: CreateInvoiceSupplierDto): Promise<any> {
+    console.log(invoice);
     try {
       const entity: InvoiceSupplier = this.invoiceRepository.create({
         supplier: invoice.supplier,
-        dueDate: invoice.dueDate,
+        dueDate: new Date(invoice.dueDate),
         totalAccountHT: this.getTotalAccount(invoice.items),
         comment: invoice.comment,
         totalPriceHt: await this.getTotalPriceHt(invoice.items),
         totalInvoiceItems: this.getTotalItems(invoice.items),
         internalInvoiceReference: await this.createRefence(invoice.supplier),
         shippingCost: invoice.shippingCost,
+        vat: invoice.vat,
+        items: [],
       });
       const created: InvoiceSupplier =
         await this.invoiceRepository.save(entity);
+      console.log('Created', created);
       for (const item of invoice.items) {
         created.items.push(await this.invoiceItemService.insert(item, created));
       }
@@ -197,6 +201,7 @@ export class SupplierInvoiceService {
    * @private
    */
   private async createRefence(supplier: SupplierDto): Promise<string> {
+    //TODO : Marche pas
     const totalInvoiceFromThisSupplier =
       await this.countTotalInvoiceInCurrentMouthBySupplier(supplier);
     return `${new Date().getDay()}-${new Date().getMonth()}-${new Date().getFullYear()}/${supplier.name}/${totalInvoiceFromThisSupplier}`;

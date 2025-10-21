@@ -26,8 +26,11 @@ export class ItemInvoiceSupplier extends BaseEntity {
   @Column()
   internalInvoiceReference: string;
 
-  @Column()
+  @Column({ nullable: true })
   comment: string;
+
+  @Column({ nullable: true })
+  description: string;
 
   @ManyToOne(() => InvoiceSupplier, (invoice) => invoice.items)
   invoice: InvoiceSupplier;
@@ -35,6 +38,6 @@ export class ItemInvoiceSupplier extends BaseEntity {
   @Column({ default: 'IN_ORDER' })
   status: InvoiceOrderStatus;
 
-  @Column()
+  @Column({ nullable: true })
   shipmentNumber: string;
 }
