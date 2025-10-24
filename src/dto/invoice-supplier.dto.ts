@@ -78,4 +78,16 @@ export class InvoiceSupplierDto {
     type: [ItemInvoice],
   })
   items: ItemInvoice[];
+
+  @ApiProperty()
+  totalPriceHt: number;
+
+  @ApiProperty()
+  totalInvoiceItems: number;
+
+  @ApiProperty()
+  totalAccountHT: number;
+
+  @ApiProperty()
+  vat: number;
 }

@@ -9,6 +9,8 @@ import { InvoiceItemService } from './invoice-item/invoice-item.service';
 import { WeaponModule } from '../weapon/weapon.module';
 import { OpticModule } from '../optic/optic.module';
 import { AccessoryModule } from '../accessory/accessory.module';
+import { InvoiceItemController } from './invoice-item/invoice-item.controller';
+import { SaleModule } from '../sale/sale.module';
 
 @Module({
   providers: [SupplierInvoiceService, InvoiceItemService],
@@ -18,7 +20,8 @@ import { AccessoryModule } from '../accessory/accessory.module';
     WeaponModule,
     OpticModule,
     AccessoryModule,
+    SaleModule,
   ],
-  controllers: [SupplierInvoiceController],
+  controllers: [SupplierInvoiceController, InvoiceItemController],
 })
 export class InvoiceOrderModule {}

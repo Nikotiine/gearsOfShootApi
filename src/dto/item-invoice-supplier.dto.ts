@@ -111,3 +111,9 @@ export class ItemInvoice {
   @IsOptional()
   category?: LegislationCategoryDto;
 }
+
+export class UpdateItemStatusDto {
+  @ApiProperty()
+  @IsString()
+  status: InvoiceOrderStatus;
+}

@@ -71,6 +71,7 @@ export class SupplierInvoiceService {
       relations: {
         supplier: true,
         items: true,
+        createdBy: true,
       },
     });
     if (!invoice) {
@@ -84,6 +85,7 @@ export class SupplierInvoiceService {
       relations: {
         supplier: true,
         items: true,
+        createdBy: true,
       },
     });
     return this.mapArrayEntityToArrayDto(invoices);
@@ -139,6 +141,10 @@ export class SupplierInvoiceService {
       items: await this.mapItemsToFullItemsDto(entity.items),
       createdBy: entity.createdBy,
       invoiceSupplierReference: entity.invoiceSupplierReference,
+      totalAccountHT: entity.totalAccountHT,
+      totalInvoiceItems: entity.totalInvoiceItems,
+      totalPriceHt: entity.totalPriceHt,
+      vat: entity.vat,
     };
   }
 
@@ -192,7 +198,9 @@ export class SupplierInvoiceService {
     supplier: SupplierDto,
   ): Promise<number> {
     return await this.invoiceRepository.countBy({
-      supplier: supplier,
+      supplier: {
+        id: supplier.id,
+      },
     });
   }
 
@@ -202,8 +210,13 @@ export class SupplierInvoiceService {
    */
   private async createRefence(supplier: SupplierDto): Promise<string> {
     //TODO : Marche pas
+    console.log('createRefence', supplier);
     const totalInvoiceFromThisSupplier =
       await this.countTotalInvoiceInCurrentMouthBySupplier(supplier);
+    console.log(
+      'countTotalInvoiceInCurrentMouthBySupplier',
+      totalInvoiceFromThisSupplier,
+    );
     return `${new Date().getDay()}-${new Date().getMonth()}-${new Date().getFullYear()}/${supplier.name}/${totalInvoiceFromThisSupplier}`;
   }
 
