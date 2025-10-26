@@ -7,7 +7,6 @@ import {
   UpdateItemStatusDto,
 } from '../../dto/item-invoice-supplier.dto';
 import { InvoiceSupplier } from '../../database/entity/invoice-supplier.entity';
-import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { StockService } from '../../sale/stock/stock.service';
 import { CreateStockDto } from '../../dto/stock.dto';
 import { MovementType } from '../../enum/stock-item.enum';

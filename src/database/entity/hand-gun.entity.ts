@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Material } from './material.entity';
@@ -21,6 +22,7 @@ import { WeaponMagazine } from './weapon-magazine.entity';
 import { BaseAuditEntity } from './base-audit.entity';
 
 @Entity()
+@Unique(['name', 'variation', 'factory', 'caliber', 'reference'])
 export class HandGun extends BaseAuditEntity {
   // Optic Ready ( arme de poing )
   @Column({ default: false })

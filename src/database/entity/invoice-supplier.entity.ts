@@ -1,9 +1,16 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
 import { Supplier } from './supplier.entity';
 import { ItemInvoiceSupplier } from './item-invoice-supplier.entity';
 
 @Entity()
+@Unique([
+  'totalPriceHt',
+  'supplier',
+  'totalAccountHT',
+  'totalInvoiceItems',
+  'shippingCost',
+])
 export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   totalPriceHt: number;

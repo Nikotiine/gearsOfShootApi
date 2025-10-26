@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Color } from './color.entity';
@@ -21,6 +22,7 @@ import { MLockOption } from './m-lock-option.entity';
 import { BaseAuditEntity } from './base-audit.entity';
 
 @Entity()
+@Unique(['name', 'variation', 'factory', 'caliber', 'reference'])
 export class Riffle extends BaseAuditEntity {
   // Crosse reglable
   @Column()

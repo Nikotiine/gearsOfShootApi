@@ -42,8 +42,6 @@ export class InvoiceItemController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() status: UpdateItemStatusDto,
   ): Promise<ItemInvoiceSupplier> {
-    console.log('IIDDDDDDDD', id);
-    console.log('IIDDDDDDDD', status);
     return this.invoiceItemService.updateStatus(id, status);
   }
 }

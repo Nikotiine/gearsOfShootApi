@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InvoiceSupplier } from '../../database/entity/invoice-supplier.entity';
 import { Repository } from 'typeorm';
@@ -40,7 +44,6 @@ export class SupplierInvoiceService {
   ) {}
 
   public async insert(invoice: CreateInvoiceSupplierDto): Promise<any> {
-    console.log(invoice);
     try {
       const entity: InvoiceSupplier = this.invoiceRepository.create({
         supplier: invoice.supplier,
@@ -56,13 +59,13 @@ export class SupplierInvoiceService {
       });
       const created: InvoiceSupplier =
         await this.invoiceRepository.save(entity);
-      console.log('Created', created);
+
       for (const item of invoice.items) {
         created.items.push(await this.invoiceItemService.insert(item, created));
       }
       return this.mapEntityToDto(created);
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException(err.message);
     }
   }
   public async findById(id: number): Promise<InvoiceSupplierDto> {
@@ -114,7 +117,7 @@ export class SupplierInvoiceService {
       }
       return this.mapEntityToDto(updated);
     } catch (err) {
-      console.log(err);
+      throw new BadRequestException(err.message);
     }
   }
   private async mapArrayEntityToArrayDto(
@@ -209,14 +212,8 @@ export class SupplierInvoiceService {
    * @private
    */
   private async createRefence(supplier: SupplierDto): Promise<string> {
-    //TODO : Marche pas
-    console.log('createRefence', supplier);
     const totalInvoiceFromThisSupplier =
       await this.countTotalInvoiceInCurrentMouthBySupplier(supplier);
-    console.log(
-      'countTotalInvoiceInCurrentMouthBySupplier',
-      totalInvoiceFromThisSupplier,
-    );
     return `${new Date().getDay()}-${new Date().getMonth()}-${new Date().getFullYear()}/${supplier.name}/${totalInvoiceFromThisSupplier}`;
   }
 
