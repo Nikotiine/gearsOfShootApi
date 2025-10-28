@@ -117,3 +117,11 @@ export class UpdateItemStatusDto {
   @IsString()
   status: InvoiceOrderStatus;
 }
+export class UpdateBulkItemStatusDto {
+  @ApiProperty()
+  @IsString()
+  ids: number[];
+  @ApiProperty()
+  @IsString()
+  status: InvoiceOrderStatus;
+}

@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
 import { Supplier } from './supplier.entity';
 import { ItemInvoiceSupplier } from './item-invoice-supplier.entity';
+import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 
 @Entity()
 @Unique([
@@ -45,4 +46,7 @@ export class InvoiceSupplier extends BaseAuditEntity {
 
   @Column({ nullable: true })
   invoiceSupplierReference: string;
+
+  @Column({ default: 'IN_ORDER' })
+  invoiceStatus: InvoiceOrderStatus;
 }
