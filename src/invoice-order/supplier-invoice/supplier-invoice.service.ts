@@ -245,6 +245,34 @@ export class SupplierInvoiceService {
     return this.mapEntityToDto(updated);
   }
 
+  public async countInvoiceForEachStatus(): Promise<any> {
+    const result = await this.invoiceRepository
+      .createQueryBuilder('invoice')
+      .select('invoice.invoiceStatus', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('invoice.invoiceStatus')
+      .getRawMany();
+
+    // 🧠 Convertir le résultat SQL en objet clé/valeur
+    const counts: Record<string, number> = {
+      IN_ORDER: 0,
+      SHIPPING: 0,
+      RECEIVED: 0,
+      ARCHIVED: 0,
+    };
+
+    for (const row of result) {
+      counts[row.status] = Number(row.count);
+    }
+
+    return {
+      inOrder: counts.IN_ORDER,
+      inShipping: counts.SHIPPING,
+      received: counts.RECEIVED,
+      archive: counts.ARCHIVED,
+    };
+  }
+
   /**
    * Supprime logiquement une facture fournisseur et ses articles associés.
    *
@@ -364,6 +392,7 @@ export class SupplierInvoiceService {
       totalInvoiceItems: entity.totalInvoiceItems,
       totalPriceHt: entity.totalPriceHt,
       vat: entity.vat,
+      invoiceStatus: entity.invoiceStatus,
     };
   }
 

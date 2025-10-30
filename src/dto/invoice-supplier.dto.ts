@@ -6,6 +6,7 @@ import {
 } from './item-invoice-supplier.dto';
 import { IsOptional, IsString } from 'class-validator';
 import { UserDto } from './user.dto';
+import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 
 export class CreateInvoiceSupplierDto {
   @ApiProperty()
@@ -90,4 +91,7 @@ export class InvoiceSupplierDto {
 
   @ApiProperty()
   vat: number;
+
+  @ApiProperty()
+  invoiceStatus: InvoiceOrderStatus;
 }

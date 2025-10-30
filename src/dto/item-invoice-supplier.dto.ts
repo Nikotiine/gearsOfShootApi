@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { StockableObject } from '../enum/stock-item.enum';
-import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';
@@ -118,9 +124,12 @@ export class UpdateItemStatusDto {
   status: InvoiceOrderStatus;
 }
 export class UpdateBulkItemStatusDto {
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({
+    type: [Number],
+  })
+  @IsArray()
   ids: number[];
+
   @ApiProperty()
   @IsString()
   status: InvoiceOrderStatus;

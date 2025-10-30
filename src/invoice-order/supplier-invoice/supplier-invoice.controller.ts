@@ -81,7 +81,7 @@ export class SupplierInvoiceController {
     return this.supplierInvoiceService.insert(invoice);
   }
 
-  @Post('/archive:/id')
+  @Post('/archive/:id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
