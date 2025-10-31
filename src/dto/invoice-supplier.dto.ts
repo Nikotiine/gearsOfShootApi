@@ -95,3 +95,14 @@ export class InvoiceSupplierDto {
   @ApiProperty()
   invoiceStatus: InvoiceOrderStatus;
 }
+
+export class CountInvoicesDto {
+  @ApiProperty()
+  inOrder: number;
+  @ApiProperty()
+  inShipping: number;
+  @ApiProperty()
+  received: number;
+  @ApiProperty()
+  archive: number;
+}

@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InvoiceSupplier } from '../../database/entity/invoice-supplier.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
+  CountInvoicesDto,
   CreateInvoiceSupplierDto,
   InvoiceSupplierDto,
   UpdateInvoiceSupplierDto,
@@ -126,6 +127,12 @@ export class SupplierInvoiceService {
     if (!invoice) {
       throw new NotFoundException(CodeError.INVOICE_NOT_FOUND);
     }
+    const newStatus = this.verifyInvoiceStatus(invoice.items);
+    if (invoice.invoiceStatus !== newStatus) {
+      invoice.invoiceStatus = newStatus;
+      const updated = await this.invoiceRepository.save(invoice);
+      return this.mapEntityToDto(updated);
+    }
     return this.mapEntityToDto(invoice);
   }
 
@@ -144,24 +151,35 @@ export class SupplierInvoiceService {
    * de toutes les factures fournisseurs au format DTO.
    *
    */
-  public async findAll(): Promise<InvoiceSupplierDto[]> {
-    const invoices: InvoiceSupplier[] = await this.invoiceRepository.find({
-      relations: {
-        supplier: true,
-        items: true,
-        createdBy: true,
-      },
-      where: {
-        invoiceStatus: Not('ARCHIVE'),
-      },
-    });
+  public async findAll(
+    status?: InvoiceOrderStatus,
+  ): Promise<InvoiceSupplierDto[]> {
+    const query = this.invoiceRepository
+      .createQueryBuilder('invoice')
+      .leftJoinAndSelect('invoice.supplier', 'supplier')
+      .leftJoinAndSelect('invoice.items', 'items')
+      .leftJoinAndSelect('invoice.createdBy', 'createdBy')
+      .orderBy('invoice.createdAt', 'DESC');
+
+    if (status) {
+      console.log('**********************', status);
+      query.andWhere('invoice.invoiceStatus = :status', { status });
+    } else {
+      query.andWhere('invoice.invoiceStatus != :archived', {
+        archived: 'ARCHIVE',
+      });
+    }
+
+    const invoices = await query.getMany();
     // Tableau pour stocker les factures à mettre à jour
     const invoicesToUpdate: InvoiceSupplier[] = [];
     for (const invoice of invoices) {
-      const newStatus = this.verifyInvoiceStatus(invoice.items);
-      if (invoice.invoiceStatus !== newStatus) {
-        invoice.invoiceStatus = newStatus;
-        invoicesToUpdate.push(invoice);
+      if (invoice.invoiceStatus !== 'ARCHIVE') {
+        const newStatus = this.verifyInvoiceStatus(invoice.items);
+        if (invoice.invoiceStatus !== newStatus) {
+          invoice.invoiceStatus = newStatus;
+          invoicesToUpdate.push(invoice);
+        }
       }
     }
     // Mise à jour en batch uniquement pour les factures modifiées
@@ -245,7 +263,7 @@ export class SupplierInvoiceService {
     return this.mapEntityToDto(updated);
   }
 
-  public async countInvoiceForEachStatus(): Promise<any> {
+  public async countInvoiceForEachStatus(): Promise<CountInvoicesDto> {
     const result = await this.invoiceRepository
       .createQueryBuilder('invoice')
       .select('invoice.invoiceStatus', 'status')

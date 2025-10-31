@@ -1,6 +1,8 @@
 export enum SwaggerDescription {
   FIND_ALL = 'all',
   FIND_ALL_SUMMARY = 'Liste complète',
+  COUNT = 'count',
+  COUNT_SUMMARY = 'Compte',
   FIND_BY_ID = 'by/id/:id',
   ID_PARAM = 'id',
   FIND_BY_ID_SUMMARY = 'Filtré par id',

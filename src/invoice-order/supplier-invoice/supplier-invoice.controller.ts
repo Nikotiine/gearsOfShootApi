@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -13,18 +14,21 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { SupplierInvoiceService } from './supplier-invoice.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import {
+  CountInvoicesDto,
   CreateInvoiceSupplierDto,
   InvoiceSupplierDto,
   UpdateInvoiceSupplierDto,
 } from '../../dto/invoice-supplier.dto';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 
 @Controller('supplier-invoice')
 @ApiTags('Invoice')
@@ -41,8 +45,27 @@ export class SupplierInvoiceController {
   @ApiOkResponse({
     type: [InvoiceSupplierDto],
   })
-  public async findAll(): Promise<InvoiceSupplierDto[]> {
-    return await this.supplierInvoiceService.findAll();
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    description: 'Filtrer les factures selon leur statut',
+  })
+  public async findAll(
+    @Query('status') status?: InvoiceOrderStatus,
+  ): Promise<InvoiceSupplierDto[]> {
+    return await this.supplierInvoiceService.findAll(status);
+  }
+
+  @Get(SwaggerDescription.COUNT)
+  @ApiOperation({
+    summary: SwaggerDescription.COUNT_SUMMARY,
+    description: 'Compte les commandes suivant leur status',
+  })
+  @ApiOkResponse({
+    type: CountInvoicesDto,
+  })
+  public async countInvoice(): Promise<CountInvoicesDto> {
+    return this.supplierInvoiceService.countInvoiceForEachStatus();
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
