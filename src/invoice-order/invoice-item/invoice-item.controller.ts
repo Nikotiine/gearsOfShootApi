@@ -15,6 +15,9 @@ import {
   UpdateItemStatusDto,
 } from '../../dto/item-invoice-supplier.dto';
 import { ItemInvoiceSupplier } from '../../database/entity/item-invoice-supplier.entity';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('invoice-item')
 @ApiTags('invoice-item')
@@ -22,7 +25,8 @@ export class InvoiceItemController {
   constructor(private readonly invoiceItemService: InvoiceItemService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
@@ -41,7 +45,8 @@ export class InvoiceItemController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,

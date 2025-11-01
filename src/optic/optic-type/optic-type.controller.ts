@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,12 +14,17 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { OpticTypeService } from './optic-type.service';
 import { CreateOpticTypeDto, OpticTypeDto } from '../../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('optic-type')
 @ApiTags('OpticType')
@@ -38,11 +44,14 @@ export class OpticTypeController {
   }
 
   @Post('')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiCreatedResponse({
     type: OpticTypeDto,
   })
   @ApiOperation({
-    summary: 'Ajout',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajouter un nouveau type d optique',
   })
   @ApiBody({
@@ -53,6 +62,9 @@ export class OpticTypeController {
   }
 
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -74,6 +86,9 @@ export class OpticTypeController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })

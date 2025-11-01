@@ -26,6 +26,9 @@ import {
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('optic-collar')
 @ApiTags('Optic-Collar')
@@ -60,7 +63,8 @@ export class OpticCollarController {
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiBody({
     type: CreateOpticCollarDto,
@@ -79,7 +83,8 @@ export class OpticCollarController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
@@ -102,7 +107,8 @@ export class OpticCollarController {
   }
 
   @Delete(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
