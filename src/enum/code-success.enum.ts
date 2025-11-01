@@ -19,4 +19,6 @@ export enum CodeSuccess {
   COLOR_DELETE = '105',
   MATERIAL_DELETE = '106',
   OPTIC_READY_PLATE_DELETE = '107',
+
+  INVOICE_DELETE = '108',
 }

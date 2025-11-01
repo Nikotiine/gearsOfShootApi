@@ -4,8 +4,9 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from './item-invoice-supplier.dto';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { UserDto } from './user.dto';
+import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 
 export class CreateInvoiceSupplierDto {
   @ApiProperty()
@@ -23,15 +24,20 @@ export class CreateInvoiceSupplierDto {
   @ApiProperty()
   shippingCost: number;
 
+  @ApiProperty()
+  vat: number;
+
   @ApiProperty({
     type: [CreateItemInvoiceSupplierDto],
   })
   items: CreateItemInvoiceSupplierDto[];
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  invoiceSupplierReference?: string;
 }
 export class UpdateInvoiceSupplierDto extends CreateInvoiceSupplierDto {
-  @ApiProperty()
-  invoiceSupplierReference: string;
-
   @ApiProperty()
   id: number;
 }
@@ -73,4 +79,30 @@ export class InvoiceSupplierDto {
     type: [ItemInvoice],
   })
   items: ItemInvoice[];
+
+  @ApiProperty()
+  totalPriceHt: number;
+
+  @ApiProperty()
+  totalInvoiceItems: number;
+
+  @ApiProperty()
+  totalAccountHT: number;
+
+  @ApiProperty()
+  vat: number;
+
+  @ApiProperty()
+  invoiceStatus: InvoiceOrderStatus;
+}
+
+export class CountInvoicesDto {
+  @ApiProperty()
+  inOrder: number;
+  @ApiProperty()
+  inShipping: number;
+  @ApiProperty()
+  received: number;
+  @ApiProperty()
+  archive: number;
 }

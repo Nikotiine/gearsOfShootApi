@@ -1,1 +1,6 @@
-export type InvoiceOrderStatus = 'IN_ORDER' | 'SHIPPING' | 'RECEIVED';
+export type InvoiceOrderStatus =
+  | 'IN_ORDER'
+  | 'SHIPPING'
+  | 'RECEIVED'
+  | 'CANCELED'
+  | 'ARCHIVE';

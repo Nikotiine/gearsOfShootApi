@@ -1,9 +1,17 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
 import { Supplier } from './supplier.entity';
 import { ItemInvoiceSupplier } from './item-invoice-supplier.entity';
+import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 
 @Entity()
+@Unique([
+  'totalPriceHt',
+  'supplier',
+  'totalAccountHT',
+  'totalInvoiceItems',
+  'shippingCost',
+])
 export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   totalPriceHt: number;
@@ -11,7 +19,7 @@ export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   internalInvoiceReference: string;
 
-  @Column()
+  @Column({ nullable: true })
   comment: string;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.invoices)
@@ -23,19 +31,22 @@ export class InvoiceSupplier extends BaseAuditEntity {
   @Column()
   dueDate: Date;
 
-  @Column()
+  @Column({ default: 0 })
   totalAccountHT: number;
 
   @OneToMany(() => ItemInvoiceSupplier, (item) => item.invoice)
   items: ItemInvoiceSupplier[];
 
   // TVA
-  @Column()
+  @Column({ default: 20 })
   vat: number;
 
-  @Column()
+  @Column({ default: 0 })
   shippingCost: number;
 
-  @Column()
+  @Column({ nullable: true })
   invoiceSupplierReference: string;
+
+  @Column({ default: 'IN_ORDER' })
+  invoiceStatus: InvoiceOrderStatus;
 }

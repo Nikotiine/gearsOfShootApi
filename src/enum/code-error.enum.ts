@@ -51,4 +51,5 @@ export enum CodeError {
   //STOCK
   STOCK_QUANTITY_ERROR = '0900',
   INVOICE_NOT_FOUND = '0950',
+  INVOICE_CANT_BE_ARCHIVE = '0951',
 }
