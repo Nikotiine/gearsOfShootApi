@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { ColorService } from './color.service';
@@ -20,6 +22,10 @@ import { ColorService } from './color.service';
 import { ColorDto, CreateColorDto } from '../../dto/color.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('color')
 @ApiTags('Color')
@@ -54,6 +60,9 @@ export class ColorController {
   }
 
   @Post()
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajoute une nouvelle couleur',
@@ -69,6 +78,9 @@ export class ColorController {
   }
 
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -90,6 +102,9 @@ export class ColorController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -97,7 +112,7 @@ export class ColorController {
     type: ApiDeleteResponseDto,
   })
   @ApiOperation({
-    summary: 'Suppression logique',
+    summary: SwaggerDescription.DELETE_SUMMARY,
     description: 'Sppression logique de la couleur',
   })
   public async delete(

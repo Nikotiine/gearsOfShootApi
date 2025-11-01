@@ -26,6 +26,9 @@ import {
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('sound-reducer')
 @ApiTags('Sound-reducer')
@@ -35,6 +38,7 @@ export class SoundReducerController {
   @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
     type: [SoundNoiseReducerDto],
+    description: 'Tableau de SoundNoiseReducerDto',
   })
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
@@ -62,7 +66,8 @@ export class SoundReducerController {
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiCreatedResponse({
     type: SoundNoiseReducerDto,
@@ -81,7 +86,8 @@ export class SoundReducerController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
@@ -89,6 +95,7 @@ export class SoundReducerController {
   })
   @ApiCreatedResponse({
     type: SoundNoiseReducerDto,
+    description: 'Retourne le RDS sous la forme de SoundNoiseReducerDto',
   })
   @ApiBody({
     type: UpdateSoundNoiseReducerDto,
@@ -104,7 +111,8 @@ export class SoundReducerController {
   }
 
   @Delete(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
@@ -115,6 +123,7 @@ export class SoundReducerController {
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
+    description: SwaggerDescription.DELETE_DESCRIPTION,
   })
   public async delete(
     @Param(SwaggerDescription.ID_PARAM) id: number,

@@ -26,6 +26,9 @@ import {
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('magazine')
 @ApiTags('Magazine')
@@ -94,7 +97,8 @@ export class MagazineController {
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
@@ -113,7 +117,8 @@ export class MagazineController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
@@ -136,7 +141,8 @@ export class MagazineController {
   }
 
   @Delete(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,

@@ -29,6 +29,9 @@ import {
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('supplier-invoice')
 @ApiTags('Invoice')
@@ -38,6 +41,9 @@ export class SupplierInvoiceController {
   ) {}
 
   @Get(SwaggerDescription.FIND_ALL)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de tous les commandes',
@@ -57,6 +63,9 @@ export class SupplierInvoiceController {
   }
 
   @Get(SwaggerDescription.COUNT)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.COUNT_SUMMARY,
     description: 'Compte les commandes suivant leur status',
@@ -69,6 +78,9 @@ export class SupplierInvoiceController {
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
     description: 'Retourne la commnde fournisseur par son id',
@@ -86,7 +98,8 @@ export class SupplierInvoiceController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
@@ -105,7 +118,8 @@ export class SupplierInvoiceController {
   }
 
   @Post('/archive/:id')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
@@ -124,7 +138,8 @@ export class SupplierInvoiceController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
@@ -147,7 +162,8 @@ export class SupplierInvoiceController {
   }
 
   @Delete(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOkResponse({
     type: ApiDeleteResponseDto,

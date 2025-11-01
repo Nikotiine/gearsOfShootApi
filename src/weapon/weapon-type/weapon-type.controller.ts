@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { WeaponTypeService } from './weapon-type.service';
@@ -24,6 +26,10 @@ import {
 } from '../../dto/weapon.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('weapon-type')
 @ApiTags('Weapon type')
@@ -71,6 +77,9 @@ export class WeaponTypeController {
   }
 
   @Post('')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d un nouveau type d arme en bdd',
@@ -87,7 +96,10 @@ export class WeaponTypeController {
     return this.weaponTypeService.insert(weaponType);
   }
 
-  @Put(':id')
+  @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiCreatedResponse({
     type: WeaponTypeDto,
   })
@@ -99,18 +111,21 @@ export class WeaponTypeController {
     type: UpdateWeaponTypeDto,
   })
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   public async edit(
-    @Param('id') id: number,
+    @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() type: UpdateWeaponTypeDto,
   ): Promise<WeaponTypeDto> {
     return await this.weaponTypeService.edit(id, type);
   }
 
-  @Delete(':id')
+  @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
-    name: 'id',
+    name: SwaggerDescription.ID_PARAM,
   })
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
@@ -119,7 +134,9 @@ export class WeaponTypeController {
   @ApiOkResponse({
     type: ApiDeleteResponseDto,
   })
-  public async delete(@Param('id') id: number): Promise<ApiDeleteResponseDto> {
+  public async delete(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<ApiDeleteResponseDto> {
     return await this.weaponTypeService.delete(id);
   }
 }

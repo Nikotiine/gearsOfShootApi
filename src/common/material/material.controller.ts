@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,12 +14,17 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { MaterialService } from './material.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { CreateMaterialDto, MaterialDto } from '../../dto/material.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('material')
 @ApiTags('Material')
@@ -53,6 +59,9 @@ export class MaterialController {
   }
 
   @Post()
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajoute une nouvelle couleur',
@@ -68,7 +77,11 @@ export class MaterialController {
   ): Promise<MaterialDto> {
     return await this.materialService.insert(material);
   }
+
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -90,6 +103,9 @@ export class MaterialController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })

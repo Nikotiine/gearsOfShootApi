@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OpticReadyPlateService } from './optic-ready-plate.service';
 import {
@@ -14,6 +15,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
@@ -22,6 +24,10 @@ import {
   OpticReadyPlateDto,
 } from '../../dto/optic-ready-plate.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('optic-ready-plate')
 @ApiTags('Optic-ready-plate')
@@ -60,6 +66,9 @@ export class OpticReadyPlateController {
   }
 
   @Post('')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d une nouvelle plaque optic ready',
@@ -77,6 +86,9 @@ export class OpticReadyPlateController {
   }
 
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -98,6 +110,9 @@ export class OpticReadyPlateController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })

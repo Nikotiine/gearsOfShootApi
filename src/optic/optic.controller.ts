@@ -22,6 +22,9 @@ import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { SwaggerDescription } from '../enum/swagger-description.enum';
 import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
+import { Roles } from '../decorator/roles.decorator';
+import { UserRoles } from '../enum/user-roles.enum';
+import { RolesGuard } from '../auth/strategy/roles.guard';
 
 @Controller('optic')
 @ApiTags('Optic')
@@ -56,7 +59,8 @@ export class OpticController {
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiCreatedResponse({
     type: OpticDto,
@@ -73,7 +77,8 @@ export class OpticController {
   }
 
   @Put(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
@@ -96,7 +101,8 @@ export class OpticController {
   }
 
   @Delete(SwaggerDescription.ID)
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,

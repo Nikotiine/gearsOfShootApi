@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { ThreadedSizeService } from './threaded-size.service';
@@ -22,6 +24,10 @@ import {
 } from '../../dto/threaded-size.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('threaded-size')
 @ApiTags('Threaded-size')
@@ -56,6 +62,9 @@ export class ThreadedSizeController {
   }
 
   @Post()
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajouter un nouveux type de filetage arme ou rds ',
@@ -73,6 +82,9 @@ export class ThreadedSizeController {
   }
 
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
@@ -94,6 +106,9 @@ export class ThreadedSizeController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })

@@ -82,10 +82,14 @@ export class SoundNoiseReducerDto extends UpdateSoundNoiseReducerDto {
   })
   updatedBy: UserDto;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Date de creation',
+  })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Date de mise a jour',
+  })
   updatedAt: Date;
 
   @ApiProperty({

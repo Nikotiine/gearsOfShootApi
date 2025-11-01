@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { AmmunitionBodyTypeService } from './ammunition-body-type.service';
@@ -23,6 +25,10 @@ import {
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { CaliberDto } from '../../dto/caliber.dto';
+import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
+import { Roles } from '../../decorator/roles.decorator';
+import { UserRoles } from '../../enum/user-roles.enum';
+import { RolesGuard } from '../../auth/strategy/roles.guard';
 
 @Controller('ammunition-body-type')
 @ApiTags('AmmunitionBodyType')
@@ -31,7 +37,7 @@ export class AmmunitionBodyTypeController {
     private readonly ammunitionBodyTypeService: AmmunitionBodyTypeService,
   ) {}
 
-  @Get('')
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de toutes les douilles disponible',
@@ -61,6 +67,9 @@ export class AmmunitionBodyTypeController {
   }
 
   @Post('')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: 'Ajout ',
     description: 'Creattion d un nouveau type de douille pour les munitions',
@@ -78,6 +87,9 @@ export class AmmunitionBodyTypeController {
   }
 
   @Put(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
     description: 'Edition d un type de douille',
@@ -99,6 +111,9 @@ export class AmmunitionBodyTypeController {
   }
 
   @Delete(SwaggerDescription.ID)
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiSecurity('JWT-Auth')
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
