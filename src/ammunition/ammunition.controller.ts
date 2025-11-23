@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -14,6 +15,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -29,6 +31,11 @@ import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { Roles } from '../decorator/roles.decorator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { RolesGuard } from '../auth/strategy/roles.guard';
+import { AmmunitionFilter } from '../dto/filter/ammunition.filter';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../dto/paginated-response.dto';
 
 @Controller('ammunition')
 @ApiTags('Ammunition')
@@ -69,21 +76,29 @@ export class AmmunitionController {
     return this.ammunitionService.findById(id);
   }
 
-  @Get(SwaggerDescription.FIND_BY_CATEGORY)
-  @ApiParam({
-    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
-  })
+  /**
+   * Récupère la liste paginée des munitions selon les filtres fournis.
+   *
+   * ### Filtres disponibles :
+   * - `category`: nom de la catégorie (ex. "B", "C", etc.)
+   * - `factory`: nom du fabricant (ex. "Glock", "Winchester")
+   * - `caliber`: nom du calibre (ex. "9mm", "5.56")
+   * - `limit`: nombre maximum de résultats (défaut : 10)
+   * - `offset`: index de départ de la pagination (défaut : 0)
+   *
+   * @param {AmmunitionFilter} filters - Objet contenant les filtres et paramètres de pagination.
+   * @returns {Promise<PaginatedResponseDto<AmmunitionDto>>} Une liste paginée de munitions.
+   */
+  @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
     description: 'Retourne la liste des munitions filtre par calibre',
   })
-  @ApiOkResponse({
-    type: [AmmunitionDto],
-  })
-  public async findByCategory(
-    @Param('category') category: string,
-  ): Promise<AmmunitionDto[]> {
-    return this.ammunitionService.findByCategory(category);
+  @ApiPaginatedResponse(AmmunitionDto)
+  public async findAll(
+    @Query() filters: AmmunitionFilter,
+  ): Promise<PaginatedResponseDto<AmmunitionDto>> {
+    return this.ammunitionService.findAll(filters);
   }
 
   @Post('')

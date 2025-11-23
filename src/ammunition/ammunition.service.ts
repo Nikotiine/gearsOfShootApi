@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ammunition } from '../database/entity/ammunition.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import {
   AmmunitionDto,
   CreateAmmunitionDto,
@@ -24,6 +24,8 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../dto/item-invoice-supplier.dto';
+import { AmmunitionFilter } from '../dto/filter/ammunition.filter';
+import { PaginatedResponseDto } from '../dto/paginated-response.dto';
 
 @Injectable()
 export class AmmunitionService {
@@ -185,6 +187,49 @@ export class AmmunitionService {
     });
 
     return await this.mapEntityArrayToDtoArray(ammunitions);
+  }
+
+  public async findAll(
+    filter: AmmunitionFilter,
+  ): Promise<PaginatedResponseDto<AmmunitionDto>> {
+    const {
+      category,
+      factory,
+      caliber,
+      limit = 10,
+      offset = 0,
+      name,
+      reference,
+    } = filter;
+
+    // Construction dynamique du "where"
+    const where: any = {};
+    if (category) where.category = { name: ILike(`%${category}%`) };
+    if (factory) where.factory = { name: ILike(`%${factory}%`) };
+    if (caliber) where.caliber = { name: ILike(`%${caliber}%`) };
+    if (name) where.name = ILike(`%${name}%`);
+    if (reference) where.reference = ILike(`%${reference}%`);
+
+    const [entities, total] = await this.ammunitionRepository.findAndCount({
+      where,
+      relations: {
+        caliber: true,
+        factory: true,
+        category: true,
+      },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
+    });
+
+    const dtoList = await this.mapEntityArrayToDtoArray(entities);
+
+    return new PaginatedResponseDto<AmmunitionDto>(
+      dtoList,
+      total,
+      limit,
+      offset,
+    );
   }
 
   /**
