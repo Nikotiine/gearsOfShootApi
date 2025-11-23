@@ -15,7 +15,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -42,23 +41,11 @@ import {
 export class AmmunitionController {
   constructor(private readonly ammunitionService: AmmunitionService) {}
 
-  @Get('by/caliber/:id')
-  @ApiParam({
-    name: 'id',
-  })
-  @ApiOperation({
-    summary: 'Filtre par calibre',
-    description: 'Retourne la liste des munitions filtre par calibre',
-  })
-  @ApiOkResponse({
-    type: [AmmunitionDto],
-  })
-  public async findByCaliber(
-    @Param('caliberId') caliberId: number,
-  ): Promise<AmmunitionDto[]> {
-    return this.ammunitionService.findByCaliber(caliberId);
-  }
-
+  /**
+   * Récupère la munitions selon son id.
+   * @param {number} id identifiant de la munition
+   * @returns {Promise<AmmunitionDto>} Le DTO de la munition
+   */
   @Get(SwaggerDescription.FIND_BY_ID)
   @ApiOperation({
     summary: SwaggerDescription.FIND_BY_ID_SUMMARY,
@@ -85,6 +72,8 @@ export class AmmunitionController {
    * - `caliber`: nom du calibre (ex. "9mm", "5.56")
    * - `limit`: nombre maximum de résultats (défaut : 10)
    * - `offset`: index de départ de la pagination (défaut : 0)
+   * - 'name' : nom du modele
+   * - 'reference' : reference du produit
    *
    * @param {AmmunitionFilter} filters - Objet contenant les filtres et paramètres de pagination.
    * @returns {Promise<PaginatedResponseDto<AmmunitionDto>>} Une liste paginée de munitions.
