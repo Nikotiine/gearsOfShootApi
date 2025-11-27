@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Optic } from '../database/entity/optic.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateOpticDto, OpticDto, UpdateOpticDto } from '../dto/optic.dto';
 import { ApiDeleteResponseDto } from '../dto/api-response.dto';
 import { CodeSuccess } from '../enum/code-success.enum';
@@ -16,7 +20,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../dto/item-invoice-supplier.dto';
-import { WeaponMagazineDto } from '../dto/weapon-magazine.dto';
+import { OpticFilter } from './filters/optic.filter';
+import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
+import { buildWhereGeneric } from '../database/utils/where-builder';
+import { opticWhereFilterConfig } from './filters/optic-where-filter.config';
 
 @Injectable()
 export class OpticService {
@@ -27,9 +34,12 @@ export class OpticService {
     private readonly stockService: StockService,
   ) {}
 
-  //TODO: Mettre la contrainte d unicite
   public async insert(optic: CreateOpticDto): Promise<OpticDto> {
-    const entity = this.opticRepository.create({
+    const isExist: boolean = await this.verifyIsNoExist(optic);
+    if (isExist) {
+      throw new BadRequestException(CodeError.OPTIC_IS_EXIST);
+    }
+    const entity: Optic = this.opticRepository.create({
       name: optic.name,
       maxParallax: optic.maxParallax,
       minParallax: optic.minParallax,
@@ -93,8 +103,17 @@ export class OpticService {
     return this.mapEntityToDto(optic, price);
   }
 
-  public async findAll(): Promise<OpticDto[]> {
-    const optics = await this.opticRepository.find({
+  public async findAll(
+    filter: OpticFilter,
+  ): Promise<PaginatedResponseDto<OpticDto>> {
+    const { limit, offset } = filter;
+    const where: FindOptionsWhere<Optic> = buildWhereGeneric<
+      OpticFilter,
+      Optic
+    >(filter, opticWhereFilterConfig);
+
+    const [entities, total] = await this.opticRepository.findAndCount({
+      where,
       relations: {
         factory: {
           type: true,
@@ -104,8 +123,15 @@ export class OpticService {
         type: true,
         providedOpticCollarSize: true,
       },
+      take: limit,
+      skip: offset,
+      order: {
+        id: 'DESC',
+      },
     });
-    return this.mapOpticsArrayToOpticsDtoArray(optics);
+    const data: OpticDto[] =
+      await this.mapOpticsArrayToOpticsDtoArray(entities);
+    return new PaginatedResponseDto<OpticDto>(data, total, limit, offset);
   }
 
   public async edit(id: number, optic: UpdateOpticDto): Promise<OpticDto> {
@@ -228,6 +254,22 @@ export class OpticService {
       createdAt: optic.createdAt,
       updatedAt: optic.updatedAt,
     };
+  }
+
+  private async verifyIsNoExist(dto: CreateOpticDto): Promise<boolean> {
+    const optic: Optic = await this.opticRepository.findOne({
+      where: {
+        name: dto.name,
+        maxZoom: dto.maxZoom,
+        minZoom: dto.minZoom,
+        bodyDiameter: dto.bodyDiameter,
+        lensDiameter: dto.lensDiameter,
+        factory: {
+          id: dto.factory.id,
+        },
+      },
+    });
+    return !!optic;
   }
 
   private async createReference(optic: CreateOpticDto): Promise<string> {

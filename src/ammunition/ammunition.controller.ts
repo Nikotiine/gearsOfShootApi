@@ -30,11 +30,11 @@ import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { Roles } from '../decorator/roles.decorator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { RolesGuard } from '../auth/strategy/roles.guard';
-import { AmmunitionFilter } from '../dto/filter/ammunition.filter';
+import { AmmunitionFilter } from './filters/ammunition.filter';
 import {
   ApiPaginatedResponse,
   PaginatedResponseDto,
-} from '../dto/paginated-response.dto';
+} from '../decorator/paginated-response.decorator';
 
 @Controller('ammunition')
 @ApiTags('Ammunition')

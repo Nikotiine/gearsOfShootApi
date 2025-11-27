@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ammunition } from '../database/entity/ammunition.entity';
-import { ILike, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import {
   AmmunitionDto,
   CreateAmmunitionDto,
@@ -24,8 +24,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../dto/item-invoice-supplier.dto';
-import { AmmunitionFilter } from '../dto/filter/ammunition.filter';
-import { PaginatedResponseDto } from '../dto/paginated-response.dto';
+import { AmmunitionFilter } from './filters/ammunition.filter';
+import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
+import { buildWhereGeneric } from '../database/utils/where-builder';
+import { ammunitionWhereFilterConfig } from './filters/ammunition-where-filter.config';
 
 @Injectable()
 export class AmmunitionService {
@@ -207,23 +209,11 @@ export class AmmunitionService {
   public async findAll(
     filter: AmmunitionFilter,
   ): Promise<PaginatedResponseDto<AmmunitionDto>> {
-    const {
-      category,
-      factory,
-      caliber,
-      limit = 10,
-      offset = 0,
-      name,
-      reference,
-    } = filter;
-
-    // Construction dynamique du "where"
-    const where: any = {};
-    if (category) where.category = { name: ILike(`%${category}%`) };
-    if (factory) where.factory = { name: ILike(`%${factory}%`) };
-    if (caliber) where.caliber = { name: ILike(`%${caliber}%`) };
-    if (name) where.name = ILike(`%${name}%`);
-    if (reference) where.reference = ILike(`%${reference}%`);
+    const { limit = 10, offset = 0 } = filter;
+    const where: FindOptionsWhere<Ammunition> = buildWhereGeneric<
+      AmmunitionFilter,
+      Ammunition
+    >(filter, ammunitionWhereFilterConfig);
 
     const [entities, total] = await this.ammunitionRepository.findAndCount({
       where,
@@ -237,14 +227,9 @@ export class AmmunitionService {
       order: { id: 'DESC' },
     });
 
-    const dtoList = await this.mapEntityArrayToDtoArray(entities);
+    const data: AmmunitionDto[] = await this.mapEntityArrayToDtoArray(entities);
 
-    return new PaginatedResponseDto<AmmunitionDto>(
-      dtoList,
-      total,
-      limit,
-      offset,
-    );
+    return new PaginatedResponseDto<AmmunitionDto>(data, total, limit, offset);
   }
 
   /**

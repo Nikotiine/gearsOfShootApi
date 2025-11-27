@@ -23,7 +23,7 @@ export class BaseFilter {
   @Min(0)
   offset?: number = 0;
 
-  @ApiPropertyOptional({ example: 'B' })
+  @ApiPropertyOptional({ example: 'Reference interne de l objet' })
   @IsOptional()
   @IsString()
   reference?: string;

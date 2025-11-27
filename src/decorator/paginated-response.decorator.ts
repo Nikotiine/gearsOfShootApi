@@ -43,9 +43,7 @@ export const ApiPaginatedResponse = <
   model: TModel,
 ) => {
   return (target: any, key: string, descriptor: PropertyDescriptor) => {
-    // Déclare les modèles utilisés
     ApiExtraModels(PaginatedResponseDto, model)(target, key, descriptor);
-
     ApiOkResponse({
       schema: {
         allOf: [

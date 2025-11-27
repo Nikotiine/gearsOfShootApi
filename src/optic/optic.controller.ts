@@ -25,22 +25,30 @@ import { JwtAuthGuard } from '../auth/strategy/jwt-auth.guard';
 import { Roles } from '../decorator/roles.decorator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { RolesGuard } from '../auth/strategy/roles.guard';
+import { OpticFilter } from './filters/optic.filter';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../decorator/paginated-response.decorator';
+import { QueryFilter } from '../decorator/query-filter.decorator';
 
+import { ReqQueryFilter } from '../decorator/req-query-filter.decorator';
 @Controller('optic')
 @ApiTags('Optic')
 export class OpticController {
   constructor(private readonly opticService: OpticService) {}
 
   @Get(SwaggerDescription.FIND_ALL)
-  @ApiOkResponse({
-    type: [OpticDto],
-  })
+  @ApiPaginatedResponse(OpticDto)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste completes des optiques',
   })
-  public async findAllOptics(): Promise<OpticDto[]> {
-    return await this.opticService.findAll();
+  @QueryFilter(OpticFilter)
+  public async findAllOptics(
+    @ReqQueryFilter() filters: OpticFilter,
+  ): Promise<PaginatedResponseDto<OpticDto>> {
+    return await this.opticService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
@@ -54,7 +62,9 @@ export class OpticController {
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,
   })
-  public async findById(@Param('id') id: number): Promise<OpticDto> {
+  public async findById(
+    @Param(SwaggerDescription.ID_PARAM) id: number,
+  ): Promise<OpticDto> {
     return await this.opticService.findById(id);
   }
 
@@ -66,7 +76,7 @@ export class OpticController {
     type: OpticDto,
   })
   @ApiOperation({
-    summary: 'Creation d une nouvelle optique',
+    summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Creer une nouvelle optique et retourne son dto en reponse',
   })
   @ApiBody({
