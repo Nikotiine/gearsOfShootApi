@@ -42,7 +42,7 @@ export class OpticController {
   @ApiPaginatedResponse(OpticDto)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
-    description: 'Retourne la liste completes des optiques',
+    description: 'Retourne la liste complete des optiques',
   })
   @QueryFilter(OpticFilter)
   public async findAllOptics(

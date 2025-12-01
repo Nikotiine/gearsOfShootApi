@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OpticUnitService } from './optic-unit.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
-import { OpticUnitDto } from '../../dto/optic.dto';
+import { OpticUnitDto } from '../../dto/optic-unit.dto';
 
 @Controller('optic-unit')
 @ApiTags('OpticUnit')

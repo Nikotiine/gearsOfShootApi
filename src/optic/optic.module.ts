@@ -17,6 +17,9 @@ import { OpticCollar } from '../database/entity/optic-collar.entity';
 import { OpticFocalPlaneController } from './optic-focal-plane/optic-focal-plane.controller';
 import { OpticUnitController } from './optic-unit/optic-unit.controller';
 import { SaleModule } from '../sale/sale.module';
+import { OpticClick } from '../database/entity/optic-click.entity';
+import { OpticClickController } from './optic-click/optic-click.controller';
+import { OpticClickService } from './optic-click/optic-click.service';
 
 @Module({
   controllers: [
@@ -25,6 +28,7 @@ import { SaleModule } from '../sale/sale.module';
     OpticCollarController,
     OpticFocalPlaneController,
     OpticUnitController,
+    OpticClickController,
   ],
   providers: [
     OpticService,
@@ -32,6 +36,7 @@ import { SaleModule } from '../sale/sale.module';
     OpticFocalPlaneService,
     OpticUnitService,
     OpticCollarService,
+    OpticClickService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -40,6 +45,7 @@ import { SaleModule } from '../sale/sale.module';
       OpticFocalPlane,
       OpticUnit,
       OpticCollar,
+      OpticClick,
     ]),
     CommonModule,
     SaleModule,

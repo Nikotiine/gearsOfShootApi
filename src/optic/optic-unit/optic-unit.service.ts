@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpticUnit } from '../../database/entity/optic-unit.entity';
 import { Repository } from 'typeorm';
-import { OpticUnitDto } from '../../dto/optic.dto';
+import { OpticUnitDto } from '../../dto/optic-unit.dto';
 
 @Injectable()
 export class OpticUnitService {
