@@ -184,7 +184,6 @@ export class AmmunitionService {
    * - Convertit la liste des entités en liste de DTOs via `mapEntityArrayToDtoArray`.
    * - Retourne une structure de pagination standardisée via `PaginatedResponseDto`.
    *
-   * @param {AmmunitionFilter} filter - Objet contenant les filtres de recherche :
    *  - `category` (string) : filtre sur le nom de la catégorie
    *  - `factory` (string) : filtre sur le nom du fabricant
    *  - `caliber` (string) : filtre sur le nom du calibre
@@ -205,15 +204,16 @@ export class AmmunitionService {
    * // result.data → AmmunitionDto[]
    * // result.total → nombre total filtré
    *
+   * @param filters AmmunitionFilter
    */
   public async findAll(
-    filter: AmmunitionFilter,
+    filters: AmmunitionFilter,
   ): Promise<PaginatedResponseDto<AmmunitionDto>> {
-    const { limit = 10, offset = 0 } = filter;
+    const { limit = 10, offset = 0 } = filters;
     const where: FindOptionsWhere<Ammunition> = buildWhereGeneric<
       AmmunitionFilter,
       Ammunition
-    >(filter, ammunitionWhereFilterConfig);
+    >(filters, ammunitionWhereFilterConfig);
 
     const [entities, total] = await this.ammunitionRepository.findAndCount({
       where,

@@ -38,6 +38,25 @@ import { ReqQueryFilter } from '../decorator/req-query-filter.decorator';
 export class OpticController {
   constructor(private readonly opticService: OpticService) {}
 
+  /**
+   * Récupère la liste paginée des optiques.
+   *
+   * Cette route permet de retourner l’ensemble des optiques en appliquant
+   * éventuellement un filtre fourni via les paramètres de requête.
+   *
+   * Les métadonnées Swagger associées :
+   * - `@ApiPaginatedResponse(OpticDto)`: indique que la réponse est paginée
+   *   et de type `OpticDto`.
+   * - `@ApiOperation`: fournit le résumé et la description pour la documentation Swagger.
+   * - `@QueryFilter(OpticFilter)`: ajoute automatiquement au Swagger un schéma
+   *   pour les filtres transmis sous forme d’objet dans la query (`filters[...]`).
+   *
+   * Le décorateur `@ReqQueryFilter()` extrait automatiquement l’objet `filters`
+   * depuis la query (`req.query.filters`) et le transforme en instance d’`OpticFilter`.
+   *
+   * @param filters - Instance de `OpticFilter` construite à partir de `req.query.filters`.
+   * @returns Une réponse paginée contenant la liste des optiques.
+   */
   @Get(SwaggerDescription.FIND_ALL)
   @ApiPaginatedResponse(OpticDto)
   @ApiOperation({

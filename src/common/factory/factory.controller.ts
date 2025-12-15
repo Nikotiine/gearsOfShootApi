@@ -21,7 +21,6 @@ import { FactoryService, FactoryTypes } from './factory.service';
 import {
   CreateFactoryDto,
   FactoryDto,
-  ListOfPrerequisitesFactoryDto,
   UpdateFactoryDto,
 } from '../../dto/factory.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
@@ -30,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { FactoryFilter } from './filters/factory.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
 
 @Controller('factory')
 @ApiTags('Factory')
@@ -41,11 +47,12 @@ export class FactoryController {
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la listes de toutes les marques sans distinction',
   })
-  @ApiOkResponse({
-    type: [FactoryDto],
-  })
-  public async findAll(): Promise<FactoryDto[]> {
-    return await this.factoryService.findAll();
+  @ApiPaginatedResponse(FactoryDto)
+  @QueryFilter(FactoryFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: FactoryFilter,
+  ): Promise<PaginatedResponseDto<FactoryDto>> {
+    return await this.factoryService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
@@ -80,19 +87,6 @@ export class FactoryController {
     @Param(SwaggerDescription.FIND_BY_TYPE_PARAM) type: FactoryTypes,
   ): Promise<FactoryDto[]> {
     return await this.factoryService.findByType(type);
-  }
-
-  @Get('prerequisites')
-  @ApiOkResponse({
-    type: ListOfPrerequisitesFactoryDto,
-  })
-  @ApiOperation({
-    summary: 'Pre-requis de creation',
-    description:
-      'Retourne la liste des pre-requis necesssaire a la creation d une marque',
-  })
-  public async findPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
-    return this.factoryService.getListOfPrerequisitesFactoryList();
   }
 
   @Post('')

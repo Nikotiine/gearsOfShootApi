@@ -33,7 +33,7 @@ import { RolesGuard } from '../../auth/strategy/roles.guard';
 @Controller('magazine')
 @ApiTags('Magazine')
 export class MagazineController {
-  constructor(private readonly magzineService: MagazineService) {}
+  constructor(private readonly magazineService: MagazineService) {}
 
   @Get(SwaggerDescription.FIND_ALL)
   @ApiOkResponse({
@@ -44,7 +44,7 @@ export class MagazineController {
     description: 'Retourne la liste de tous les chargeurs disponible',
   })
   public async findAll(): Promise<WeaponMagazineDto[]> {
-    return await this.magzineService.findAll();
+    return await this.magazineService.findAll();
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
@@ -59,7 +59,7 @@ export class MagazineController {
     type: WeaponMagazineDto,
   })
   public async findById(@Param('id') id: number): Promise<WeaponMagazineDto> {
-    return await this.magzineService.findById(id);
+    return await this.magazineService.findById(id);
   }
 
   @Get(SwaggerDescription.FIND_BY_FACTORY)
@@ -76,7 +76,7 @@ export class MagazineController {
   public async findByFactory(
     @Param(SwaggerDescription.FIND_BY_FACTORY_PARAM) factoryName: string,
   ): Promise<WeaponMagazineDto[]> {
-    return this.magzineService.findByFactory(factoryName);
+    return this.magazineService.findByFactory(factoryName);
   }
 
   @Get(SwaggerDescription.FIND_BY_CATEGORY)
@@ -93,7 +93,7 @@ export class MagazineController {
   public async findByCategory(
     @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
   ): Promise<WeaponMagazineDto[]> {
-    return await this.magzineService.findByCategory(category);
+    return await this.magazineService.findByCategory(category);
   }
 
   @Post('')
@@ -113,7 +113,7 @@ export class MagazineController {
   public async create(
     @Body() magazine: CreateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
-    return await this.magzineService.insert(magazine);
+    return await this.magazineService.insert(magazine);
   }
 
   @Put(SwaggerDescription.ID)
@@ -137,7 +137,7 @@ export class MagazineController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() magazine: UpdateWeaponMagazineDto,
   ): Promise<WeaponMagazineDto> {
-    return await this.magzineService.edit(id, magazine);
+    return await this.magazineService.edit(id, magazine);
   }
 
   @Delete(SwaggerDescription.ID)
@@ -157,6 +157,6 @@ export class MagazineController {
   public async delete(
     @Param(SwaggerDescription.ID_PARAM) id: number,
   ): Promise<ApiDeleteResponseDto> {
-    return await this.magzineService.delete(id);
+    return await this.magazineService.delete(id);
   }
 }

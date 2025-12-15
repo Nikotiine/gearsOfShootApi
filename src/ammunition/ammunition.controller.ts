@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -35,6 +34,8 @@ import {
   ApiPaginatedResponse,
   PaginatedResponseDto,
 } from '../decorator/paginated-response.decorator';
+import { ReqQueryFilter } from '../decorator/req-query-filter.decorator';
+import { QueryFilter } from '../decorator/query-filter.decorator';
 
 @Controller('ammunition')
 @ApiTags('Ammunition')
@@ -84,8 +85,9 @@ export class AmmunitionController {
     description: 'Retourne la liste des munitions filtre par calibre',
   })
   @ApiPaginatedResponse(AmmunitionDto)
+  @QueryFilter(AmmunitionFilter)
   public async findAll(
-    @Query() filters: AmmunitionFilter,
+    @ReqQueryFilter() filters: AmmunitionFilter,
   ): Promise<PaginatedResponseDto<AmmunitionDto>> {
     return this.ammunitionService.findAll(filters);
   }

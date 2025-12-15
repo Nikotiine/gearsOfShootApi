@@ -122,6 +122,9 @@ export class OpticService {
         opticUnit: true,
         type: true,
         providedOpticCollarSize: true,
+        clickValue: {
+          opticUnit: true,
+        },
       },
       take: limit,
       skip: offset,

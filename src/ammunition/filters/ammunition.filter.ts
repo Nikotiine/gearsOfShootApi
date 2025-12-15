@@ -18,7 +18,7 @@ export class AmmunitionFilter extends BaseFilter {
   @IsString()
   caliber?: string;
 
-  @ApiPropertyOptional({ example: 'Le nom de l arme' })
+  @ApiPropertyOptional({ example: 'Le nom du moodel de munition' })
   @IsOptional()
   @IsString()
   name?: string;

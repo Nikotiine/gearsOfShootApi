@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpticCollar } from '../../database/entity/optic-collar.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   CreateOpticCollarDto,
   OpticCollarDto,
@@ -20,7 +24,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { HandGunDto } from '../../dto/hand-gun.dto';
+import { OpticCollarFilter } from '../filters/optic-collar.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { opticCollarWhereFilterConfig } from '../filters/optic-collar-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 
 @Injectable()
 export class OpticCollarService {
@@ -31,18 +38,35 @@ export class OpticCollarService {
     private readonly stockService: StockService,
   ) {}
 
-  public async findAll(): Promise<OpticCollarDto[]> {
-    const collars = await this.opticCollarRepository.find({
+  public async findAll(
+    filters: OpticCollarFilter,
+  ): Promise<PaginatedResponseDto<OpticCollarDto>> {
+    const { limit, offset } = filters;
+    const where: FindOptionsWhere<OpticCollar> = buildWhereGeneric<
+      OpticCollarFilter,
+      OpticCollar
+    >(filters, opticCollarWhereFilterConfig);
+    const [entities, total] = await this.opticCollarRepository.findAndCount({
+      where,
       relations: {
         railSize: true,
         factory: true,
       },
+      take: limit,
+      skip: offset,
+      order: {
+        id: 'DESC',
+      },
     });
-    return this.mapOpticCollarArrayToDtoArray(collars);
+    const data = await this.mapOpticCollarArrayToDtoArray(entities);
+    return new PaginatedResponseDto<OpticCollarDto>(data, total, limit, offset);
   }
 
-  //TODO: Mettre la contrainte d unicite
   public async insert(collar: CreateOpticCollarDto): Promise<OpticCollarDto> {
+    const isExist = await this.verifyIsNoExist(collar);
+    if (isExist) {
+      throw new BadRequestException(CodeError.OPTIC_COLLAR_IS_EXIST);
+    }
     const entity = this.opticCollarRepository.create({
       diameter: collar.diameter,
       name: collar.name,
@@ -196,5 +220,19 @@ export class OpticCollarService {
       reference: collar.reference,
       description: `Pour rail: ${collar.railSize.name ?? ''} | Diametre: ${collar.diameter} | Description: ${collar.description}`,
     };
+  }
+
+  private async verifyIsNoExist(dto: CreateOpticCollarDto): Promise<boolean> {
+    const entity: OpticCollar = await this.opticCollarRepository.findOne({
+      where: {
+        name: dto.name,
+        factory: {
+          id: dto.factory.id,
+        },
+        height: dto.height,
+        diameter: dto.diameter,
+      },
+    });
+    return !!entity;
   }
 }

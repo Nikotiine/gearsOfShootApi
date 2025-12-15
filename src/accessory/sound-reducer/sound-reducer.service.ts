@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SoundNoiseReducer } from '../../database/entity/sound-noise-reducer.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   CreateSoundNoiseReducerDto,
   SoundNoiseReducerDto,
@@ -25,6 +25,11 @@ import {
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
 import { HandGunDto } from '../../dto/hand-gun.dto';
+import { SoundNoiseFilter } from './filters/sound-noise.reducer.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { soundNoiseFilterConfig } from './filters/sound-noise-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import { AmmunitionDto } from '../../dto/ammunition.dto';
 
 @Injectable()
 export class SoundReducerService {
@@ -38,15 +43,34 @@ export class SoundReducerService {
   /**
    * Retourne tous les reduceteur de sons
    */
-  public async findAll(): Promise<SoundNoiseReducerDto[]> {
-    const soundNoiseReducers = await this.soundNoiseReducerRepository.find({
-      relations: {
-        caliber: true,
-        threadedSize: true,
-        factory: true,
-      },
-    });
-    return this.mapArrayEntityToArrayDto(soundNoiseReducers);
+  public async findAll(
+    filter: SoundNoiseFilter,
+  ): Promise<PaginatedResponseDto<SoundNoiseReducerDto>> {
+    const { limit = 10, offset = 0 } = filter;
+    const where: FindOptionsWhere<SoundNoiseReducer> = buildWhereGeneric<
+      SoundNoiseFilter,
+      SoundNoiseReducer
+    >(filter, soundNoiseFilterConfig);
+    const [entities, total] =
+      await this.soundNoiseReducerRepository.findAndCount({
+        where,
+        relations: {
+          caliber: true,
+          threadedSize: true,
+          factory: true,
+        },
+        take: limit,
+        skip: offset,
+        order: { id: 'DESC' },
+      });
+    const data: SoundNoiseReducerDto[] =
+      await this.mapArrayEntityToArrayDto(entities);
+    return new PaginatedResponseDto<SoundNoiseReducerDto>(
+      data,
+      total,
+      limit,
+      offset,
+    );
   }
 
   public async insert(

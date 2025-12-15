@@ -17,15 +17,14 @@ export class CreateFactoryDto {
     example: 'Colt',
   })
   name: string;
-  @ApiProperty({})
-  typeId: number;
+  @ApiProperty({
+    type: FactoryTypeDto,
+  })
+  type: FactoryTypeDto;
   @ApiProperty({
     example: 'Une description de la marque et ses produits',
   })
   description: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  reference: string;
 }
 export class UpdateFactoryDto extends CreateFactoryDto {
   @ApiProperty()
