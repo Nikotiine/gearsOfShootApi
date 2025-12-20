@@ -1,32 +1,43 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   CreateFactoryDto,
-  UpdateFactoryDto,
   FactoryDto,
-  ListOfPrerequisitesFactoryDto,
+  FactoryTypeDto,
+  UpdateFactoryDto,
 } from '../../dto/factory.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Factory } from '../../database/entity/factory.entity';
 
 import { CodeError } from '../../enum/code-error.enum';
-import { FactoryTypeService } from '../factory-type/factory-type.service';
+
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
+import { FactoryFilter } from './filters/factory.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { factoryWhereFilterConfig } from './filters/factory-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 
 @Injectable()
 export class FactoryService {
   constructor(
     @InjectRepository(Factory)
     private readonly factoryRepository: Repository<Factory>,
-    private readonly factoryTypeService: FactoryTypeService,
   ) {}
 
   /**
    * Retourne la liste de toutes les marque disponible
    */
-  public async findAll(): Promise<FactoryDto[]> {
-    const factories: Factory[] = await this.factoryRepository.find({
+  public async findAll(
+    filters: FactoryFilter,
+  ): Promise<PaginatedResponseDto<FactoryDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<Factory> = buildWhereGeneric<
+      FactoryFilter,
+      Factory
+    >(filters, factoryWhereFilterConfig);
+    const [entities, total] = await this.factoryRepository.findAndCount({
+      where,
       relations: {
         type: true,
       },
@@ -40,9 +51,13 @@ export class FactoryService {
         description: true,
         reference: true,
       },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
     });
 
-    return this.mapArrayEntityToArrayDto(factories);
+    const data = this.mapArrayEntityToArrayDto(entities);
+    return new PaginatedResponseDto(data, total, limit, offset);
   }
 
   /**
@@ -79,21 +94,15 @@ export class FactoryService {
    * @param factory {CreateFactoryDto}
    */
   public async insert(factory: CreateFactoryDto): Promise<FactoryDto> {
-    const isExist = await this.verifyIfFactoryExist(
-      factory.name,
-      factory.typeId,
-    );
+    const isExist = await this.verifyIfFactoryExist(factory.name, factory.type);
     if (isExist) {
       throw new BadRequestException(CodeError.FACTORY_NAME_IS_USED);
     }
-    //TODO: changer DTO
     const entity = this.factoryRepository.create({
       name: factory.name,
       description: factory.description,
-      type: {
-        id: factory.typeId,
-      },
-      reference: factory.reference,
+      type: factory.type,
+      reference: this.createReference(factory),
     });
     const created = await this.factoryRepository.save(entity);
 
@@ -103,18 +112,18 @@ export class FactoryService {
   /**
    * Verification que la marque n'existe pas
    * @param name {string} son nom
-   * @param typeId {number} id du type de marque
+   * @param type FactoryTypeDto
    * @private
    */
   private async verifyIfFactoryExist(
     name: string,
-    typeId: number,
+    type: FactoryTypeDto,
   ): Promise<boolean> {
     const factory = await this.factoryRepository.findOne({
       where: {
         name: name,
         type: {
-          id: typeId,
+          id: type.id,
         },
       },
     });
@@ -136,15 +145,6 @@ export class FactoryService {
   }
 
   /**
-   * Retorune la liste des prerequis pour creer une nohvelle marque
-   */
-  public async getListOfPrerequisitesFactoryList(): Promise<ListOfPrerequisitesFactoryDto> {
-    return {
-      types: await this.factoryTypeService.findAll(),
-    };
-  }
-
-  /**
    * Edition d'une marque
    * @param id
    * @param factory
@@ -156,11 +156,9 @@ export class FactoryService {
     const updateResult = await this.factoryRepository.update(id, {
       id: id,
       name: factory.name,
-      reference: factory.reference,
+      reference: this.createReference(factory),
       description: factory.description,
-      type: {
-        id: factory.typeId,
-      },
+      type: factory.type,
     });
     if (updateResult.affected === 0) {
       throw new BadRequestException(CodeError.FACTORY_UPDATE_FAILED);
@@ -223,6 +221,10 @@ export class FactoryService {
       description: factory.description,
       reference: factory.reference,
     };
+  }
+
+  private createReference(factory: CreateFactoryDto) {
+    return `${factory.type.name.substring(0, 3).toUpperCase()}/${factory.name.toUpperCase()}`;
   }
 }
 

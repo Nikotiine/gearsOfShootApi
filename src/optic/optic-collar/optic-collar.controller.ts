@@ -29,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { OpticCollarFilter } from '../filters/optic-collar.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
 
 @Controller('optic-collar')
 @ApiTags('Optic-Collar')
@@ -36,15 +43,16 @@ export class OpticCollarController {
   constructor(private readonly opticCollarService: OpticCollarService) {}
 
   @Get(SwaggerDescription.FIND_ALL)
-  @ApiOkResponse({
-    type: [OpticCollarDto],
-  })
+  @ApiPaginatedResponse(OpticCollarDto)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Liste complete des colliers d optique',
   })
-  public async findAll(): Promise<OpticCollarDto[]> {
-    return this.opticCollarService.findAll();
+  @QueryFilter(OpticCollarFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: OpticCollarFilter,
+  ): Promise<PaginatedResponseDto<OpticCollarDto>> {
+    return this.opticCollarService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)

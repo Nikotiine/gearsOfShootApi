@@ -11,6 +11,8 @@ import { CreatePriceHistoryDto } from './price-history.dto';
 import { RailSizeDto } from './rail-size.dto';
 import { UserDto } from './user.dto';
 import { StockDto } from './stock.dto';
+import { OpticClickValueDto } from './optic-click-value.dto';
+import { OpticUnitDto } from './optic-unit.dto';
 
 export class FocalPlaneDto {
   @ApiProperty()
@@ -18,12 +20,7 @@ export class FocalPlaneDto {
   @ApiProperty()
   name: string;
 }
-export class OpticUnitDto {
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  name: string;
-}
+
 export class CreateOpticTypeDto {
   @ApiProperty()
   name: string;
@@ -70,9 +67,10 @@ export class CreateOpticDto {
   @IsNumber()
   maxElevation: number;
 
-  @ApiProperty()
-  @IsNumber()
-  valueOfOneClick: number;
+  @ApiProperty({
+    type: OpticClickValueDto,
+  })
+  clickValue: OpticClickValueDto;
 
   @ApiProperty()
   @IsNumber()

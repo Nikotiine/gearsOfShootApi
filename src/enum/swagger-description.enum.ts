@@ -19,4 +19,5 @@ export enum SwaggerDescription {
   ID = ':id',
   DELETE_SUMMARY = 'Suppresion logique',
   DELETE_DESCRIPTION = 'Apres la suppresion retourne l objet ApiDeleteResponseDto ',
+  CATEGORY_QUERY = 'cat',
 }

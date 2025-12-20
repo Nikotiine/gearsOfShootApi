@@ -29,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { SoundNoiseFilter } from './filters/sound-noise.reducer.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
 
 @Controller('sound-reducer')
 @ApiTags('Sound-reducer')
@@ -36,16 +43,16 @@ export class SoundReducerController {
   constructor(private readonly soundNoiseReducerService: SoundReducerService) {}
 
   @Get(SwaggerDescription.FIND_ALL)
-  @ApiOkResponse({
-    type: [SoundNoiseReducerDto],
-    description: 'Tableau de SoundNoiseReducerDto',
-  })
+  @ApiPaginatedResponse(SoundNoiseReducerDto)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de tous les reducteurs de son disponible',
   })
-  public async findAll(): Promise<SoundNoiseReducerDto[]> {
-    return await this.soundNoiseReducerService.findAll();
+  @QueryFilter(SoundNoiseFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: SoundNoiseFilter,
+  ): Promise<PaginatedResponseDto<SoundNoiseReducerDto>> {
+    return await this.soundNoiseReducerService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)

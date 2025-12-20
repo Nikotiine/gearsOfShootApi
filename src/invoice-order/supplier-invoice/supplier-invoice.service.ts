@@ -162,7 +162,6 @@ export class SupplierInvoiceService {
       .orderBy('invoice.createdAt', 'DESC');
 
     if (status) {
-      console.log('**********************', status);
       query.andWhere('invoice.invoiceStatus = :status', { status });
     } else {
       query.andWhere('invoice.invoiceStatus != :archived', {

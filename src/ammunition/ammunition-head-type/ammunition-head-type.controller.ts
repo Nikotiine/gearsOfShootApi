@@ -39,7 +39,7 @@ export class AmmunitionHeadTypeController {
   @Get(SwaggerDescription.FIND_ALL)
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
-    description: 'Retourne la liste de toutes les oviges disponible',
+    description: 'Retourne la liste de toutes les oviges disponibles',
   })
   @ApiOkResponse({
     type: [AmmunitionHeadTypeDto],
@@ -91,7 +91,7 @@ export class AmmunitionHeadTypeController {
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
-    description: 'Edition d un  type d ovige',
+    description: 'Edition d un type d ovige',
   })
   @ApiParam({
     name: SwaggerDescription.ID_PARAM,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponMagazine } from '../../database/entity/weapon-magazine.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   CreateWeaponMagazineDto,
   UpdateWeaponMagazineDto,
@@ -21,7 +21,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { RiffleDto } from '../../dto/riffle.dto';
+import { MagazineFilter } from './filters/magazine.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { magazineFilterConfig } from './filters/magazine-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 
 @Injectable()
 export class MagazineService {
@@ -37,9 +40,33 @@ export class MagazineService {
   /**
    * Retourne tous les chargeur disponible
    */
-  public async findAll(): Promise<WeaponMagazineDto[]> {
-    const magazines = await this.weaponMagazineRepository.find();
-    return this.mapEntityArrayToDtoArray(magazines);
+  public async findAll(
+    filters: MagazineFilter,
+  ): Promise<PaginatedResponseDto<WeaponMagazineDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<WeaponMagazine> = buildWhereGeneric<
+      MagazineFilter,
+      WeaponMagazine
+    >(filters, magazineFilterConfig);
+    const [entities, total] = await this.weaponMagazineRepository.findAndCount({
+      where,
+      relations: {
+        caliber: true,
+        factory: true,
+        category: true,
+      },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
+    });
+    const data: WeaponMagazineDto[] =
+      await this.mapEntityArrayToDtoArray(entities);
+    return new PaginatedResponseDto<WeaponMagazineDto>(
+      data,
+      total,
+      limit,
+      offset,
+    );
   }
 
   /**

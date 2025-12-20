@@ -8,7 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Gears of shoot')
     .setDescription('Gears of shoot API')
-    .setVersion('0.2.3')
+    .setVersion('0.3.2')
     .addBearerAuth(
       {
         type: 'http',

@@ -5,6 +5,7 @@ import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
 import { RailSize } from './rail-size.entity';
 import { BaseAuditEntity } from './base-audit.entity';
+import { OpticClick } from './optic-click.entity';
 
 @Entity()
 @Unique([
@@ -52,8 +53,8 @@ export class Optic extends BaseAuditEntity {
   @ManyToOne(() => OpticUnit, (unit) => unit.optics)
   opticUnit: OpticUnit;
 
-  @Column()
-  valueOfOneClick: number;
+  @ManyToOne(() => OpticClick, (value) => value.optic)
+  clickValue: OpticClick;
 
   @Column()
   minParallax: number;
