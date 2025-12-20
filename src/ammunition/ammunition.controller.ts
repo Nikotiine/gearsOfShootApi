@@ -98,7 +98,7 @@ export class AmmunitionController {
   @ApiSecurity('JWT-Auth')
   @ApiOperation({
     summary: SwaggerDescription.CREATE_SUMMARY,
-    description: 'Creation d une nouvelle munition en base de donnée',
+    description: 'Creation d une nouvelle munition',
   })
   @ApiCreatedResponse({
     type: AmmunitionDto,
@@ -124,7 +124,7 @@ export class AmmunitionController {
   })
   @ApiOperation({
     summary: SwaggerDescription.UPDATE_SUMMARY,
-    description: 'Edition d une  munition en base de donnée',
+    description: 'Edition d une munition',
   })
   @ApiCreatedResponse({
     type: AmmunitionDto,
@@ -145,7 +145,7 @@ export class AmmunitionController {
   })
   @ApiOperation({
     summary: SwaggerDescription.DELETE_SUMMARY,
-    description: 'Suppression logique d une  munition en base de donnée',
+    description: 'Suppression logique d une munition',
   })
   @ApiOkResponse({
     type: ApiDeleteResponseDto,

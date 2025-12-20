@@ -3,7 +3,7 @@ import { IsOptional, IsString } from 'class-validator';
 import { BaseFilter } from '../../dto/filter/base.filter';
 
 export class AmmunitionFilter extends BaseFilter {
-  @ApiPropertyOptional({ example: 'La categorie d arme' })
+  @ApiPropertyOptional({ example: 'La categorie de la munition' })
   @IsOptional()
   @IsString()
   category?: string;

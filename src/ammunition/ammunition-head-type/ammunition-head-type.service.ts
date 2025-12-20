@@ -21,7 +21,7 @@ export class AmmunitionHeadTypeService {
    * Retourne tous les types d'ogive
    */
   public async findAll(): Promise<AmmunitionHeadTypeDto[]> {
-    const headTypes: AmmunitionHeadType[] =
+    const entities: AmmunitionHeadType[] =
       await this.ammunitionHeadTypeRepository.find({
         select: {
           id: true,
@@ -29,22 +29,16 @@ export class AmmunitionHeadTypeService {
           reference: true,
         },
       });
-    return headTypes.map((head) => {
-      return {
-        id: head.id,
-        name: head.name,
-        reference: head.reference,
-      };
-    });
+    return this.mapEntityArrayToDtoArray(entities);
   }
 
   public async edit(
     id: number,
-    body: AmmunitionHeadTypeDto,
+    updateDto: AmmunitionHeadTypeDto,
   ): Promise<AmmunitionHeadTypeDto> {
     const updatedResult = await this.ammunitionHeadTypeRepository.update(id, {
-      name: body.name,
-      reference: body.reference,
+      name: updateDto.name,
+      reference: this.createReference(updateDto),
     });
     if (updatedResult.affected === 0) {
       throw new BadRequestException(
@@ -56,42 +50,40 @@ export class AmmunitionHeadTypeService {
 
   /**
    * Ajout d'un nouveau type d'ogive
-   * @param ammunitionHeadType {CreateAmmunitionHeadTypeDto}
+   * @param dto CreateAmmunitionHeadTypeDto
    */
   public async insert(
-    ammunitionHeadType: CreateAmmunitionHeadTypeDto,
+    dto: CreateAmmunitionHeadTypeDto,
   ): Promise<AmmunitionHeadTypeDto> {
     const isExist = await this.ammunitionHeadTypeRepository.findOne({
       where: {
-        name: ammunitionHeadType.name,
+        name: dto.name,
       },
     });
     if (isExist) {
       throw new BadRequestException(CodeError.AMMUNITION_HEAD_TYPE_NAME_USED);
     }
     const entity = this.ammunitionHeadTypeRepository.create({
-      name: ammunitionHeadType.name,
-      reference: ammunitionHeadType.reference,
+      name: dto.name,
+      reference: this.createReference(dto),
     });
-    const created = await this.ammunitionHeadTypeRepository.save(entity);
-    return { id: created.id, name: created.name, reference: created.reference };
+    const created: AmmunitionHeadType =
+      await this.ammunitionHeadTypeRepository.save(entity);
+    return this.mapEntityToDto(created);
   }
-  //TODO:Faire un mapper d'entité
+
   /**
    * Retourne la douille en focntion de son id
    * @param headTypeId {number} id de la douille
    */
   public async findById(headTypeId: number): Promise<AmmunitionHeadTypeDto> {
-    const headType = await this.ammunitionHeadTypeRepository.findOne({
-      where: {
-        id: headTypeId,
-      },
-    });
-    return {
-      id: headType.id,
-      name: headType.name,
-      reference: headType.reference,
-    };
+    const entity: AmmunitionHeadType =
+      await this.ammunitionHeadTypeRepository.findOne({
+        where: {
+          id: headTypeId,
+        },
+      });
+    return this.mapEntityToDto(entity);
   }
 
   /**
@@ -105,5 +97,23 @@ export class AmmunitionHeadTypeService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.HEAD_TYPE_DELETE,
     };
+  }
+
+  private mapEntityToDto(entity: AmmunitionHeadType): AmmunitionHeadTypeDto {
+    return {
+      id: entity.id,
+      name: entity.name,
+      reference: entity.reference,
+    };
+  }
+
+  private mapEntityArrayToDtoArray(
+    entities: AmmunitionHeadType[],
+  ): AmmunitionHeadTypeDto[] {
+    return entities.map((entity) => this.mapEntityToDto(entity));
+  }
+
+  private createReference(dto: CreateAmmunitionHeadTypeDto): string {
+    return `${dto.name.substring(0, 3).toUpperCase()}`;
   }
 }

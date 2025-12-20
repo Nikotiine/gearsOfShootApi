@@ -29,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { MagazineFilter } from './filters/magazine.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
 
 @Controller('magazine')
 @ApiTags('Magazine')
@@ -36,15 +43,16 @@ export class MagazineController {
   constructor(private readonly magazineService: MagazineService) {}
 
   @Get(SwaggerDescription.FIND_ALL)
-  @ApiOkResponse({
-    type: [WeaponMagazineDto],
-  })
   @ApiOperation({
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste de tous les chargeurs disponible',
   })
-  public async findAll(): Promise<WeaponMagazineDto[]> {
-    return await this.magazineService.findAll();
+  @ApiPaginatedResponse(WeaponMagazineDto)
+  @QueryFilter(MagazineFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: MagazineFilter,
+  ): Promise<PaginatedResponseDto<WeaponMagazineDto>> {
+    return await this.magazineService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)
