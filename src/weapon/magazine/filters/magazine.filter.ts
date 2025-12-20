@@ -1,6 +1,6 @@
 import { BaseFilter } from '../../../dto/filter/base.filter';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class MagazineFilter extends BaseFilter {
   @ApiPropertyOptional({ example: 'Nom du chargeur' })
@@ -22,4 +22,9 @@ export class MagazineFilter extends BaseFilter {
   @IsOptional()
   @IsString()
   caliber?: string;
+
+  @ApiPropertyOptional({ example: 'La capacite' })
+  @IsOptional()
+  @IsNumber()
+  capacity?: number;
 }

@@ -1,12 +1,16 @@
-import { ILike, FindOptionsWhere } from 'typeorm';
+import { ILike, FindOptionsWhere, Equal } from 'typeorm';
 
+export type FilterRule =
+  | { type: 'string' } // ILike
+  | { type: 'number' } // Equal
+  | { type: 'boolean' } // Equal
+  | { type: 'relation-string'; relation: string; property: string }
+  | { type: 'relation-number'; relation: string; property: string };
 /**
  * Définit comment chaque propriété doit être convertie en filtre TypeORM.
  */
 export type FilterConfig<T> = {
-  [K in keyof T]?:
-    | 'direct' // filtre sur un champ direct
-    | { relation: string; property: string }; // filtre sur relation.property
+  [K in keyof T]?: FilterRule;
 };
 
 /**
@@ -26,22 +30,32 @@ export function buildWhereGeneric<TFilter, TEntity>(
 
   for (const key in filter) {
     const value = filter[key];
-    if (!value) continue;
+    if (value === undefined || value === null || value === '') continue;
 
     const rule = config[key];
-
     if (!rule) continue;
 
-    // --- Cas champ direct ---
-    if (rule === 'direct') {
+    // --- Champ string ---
+    if (rule.type === 'string') {
       where[key as unknown as keyof TEntity] = ILike(`%${value}%`) as any;
-      continue;
     }
 
-    // --- Cas relation ---
-    if (typeof rule === 'object' && rule.relation) {
+    // --- Champ number / boolean ---
+    if (rule.type === 'number' || rule.type === 'boolean') {
+      where[key as unknown as keyof TEntity] = Equal(value) as any;
+    }
+
+    // --- Relation string ---
+    if (rule.type === 'relation-string') {
       where[rule.relation as keyof TEntity] = {
         [rule.property]: ILike(`%${value}%`),
+      } as any;
+    }
+
+    // --- Relation number ---
+    if (rule.type === 'relation-number') {
+      where[rule.relation as keyof TEntity] = {
+        [rule.property]: Equal(value),
       } as any;
     }
   }
