@@ -209,6 +209,7 @@ export class AmmunitionService {
   public async findAll(
     filters: AmmunitionFilter,
   ): Promise<PaginatedResponseDto<AmmunitionDto>> {
+    console.log('******************', filters.caliberId);
     const { limit = 10, offset = 0 } = filters;
     const where: FindOptionsWhere<Ammunition> = buildWhereGeneric<
       AmmunitionFilter,

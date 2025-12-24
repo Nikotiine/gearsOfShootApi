@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HandGun } from '../../database/entity/hand-gun.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   CreateHandGunDto,
   HandGunDto,
@@ -24,7 +24,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { AmmunitionDto } from '../../dto/ammunition.dto';
+import { HandGunFilter } from '../filters/hand-gun.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { handGunWhereFilterConfig } from '../filters/hand-gun-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 
 @Injectable()
 export class HandGunService {
@@ -160,8 +163,16 @@ export class HandGunService {
     return this.mapEntityToDto(handGunEntity, price, stock);
   }
 
-  public async findAll(): Promise<HandGunDto[]> {
-    const handGuns = await this.handGunRepository.find({
+  public async findAll(
+    filters: HandGunFilter,
+  ): Promise<PaginatedResponseDto<HandGunDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<HandGun> = buildWhereGeneric<
+      HandGunFilter,
+      HandGun
+    >(filters, handGunWhereFilterConfig);
+    const [entities, total] = await this.handGunRepository.findAndCount({
+      where,
       relations: {
         slideMaterial: true,
         slideColor: true,
@@ -178,8 +189,12 @@ export class HandGunService {
         createdBy: true,
         updatedBy: true,
       },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
     });
-    return this.mapEntityArrayToDtoArray(handGuns);
+    const data = await this.mapEntityArrayToDtoArray(entities);
+    return new PaginatedResponseDto<HandGunDto>(data, total, limit, offset);
   }
 
   public async findAllByCategory(category: string): Promise<HandGunDto[]> {

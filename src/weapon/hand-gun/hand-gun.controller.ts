@@ -29,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { HandGunFilter } from '../filters/hand-gun.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
 
 @Controller('hand-gun')
 @ApiTags('Hand-Gun')
@@ -40,11 +47,12 @@ export class HandGunController {
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste des arme de poings',
   })
-  @ApiOkResponse({
-    type: [HandGunDto],
-  })
-  public async findAll(): Promise<HandGunDto[]> {
-    return await this.handGunService.findAll();
+  @ApiPaginatedResponse(HandGunDto)
+  @QueryFilter(HandGunFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: HandGunFilter,
+  ): Promise<PaginatedResponseDto<HandGunDto>> {
+    return await this.handGunService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)

@@ -2,12 +2,12 @@ import { AmmunitionFilter } from './ammunition.filter';
 import { FilterConfig } from '../../database/utils/where-builder';
 
 export const ammunitionWhereFilterConfig: FilterConfig<AmmunitionFilter> = {
-  factory: {
-    type: 'relation-string',
+  factoryId: {
+    type: 'relation-number',
     relation: 'factory',
-    property: 'name',
+    property: 'id',
   },
-  caliber: { type: 'relation-string', relation: 'caliber', property: 'name' },
+  caliberId: { type: 'relation-number', relation: 'caliber', property: 'id' },
   category: { type: 'relation-string', relation: 'category', property: 'name' },
   name: { type: 'string' },
   reference: { type: 'string' },

@@ -154,6 +154,7 @@ export default class FactorySeeder implements Seeder {
           name: factory.name,
           type: factory.type,
           description: factory.description,
+          reference: `${factory.type.name.substring(0, 3)}/${factory.name.substring(0, 3)}`,
         },
       ]);
     }
