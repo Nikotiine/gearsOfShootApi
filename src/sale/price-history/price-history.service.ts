@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PriceHistory } from '../../database/entity/price-history.entity';
 import { Repository } from 'typeorm';
-import {
-  CreatePriceHistoryDto,
-  PriceHistoryDto,
-  PriceHistoryFromEntity,
-} from '../../dto/price-history.dto';
+import { CreatePriceHistoryDto, PriceHistoryDto, PriceHistoryFromEntity } from '../../dto/price-history.dto';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';

@@ -1,4 +1,4 @@
-import { Column, ManyToOne, ManyToMany, JoinColumn } from 'typeorm';
+import { Column, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { Caliber } from './caliber.entity';

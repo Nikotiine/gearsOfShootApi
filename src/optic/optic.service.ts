@@ -24,6 +24,7 @@ import { OpticFilter } from './filters/optic.filter';
 import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
 import { buildWhereGeneric } from '../database/utils/where-builder';
 import { opticWhereFilterConfig } from './filters/optic-where-filter.config';
+import { NewItemsDto } from '../dto/new-items.dto';
 
 @Injectable()
 export class OpticService {
@@ -192,6 +193,30 @@ export class OpticService {
       name: `${optic.name} | ${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`,
       reference: optic.reference,
       description: `Plan focal: ${optic.focalPlane.name ?? ''} | Type: ${optic.opticType.name} | Description: ${optic.description}`,
+    };
+  }
+
+  public async findLastEntry(): Promise<NewItemsDto | null> {
+    const [entity] = await this.opticRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        factory: true,
+      },
+      take: 1,
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+    return {
+      name: entity.name,
+      type: 'optic',
+      id: entity.id,
+      price: dto.priceHistory.currentSalePrice,
+      sub: `${entity.minZoom}-${entity.maxZoom}X${entity.lensDiameter}`,
+      factory: dto.factory.name,
     };
   }
 

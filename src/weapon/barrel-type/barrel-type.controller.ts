@@ -1,11 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { BarrelTypeService } from './barrel-type.service';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WeaponBarrelTypeDto } from '../../dto/weapon.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 

@@ -24,12 +24,11 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { HandGunDto } from '../../dto/hand-gun.dto';
 import { SoundNoiseFilter } from './filters/sound-noise.reducer.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { soundNoiseFilterConfig } from './filters/sound-noise-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
-import { AmmunitionDto } from '../../dto/ammunition.dto';
+import { NewItemsDto } from '../../dto/new-items.dto';
 
 @Injectable()
 export class SoundReducerService {
@@ -290,6 +289,32 @@ export class SoundReducerService {
       name: rds.name,
       reference: rds.reference,
       description: `Pas de vis: ${rds.threadedSize.size} | Diametre: ${rds.diameter} | Demontable: ${rds.isCleanable ? 'oui' : 'non'} | Description: ${rds.description}`,
+    };
+  }
+
+  public async findLastEntry(): Promise<NewItemsDto | null> {
+    const [entity] = await this.soundNoiseReducerRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        caliber: true,
+        threadedSize: true,
+        factory: true,
+      },
+      take: 1,
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+    return {
+      name: entity.name,
+      type: 'rds',
+      id: entity.id,
+      price: dto.priceHistory.currentSalePrice,
+      sub: `Calibre: ${dto.caliber} - Pas de vis: ${dto.threadedSize.size}`,
+      factory: dto.factory.name,
     };
   }
 }

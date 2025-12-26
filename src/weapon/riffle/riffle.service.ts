@@ -30,6 +30,8 @@ import { RiffleFilter } from '../filters/riffle.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { riffleWhereFilterConfig } from '../filters/riffle-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import { LegislationCategory } from '../../types/legislation-category.type';
+import { NewItemsDto } from '../../dto/new-items.dto';
 
 @Injectable()
 export class RiffleService {
@@ -344,6 +346,38 @@ export class RiffleService {
       return this.mapEntityToDto(riffle);
     });
     return await Promise.all(dtoPromises);
+  }
+
+  public async findLastEntry(
+    category: LegislationCategory,
+  ): Promise<NewItemsDto | null> {
+    const [entity] = await this.riffleRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.name,
+      type: 'riffle',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+    };
   }
 
   private createReference(dto: CreateRiffleDto): string {

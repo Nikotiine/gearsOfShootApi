@@ -1,6 +1,6 @@
 import { BaseEntity } from './base.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
-import { Riffle } from './riffle.entity';
+import { Column, Entity } from 'typeorm';
+
 @Entity()
 export class MLockOption extends BaseEntity {
   @Column()

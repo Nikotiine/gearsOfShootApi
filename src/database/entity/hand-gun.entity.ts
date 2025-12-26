@@ -1,9 +1,9 @@
 import {
-  Entity,
   Column,
-  ManyToOne,
-  ManyToMany,
+  Entity,
   JoinTable,
+  ManyToMany,
+  ManyToOne,
   Unique,
 } from 'typeorm';
 

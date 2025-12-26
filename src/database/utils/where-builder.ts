@@ -1,4 +1,4 @@
-import { ILike, FindOptionsWhere, Equal } from 'typeorm';
+import { Equal, FindOptionsWhere, ILike } from 'typeorm';
 
 export type FilterRule =
   | { type: 'string' } // ILike

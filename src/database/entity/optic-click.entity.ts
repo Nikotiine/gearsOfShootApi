@@ -2,6 +2,7 @@ import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Optic } from './optic.entity';
 import { OpticUnit } from './optic-unit.entity';
+
 @Entity()
 export class OpticClick extends BaseEntity {
   @Column()

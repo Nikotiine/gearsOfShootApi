@@ -1,11 +1,9 @@
-import {
-  TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions,
-} from '@nestjs/typeorm';
+import { TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import * as process from 'process';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuditSubscriber } from '../subscriber/audit.subscriber';
+
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],

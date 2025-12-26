@@ -28,6 +28,9 @@ import { HandGunFilter } from '../filters/hand-gun.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { handGunWhereFilterConfig } from '../filters/hand-gun-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import { LegislationCategory } from '../../types/legislation-category.type';
+import { NewItemsDto } from '../../dto/new-items.dto';
+import { HandGunType } from '../../enum/weapon-type.enum';
 
 @Injectable()
 export class HandGunService {
@@ -353,5 +356,37 @@ export class HandGunService {
 
   private createReference(dto: CreateHandGunDto): string {
     return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
+  }
+  public async findLastEntry(type: HandGunType): Promise<NewItemsDto | null> {
+    const [entity] = await this.handGunRepository.find({
+      where: {
+        category: {
+          name: 'B',
+        },
+        type: {
+          name: type,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.name,
+      type: 'handgun',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+    };
   }
 }

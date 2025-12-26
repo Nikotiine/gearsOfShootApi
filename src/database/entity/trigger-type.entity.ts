@@ -1,6 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { HandGun } from './hand-gun.entity';
+
 @Entity()
 export class TriggerType extends BaseEntity {
   @Column()

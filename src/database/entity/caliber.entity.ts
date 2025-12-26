@@ -6,6 +6,7 @@ import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
+
 @Entity()
 export class Caliber extends BaseEntity {
   @Column({ unique: true })

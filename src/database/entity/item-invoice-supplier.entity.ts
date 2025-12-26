@@ -3,6 +3,7 @@ import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceSupplier } from './invoice-supplier.entity';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { BaseEntity } from './base.entity';
+
 @Entity()
 export class ItemInvoiceSupplier extends BaseEntity {
   @Column({ enum: StockableObject })

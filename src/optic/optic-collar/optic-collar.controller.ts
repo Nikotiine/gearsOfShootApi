@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { OpticCollarService } from './optic-collar.service';
 import {
   ApiBody,
@@ -18,21 +9,14 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  CreateOpticCollarDto,
-  OpticCollarDto,
-  UpdateOpticCollarDto,
-} from '../../dto/optic-collar.dto';
+import { CreateOpticCollarDto, OpticCollarDto, UpdateOpticCollarDto } from '../../dto/optic-collar.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
-import {
-  ApiPaginatedResponse,
-  PaginatedResponseDto,
-} from '../../decorator/paginated-response.decorator';
+import { ApiPaginatedResponse, PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { QueryFilter } from '../../decorator/query-filter.decorator';
 import { OpticCollarFilter } from '../filters/optic-collar.filter';
 import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';

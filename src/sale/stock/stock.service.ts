@@ -3,13 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Stock } from '../../database/entity/stock.entity';
 import { Repository } from 'typeorm';
 import { StockHistory } from '../../database/entity/stock-history.entity';
-import {
-  CreateStockDto,
-  StockDto,
-  StockHistoriesDto,
-} from '../../dto/stock.dto';
+import { CreateStockDto, StockDto, StockHistoriesDto } from '../../dto/stock.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { StockableObject } from '../../enum/stock-item.enum';
+
 @Injectable()
 export class StockService {
   constructor(

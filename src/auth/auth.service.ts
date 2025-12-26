@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TokenDto, UserDto } from '../dto/user.dto';
 import { User } from '../database/entity/user.entity';
 import { JwtService } from '@nestjs/jwt';

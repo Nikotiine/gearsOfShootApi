@@ -28,6 +28,8 @@ import { AmmunitionFilter } from './filters/ammunition.filter';
 import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
 import { buildWhereGeneric } from '../database/utils/where-builder';
 import { ammunitionWhereFilterConfig } from './filters/ammunition-where-filter.config';
+import { NewItemsDto } from '../dto/new-items.dto';
+import { LegislationCategory } from '../types/legislation-category.type';
 
 @Injectable()
 export class AmmunitionService {
@@ -293,6 +295,38 @@ export class AmmunitionService {
       name: ammo.name,
       reference: ammo.reference,
       description: `Packaging: ${ammo.packaging} | Type percussion: ${ammo.percussionType.name} | Ogive: ${ammo.headType.name} | Description: ${ammo.description}`,
+    };
+  }
+
+  public async findLastEntry(
+    category: LegislationCategory,
+  ): Promise<NewItemsDto | null> {
+    const [entity] = await this.ammunitionRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.name,
+      type: 'ammunition',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
     };
   }
 

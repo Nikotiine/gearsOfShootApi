@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WeaponMagazine } from '../../database/entity/weapon-magazine.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import {
-  CreateWeaponMagazineDto,
-  UpdateWeaponMagazineDto,
-  WeaponMagazineDto,
-} from '../../dto/weapon-magazine.dto';
+import { CreateWeaponMagazineDto, UpdateWeaponMagazineDto, WeaponMagazineDto } from '../../dto/weapon-magazine.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { RiffleService } from '../riffle/riffle.service';
@@ -17,10 +13,7 @@ import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { StockDto } from '../../dto/stock.dto';
 import { StockService } from '../../sale/stock/stock.service';
-import {
-  CreateItemInvoiceSupplierDto,
-  ItemInvoice,
-} from '../../dto/item-invoice-supplier.dto';
+import { CreateItemInvoiceSupplierDto, ItemInvoice } from '../../dto/item-invoice-supplier.dto';
 import { MagazineFilter } from './filters/magazine.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { magazineFilterConfig } from './filters/magazine-where-filter.config';

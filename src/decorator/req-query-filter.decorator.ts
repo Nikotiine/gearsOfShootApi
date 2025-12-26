@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+
 /**
  * Extrait une propriété spécifique depuis les paramètres de requête HTTP
  * (`req.query`) et l’injecte directement dans la méthode du contrôleur.

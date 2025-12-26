@@ -11,6 +11,7 @@ import { IsOptional } from 'class-validator';
 import { CreatePriceHistoryDto } from './price-history.dto';
 import { UserDto } from './user.dto';
 import { StockDto } from './stock.dto';
+
 export class CreateWeaponMagazineDto {
   @ApiProperty({
     description: 'Capacite en munition',

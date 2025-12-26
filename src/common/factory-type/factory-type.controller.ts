@@ -4,6 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FactoryTypeService } from './factory-type.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { FactoryTypeDto } from '../../dto/factory.dto';
+
 @ApiTags('FactoryType')
 @Controller('factory-type')
 export class FactoryTypeController {

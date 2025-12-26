@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -19,20 +10,13 @@ import {
 } from '@nestjs/swagger';
 import { RiffleService } from './riffle.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
-import {
-  CreateRiffleDto,
-  RiffleDto,
-  UpdateRiffleDto,
-} from '../../dto/riffle.dto';
+import { CreateRiffleDto, RiffleDto, UpdateRiffleDto } from '../../dto/riffle.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
-import {
-  ApiPaginatedResponse,
-  PaginatedResponseDto,
-} from '../../decorator/paginated-response.decorator';
+import { ApiPaginatedResponse, PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { QueryFilter } from '../../decorator/query-filter.decorator';
 import { RiffleFilter } from '../filters/riffle.filter';
 import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';

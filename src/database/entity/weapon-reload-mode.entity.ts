@@ -1,6 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { WeaponType } from './weapon-type.entity';
+
 @Entity()
 export class WeaponReloadMode extends BaseEntity {
   // Mode de rechargement pour l'arme
