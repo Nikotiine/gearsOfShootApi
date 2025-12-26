@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Riffle } from '../../database/entity/riffle.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   CreateRiffleDto,
   RiffleDto,
@@ -26,7 +26,10 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { HandGunDto } from '../../dto/hand-gun.dto';
+import { RiffleFilter } from '../filters/riffle.filter';
+import { buildWhereGeneric } from '../../database/utils/where-builder';
+import { riffleWhereFilterConfig } from '../filters/riffle-where-filter.config';
+import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 
 @Injectable()
 export class RiffleService {
@@ -152,8 +155,16 @@ export class RiffleService {
     return this.mapEntityToDto(riffle, price, stock);
   }
 
-  public async findAll(): Promise<RiffleDto[]> {
-    const riffles = await this.riffleRepository.find({
+  public async findAll(
+    filters: RiffleFilter,
+  ): Promise<PaginatedResponseDto<RiffleDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<Riffle> = buildWhereGeneric<
+      RiffleFilter,
+      Riffle
+    >(filters, riffleWhereFilterConfig);
+    const [entities, total] = await this.riffleRepository.findAndCount({
+      where,
       relations: {
         factory: true,
         buttMaterial: true,
@@ -168,8 +179,12 @@ export class RiffleService {
         createdBy: true,
         updatedBy: true,
       },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
     });
-    return this.mapEntityArrayToDtoArray(riffles);
+    const data = await this.mapEntityArrayToDtoArray(entities);
+    return new PaginatedResponseDto<RiffleDto>(data, total, limit, offset);
   }
 
   public async findAllByCategory(category: string): Promise<RiffleDto[]> {

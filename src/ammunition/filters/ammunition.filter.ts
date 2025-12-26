@@ -1,24 +1,24 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseFilter } from '../../dto/filter/base.filter';
 
 export class AmmunitionFilter extends BaseFilter {
-  @ApiPropertyOptional({ example: 'La categorie de la munition' })
+  @ApiPropertyOptional({ description: 'La categorie de la munition' })
   @IsOptional()
   @IsString()
   category?: string;
 
-  @ApiPropertyOptional({ example: 'La marque' })
+  @ApiPropertyOptional({ description: 'Id de la marque' })
   @IsOptional()
-  @IsString()
-  factory?: string;
+  @IsNumber()
+  factoryId?: number;
 
-  @ApiPropertyOptional({ example: 'Le calibre' })
+  @ApiPropertyOptional({ description: 'Id du calibre' })
   @IsOptional()
-  @IsString()
-  caliber?: string;
+  @IsNumber()
+  caliberId?: number;
 
-  @ApiPropertyOptional({ example: 'Le nom du moodel de munition' })
+  @ApiPropertyOptional({ description: 'Le nom du moodel de munition' })
   @IsOptional()
   @IsString()
   name?: string;

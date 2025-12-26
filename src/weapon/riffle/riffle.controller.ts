@@ -29,6 +29,13 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
+import { QueryFilter } from '../../decorator/query-filter.decorator';
+import { RiffleFilter } from '../filters/riffle.filter';
+import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
 
 @Controller('riffle')
 @ApiTags('Riffle')
@@ -40,11 +47,12 @@ export class RiffleController {
     summary: SwaggerDescription.FIND_ALL_SUMMARY,
     description: 'Retourne la liste des armes longues',
   })
-  @ApiOkResponse({
-    type: [RiffleDto],
-  })
-  public async findAll(): Promise<RiffleDto[]> {
-    return await this.riffleService.findAll();
+  @ApiPaginatedResponse(RiffleDto)
+  @QueryFilter(RiffleFilter)
+  public async findAll(
+    @ReqQueryFilter() filters: RiffleFilter,
+  ): Promise<PaginatedResponseDto<RiffleDto>> {
+    return await this.riffleService.findAll(filters);
   }
 
   @Get(SwaggerDescription.FIND_BY_ID)

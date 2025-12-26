@@ -1,162 +1,64 @@
 import {
-  Column,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
+  Column,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
   Unique,
 } from 'typeorm';
+
 import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Material } from './material.entity';
 import { Color } from './color.entity';
 import { TriggerType } from './trigger-type.entity';
-import { LegislationCategory } from './legislation-category.entity';
-import { Caliber } from './caliber.entity';
-import { Factory } from './factory.entity';
-import { WeaponType } from './weapon-type.entity';
-import { WeaponBarrelType } from './weapon-barrel-type.entity';
-import { ThreadedSize } from './threaded-size.entity';
-import { PercussionType } from './percussion-type.entity';
-import { WeaponMagazine } from './weapon-magazine.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import { WeaponBase } from './base-weapon.entity';
 
 @Entity()
 @Unique(['name', 'variation', 'factory', 'caliber', 'reference'])
-export class HandGun extends BaseAuditEntity {
-  // Optic Ready ( arme de poing )
+export class HandGun extends WeaponBase {
+  // =======================
+  // Optique
+  // =======================
   @Column({ default: false })
   isOpticReady: boolean;
 
-  // Plaques optiques ready fournies
   @ManyToMany(() => OpticReadyPlate, {
-    nullable: true,
     cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
     eager: true,
   })
   @JoinTable()
   providedOpticReadyPlate: OpticReadyPlate[];
 
-  // Matiere de la glissiere
-  @ManyToOne(() => Material, (material) => material.handgunsSides)
+  // =======================
+  // Glissière
+  // =======================
+  @ManyToOne(() => Material)
   slideMaterial: Material;
 
-  // Couleur de la glissiere
-  @ManyToOne(() => Color, (color) => color.slides)
+  @ManyToOne(() => Color)
   slideColor: Color;
 
-  // Picatiny
+  // =======================
+  // Ergonomie / mécanique
+  // =======================
   @Column({ default: false })
   isPicatinyRailSlop: boolean;
 
   @Column({ default: false })
   decocking: boolean;
 
-  // Type d'action de detente
-  @ManyToOne(() => TriggerType, (trigger) => trigger.weapons, {
-    nullable: true,
-  })
-  triggerType: TriggerType;
+  @ManyToOne(() => TriggerType, { nullable: true })
+  triggerType?: TriggerType;
 
-  // Chien externe
   @Column({ default: true })
   isExternalHammer: boolean;
 
-  //***********************************************************************************************
-  @Column()
-  name: string;
-
-  //Variante de l'arme si plus declinaison du meme model
-  @Column({ nullable: true })
-  variation: string;
-
-  @Column({ nullable: true })
-  description: string;
-
-  @ManyToOne(() => LegislationCategory, (category) => category.handguns, {
-    nullable: false,
-  })
-  category: LegislationCategory;
-
-  @ManyToOne(() => Caliber, (caliber) => caliber.handguns, { nullable: false })
-  caliber: Caliber;
-
-  @ManyToOne(() => Factory, (factory) => factory.handguns, { nullable: false })
-  factory: Factory;
-
-  @ManyToOne(() => WeaponType, (type) => type.handguns, { nullable: false })
-  type: WeaponType;
-
-  // Longueur du canon
-  @Column({ nullable: true })
-  barrelLength: number;
-
-  // Detente reglable
-  @Column({ default: false })
-  isAdjustableTrigger: boolean;
-
-  // Canon filete
-  @Column({ default: false })
-  isThreadedBarrel: boolean;
-
-  // Type de Canon
-  @ManyToOne(() => WeaponBarrelType, (barrel) => barrel.handguns)
-  barrelType: WeaponBarrelType;
-
-  // Taille du filetage
-  @ManyToOne(() => ThreadedSize, (threadedSize) => threadedSize.handguns, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'threadedSizeId' })
-  threadedSize?: ThreadedSize | null;
-
-  // Reference de l'objet
-  @Column()
-  reference: string;
-
-  // Valeur de reglage de la detente
-  @Column({ nullable: true })
-  adjustableTriggerMinWeight: number;
-  // Valeur de reglage de la detente
-  @Column({ nullable: true })
-  adjustableTriggerMaxWeight: number;
-  // Mode de percussion
-  @ManyToOne(() => PercussionType, (type) => type.handGuns)
-  percussionType: PercussionType;
-
-  // Si plusieur chargeur sont compatibles
-  @ManyToMany(() => WeaponMagazine, (mag) => mag.handguns, {
-    cascade: ['insert'],
-  })
-  compatiblesMagazines: WeaponMagazine[];
-
-  // Capacity du chageur de base
-  @Column({ default: 1 })
-  providedMagazineQuantity: number;
-
-  // Epaisseur du canon
-  @Column()
-  barrelSize: number;
-
-  // Matiere de la crosse ou caracasse
-  @ManyToOne(() => Material, (material) => material.handgunsButts)
-  buttMaterial: Material;
-
-  // Guidon reglable
-  @Column({ default: false })
-  isAdjustableFrontSight: boolean;
-
-  // Hausse reglable
-  @Column({ default: false })
-  isAdjustableBackSight: boolean;
-
-  // Couleur de la crosse / caracasse
-  @ManyToOne(() => Color, (color) => color.buttHandguns)
+  // =======================
+  // Couleurs spécifiques
+  // =======================
+  @ManyToOne(() => Color)
   buttColor: Color;
 
-  // Couleur du canon
-  @ManyToOne(() => Color, (color) => color.barrelHandguns)
+  @ManyToOne(() => Color)
   barrelColor: Color;
 }
