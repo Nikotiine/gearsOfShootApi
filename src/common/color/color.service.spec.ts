@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ColorService } from './color.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AmmunitionHeadType } from '../../database/entity/ammunition-head-type.entity';
 import { Color } from '../../database/entity/color.entity';
 
 describe('ColorService', () => {

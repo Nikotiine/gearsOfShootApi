@@ -25,6 +25,8 @@ import { MagazineFilter } from './filters/magazine.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { magazineFilterConfig } from './filters/magazine-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
+import { LegislationCategory } from '../../types/legislation-category.type';
 
 @Injectable()
 export class MagazineService {
@@ -36,6 +38,73 @@ export class MagazineService {
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
   ) {}
+
+  /**
+   * Ajout d'un nouveau chargeur en bdd
+   * TODO: Verifier l unicite
+   * @param magazine
+   */
+  public async insert(
+    magazine: CreateWeaponMagazineDto,
+  ): Promise<WeaponMagazineDto> {
+    const entity = this.weaponMagazineRepository.create({
+      width: magazine.width,
+      height: magazine.height,
+      caliber: magazine.caliber,
+      factory: magazine.factory,
+      body: magazine.body,
+      capacity: magazine.capacity,
+      length: magazine.length,
+      reference: await this.createReference(magazine),
+      category: magazine.category,
+      riffles: magazine.compatibleRiffle,
+      handguns: magazine.compatibleHandGun,
+      forWeaponType: magazine.weaponType,
+      isDiscounted: magazine.priceHistory.isDiscounted,
+    });
+    const created = await this.weaponMagazineRepository.save(entity);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      magazine.priceHistory,
+      created.id,
+      PriceableObjectType.MAGAZINE,
+    );
+    const stock: StockDto = await this.stockService.initStock(
+      magazine.inStock,
+      StockableObject.MAGAZINE,
+      created.id,
+    );
+    return this.mapEntityToDto(created, price, stock);
+  }
+
+  public async edit(
+    id: number,
+    magazine: UpdateWeaponMagazineDto,
+  ): Promise<WeaponMagazineDto> {
+    const updateResult = await this.weaponMagazineRepository.preload({
+      id,
+      ...magazine,
+      caliber: magazine.caliber,
+      factory: magazine.factory,
+      body: magazine.body,
+      length: magazine.length,
+      reference: await this.createReference(magazine),
+      height: magazine.height,
+      capacity: magazine.capacity,
+      width: magazine.width,
+      category: magazine.category,
+      forWeaponType: magazine.weaponType,
+      isDiscounted: magazine.priceHistory.isDiscounted,
+    });
+    const updated: WeaponMagazine =
+      await this.weaponMagazineRepository.save(updateResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        magazine.priceHistory,
+        id,
+        PriceableObjectType.MAGAZINE,
+      );
+    return this.mapEntityToDto(updated, price);
+  }
 
   /**
    * Retourne tous les chargeur disponible
@@ -69,41 +138,6 @@ export class MagazineService {
     );
   }
 
-  /**
-   * Ajout d'un nouveau chargeur en bdd
-   * @param magazine
-   */
-  public async insert(
-    magazine: CreateWeaponMagazineDto,
-  ): Promise<WeaponMagazineDto> {
-    const entity = this.weaponMagazineRepository.create({
-      width: magazine.width,
-      height: magazine.height,
-      caliber: magazine.caliber,
-      factory: magazine.factory,
-      body: magazine.body,
-      capacity: magazine.capacity,
-      length: magazine.length,
-      reference: await this.createReference(magazine),
-      category: magazine.category,
-      riffles: magazine.compatibleRiffle,
-      handguns: magazine.compatibleHandGun,
-      forWeaponType: magazine.weaponType,
-    });
-    const created = await this.weaponMagazineRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      magazine.priceHistory,
-      created.id,
-      PriceableObjectType.MAGAZINE,
-    );
-    const stock: StockDto = await this.stockService.initStock(
-      magazine.inStock,
-      StockableObject.MAGAZINE,
-      created.id,
-    );
-    return this.mapEntityToDto(created, price, stock);
-  }
-
   public async findById(id: number): Promise<WeaponMagazineDto> {
     const magazine = await this.weaponMagazineRepository.findOne({
       where: {
@@ -130,35 +164,6 @@ export class MagazineService {
     return this.mapEntityToDto(magazine);
   }
 
-  public async edit(
-    id: number,
-    magazine: UpdateWeaponMagazineDto,
-  ): Promise<WeaponMagazineDto> {
-    const updateResult = await this.weaponMagazineRepository.preload({
-      id,
-      ...magazine,
-      caliber: magazine.caliber,
-      factory: magazine.factory,
-      body: magazine.body,
-      length: magazine.length,
-      reference: await this.createReference(magazine),
-      height: magazine.height,
-      capacity: magazine.capacity,
-      width: magazine.width,
-      category: magazine.category,
-      forWeaponType: magazine.weaponType,
-    });
-    const updated: WeaponMagazine =
-      await this.weaponMagazineRepository.save(updateResult);
-    const price: PriceHistoryDto =
-      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-        magazine.priceHistory,
-        id,
-        PriceableObjectType.MAGAZINE,
-      );
-    return this.mapEntityToDto(updated, price);
-  }
-
   /**
    * Soft delete de l arme
    * @param id {number} id de l arme
@@ -176,6 +181,69 @@ export class MagazineService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.MAGAZINE_DELETE,
     };
+  }
+
+  public async findLastEntry(
+    category: LegislationCategory,
+  ): Promise<NewItemsDto | null> {
+    const [entity] = await this.weaponMagazineRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.reference,
+      type: 'ammunition',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${dto.caliber.name}, Capacité: ${dto.capacity}, Matiere:${dto.body.name}`,
+    };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 2,
+  ): Promise<DiscountedItemDto[]> {
+    const entities = await this.weaponMagazineRepository.find({
+      where: {
+        isDiscounted: true,
+      },
+      relations: {
+        caliber: true,
+        factory: true,
+        category: true,
+        body: true,
+      },
+      take: limit,
+    });
+    const dtos = await this.mapEntityArrayToDtoArray(entities);
+    return dtos.map((dto: WeaponMagazineDto) => {
+      return {
+        id: dto.id,
+        name: dto.reference,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+        type: 'magazine',
+        price: dto.priceHistory.currentSalePrice,
+        sub: `Calibre: ${dto.caliber.name}, Capacité: ${dto.capacity}, Matiere:${dto.body.name}`,
+      };
+    });
   }
 
   /**
@@ -256,6 +324,7 @@ export class MagazineService {
       updatedBy: magazine.updatedBy,
       createdAt: magazine.createdAt,
       updatedAt: magazine.updatedAt,
+      isDiscounted: magazine.isDiscounted,
     };
   }
 

@@ -1,9 +1,9 @@
 import * as process from 'process';
 import * as dotenv from 'dotenv';
-dotenv.config();
-
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
+
+dotenv.config();
 
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',

@@ -72,23 +72,6 @@ export class RiffleController {
     return this.riffleService.findById(id);
   }
 
-  @Get(SwaggerDescription.FIND_BY_CATEGORY)
-  @ApiOperation({
-    summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
-    description: 'Retourne la liste des arme de poings filtree par categories',
-  })
-  @ApiOkResponse({
-    type: [RiffleDto],
-  })
-  @ApiParam({
-    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
-  })
-  public async findAllByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
-  ): Promise<RiffleDto[]> {
-    return this.riffleService.findAllByCategory(category);
-  }
-
   @Post()
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

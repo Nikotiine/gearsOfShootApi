@@ -111,7 +111,7 @@ export class OpticCollarController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() collar: UpdateOpticCollarDto,
   ): Promise<OpticCollarDto> {
-    return this.opticCollarService.edit(id, collar);
+    return this.opticCollarService.update(id, collar);
   }
 
   @Delete(SwaggerDescription.ID)

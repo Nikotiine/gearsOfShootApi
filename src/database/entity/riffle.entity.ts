@@ -1,12 +1,4 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-  JoinColumn,
-  Unique,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, Unique } from 'typeorm';
 
 import { RailSize } from './rail-size.entity';
 import { Color } from './color.entity';

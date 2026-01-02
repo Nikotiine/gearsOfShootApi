@@ -1,4 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 export class PaginatedResponseDto<T> {
   @ApiProperty({ description: 'Résultats paginés', isArray: true })
@@ -29,7 +34,6 @@ export class PaginatedResponseDto<T> {
     this.offset = offset;
   }
 }
-import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 
 /**
  * Helper Swagger pour déclarer dynamiquement un modèle paginé.

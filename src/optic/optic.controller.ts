@@ -33,6 +33,7 @@ import {
 import { QueryFilter } from '../decorator/query-filter.decorator';
 
 import { ReqQueryFilter } from '../decorator/req-query-filter.decorator';
+
 @Controller('optic')
 @ApiTags('Optic')
 export class OpticController {
@@ -126,7 +127,7 @@ export class OpticController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() optic: UpdateOpticDto,
   ): Promise<OpticDto> {
-    return await this.opticService.edit(id, optic);
+    return await this.opticService.update(id, optic);
   }
 
   @Delete(SwaggerDescription.ID)

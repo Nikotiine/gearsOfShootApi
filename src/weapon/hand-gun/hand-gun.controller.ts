@@ -72,23 +72,6 @@ export class HandGunController {
     return this.handGunService.findById(id);
   }
 
-  @Get(SwaggerDescription.FIND_BY_CATEGORY)
-  @ApiOperation({
-    summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
-    description: 'Retourne la liste des arme de poings filtree par categories',
-  })
-  @ApiOkResponse({
-    type: [HandGunDto],
-  })
-  @ApiParam({
-    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
-  })
-  public async findAllByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
-  ): Promise<HandGunDto[]> {
-    return this.handGunService.findAllByCategory(category);
-  }
-
   @Post()
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

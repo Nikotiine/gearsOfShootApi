@@ -24,12 +24,11 @@ import {
   CreateItemInvoiceSupplierDto,
   ItemInvoice,
 } from '../../dto/item-invoice-supplier.dto';
-import { HandGunDto } from '../../dto/hand-gun.dto';
 import { SoundNoiseFilter } from './filters/sound-noise.reducer.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { soundNoiseFilterConfig } from './filters/sound-noise-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
-import { AmmunitionDto } from '../../dto/ammunition.dto';
+import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 
 @Injectable()
 export class SoundReducerService {
@@ -39,6 +38,66 @@ export class SoundReducerService {
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
   ) {}
+
+  public async insert(
+    soundNoiseReducer: CreateSoundNoiseReducerDto,
+  ): Promise<SoundNoiseReducerDto> {
+    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
+    const entity: SoundNoiseReducer = this.soundNoiseReducerRepository.create({
+      name: soundNoiseReducer.name,
+      caliber: soundNoiseReducer.caliber,
+      factory: soundNoiseReducer.factory,
+      threadedSize: soundNoiseReducer.threadedSize,
+      diameter: soundNoiseReducer.diameter,
+      description: soundNoiseReducer.description,
+      reference: await this.createReference(soundNoiseReducer),
+      isCleanable: soundNoiseReducer.isCleanable,
+      length: soundNoiseReducer.length,
+      chicane: soundNoiseReducer.chicane,
+      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
+      isDiscounted: soundNoiseReducer.priceHistory.isDiscounted,
+    });
+    const created: SoundNoiseReducer =
+      await this.soundNoiseReducerRepository.save(entity);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        soundNoiseReducer.priceHistory,
+        created.id,
+        PriceableObjectType.RDS,
+      );
+    const stock: StockDto = await this.stockService.initStock(
+      soundNoiseReducer.inStock,
+      StockableObject.RDS,
+      created.id,
+    );
+    return await this.mapEntityToDto(created, price, stock);
+  }
+
+  public async update(
+    id: number,
+    soundNoiseReducer: UpdateSoundNoiseReducerDto,
+  ): Promise<SoundNoiseReducerDto> {
+    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
+    const updateResult: SoundNoiseReducer =
+      await this.soundNoiseReducerRepository.preload({
+        id,
+        ...soundNoiseReducer,
+        factory: soundNoiseReducer.factory,
+        threadedSize: soundNoiseReducer.threadedSize,
+        caliber: soundNoiseReducer.caliber,
+        description: soundNoiseReducer.description,
+        reference: await this.createReference(soundNoiseReducer),
+        isDiscounted: soundNoiseReducer.priceHistory.isDiscounted,
+      });
+    const updated: SoundNoiseReducer =
+      await this.soundNoiseReducerRepository.save(updateResult);
+    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+      soundNoiseReducer.priceHistory,
+      id,
+      PriceableObjectType.RDS,
+    );
+    return this.mapEntityToDto(updated, price);
+  }
 
   /**
    * Retourne tous les reduceteur de sons
@@ -73,50 +132,20 @@ export class SoundReducerService {
     );
   }
 
-  public async insert(
-    soundNoiseReducer: CreateSoundNoiseReducerDto,
-  ): Promise<SoundNoiseReducerDto> {
-    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
-    const entity = this.soundNoiseReducerRepository.create({
-      name: soundNoiseReducer.name,
-      caliber: soundNoiseReducer.caliber,
-      factory: soundNoiseReducer.factory,
-      threadedSize: soundNoiseReducer.threadedSize,
-      diameter: soundNoiseReducer.diameter,
-      description: soundNoiseReducer.description,
-      reference: await this.createReference(soundNoiseReducer),
-      isCleanable: soundNoiseReducer.isCleanable,
-      length: soundNoiseReducer.length,
-      chicane: soundNoiseReducer.chicane,
-      estimatedNoiseReduction: soundNoiseReducer.estimatedNoiseReduction,
-    });
-    const created = await this.soundNoiseReducerRepository.save(entity);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      soundNoiseReducer.priceHistory,
-      created.id,
-      PriceableObjectType.RDS,
-    );
-    const stock: StockDto = await this.stockService.initStock(
-      soundNoiseReducer.inStock,
-      StockableObject.RDS,
-      created.id,
-    );
-    return await this.mapEntityToDto(created, price, stock);
-  }
-
   public async findById(id: number): Promise<SoundNoiseReducerDto> {
-    const soundNoiseReducer = await this.soundNoiseReducerRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        caliber: true,
-        factory: true,
-        threadedSize: true,
-        createdBy: true,
-        updatedBy: true,
-      },
-    });
+    const soundNoiseReducer: SoundNoiseReducer =
+      await this.soundNoiseReducerRepository.findOne({
+        where: {
+          id: id,
+        },
+        relations: {
+          caliber: true,
+          factory: true,
+          threadedSize: true,
+          createdBy: true,
+          updatedBy: true,
+        },
+      });
     if (!soundNoiseReducer) {
       throw new NotFoundException(CodeError.SOUND_NOISE_REDUCER_NOT_FOUND);
     }
@@ -145,28 +174,86 @@ export class SoundReducerService {
     };
   }
 
-  public async edit(
-    id: number,
-    soundNoiseReducer: UpdateSoundNoiseReducerDto,
-  ): Promise<SoundNoiseReducerDto> {
-    await this.ensureSoundNoiseReducerDoesNotExist(soundNoiseReducer);
-    const updateResult = await this.soundNoiseReducerRepository.preload({
-      id,
-      ...soundNoiseReducer,
-      factory: soundNoiseReducer.factory,
-      threadedSize: soundNoiseReducer.threadedSize,
-      caliber: soundNoiseReducer.caliber,
-      description: soundNoiseReducer.description,
-      reference: await this.createReference(soundNoiseReducer),
+  /**
+   * Convertie le dto pour l'affichage des factures/commandes
+   * @param item CreateItemInvoiceSupplierDto
+   */
+  public async convertToInvoiceDto(
+    item: CreateItemInvoiceSupplierDto,
+  ): Promise<ItemInvoice> {
+    const rds: SoundNoiseReducerDto = await this.findById(item.objectId);
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      status: item.status,
+      unitPriceHt: item.supplierPriceHT,
+      totalPriceHT: item.supplierPriceHT * item.quantity,
+      caliber: rds.caliber,
+      factory: rds.factory,
+      name: rds.name,
+      reference: rds.reference,
+      description: `Pas de vis: ${rds.threadedSize.size} | Diametre: ${rds.diameter} | Demontable: ${rds.isCleanable ? 'oui' : 'non'} | Description: ${rds.description}`,
+    };
+  }
+
+  public async findLastEntry(): Promise<NewItemsDto | null> {
+    const [entity] = await this.soundNoiseReducerRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        caliber: true,
+        threadedSize: true,
+        factory: true,
+      },
+      take: 1,
     });
-    const updated: SoundNoiseReducer =
-      await this.soundNoiseReducerRepository.save(updateResult);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      soundNoiseReducer.priceHistory,
-      id,
-      PriceableObjectType.RDS,
-    );
-    return this.mapEntityToDto(updated, price);
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+    return {
+      name: entity.name,
+      type: 'rds',
+      id: entity.id,
+      price: dto.priceHistory.currentSalePrice,
+      sub: `Calibre: ${dto.caliber} - Pas de vis: ${dto.threadedSize.size}`,
+      factory: dto.factory.name,
+    };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 5,
+  ): Promise<DiscountedItemDto[] | null> {
+    const entities: SoundNoiseReducer[] =
+      await this.soundNoiseReducerRepository.find({
+        where: {
+          isDiscounted: true,
+        },
+        relations: {
+          caliber: true,
+          factory: true,
+        },
+        take: limit,
+      });
+    if (!entities) {
+      return null;
+    }
+    const dtos: SoundNoiseReducerDto[] =
+      await this.mapArrayEntityToArrayDto(entities);
+    return dtos.map((dto: SoundNoiseReducerDto) => {
+      return {
+        name: dto.name,
+        type: 'ammunition',
+        price: dto.priceHistory.currentSalePrice,
+        id: dto.id,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+        sub: `Calibre: ${dto.caliber.name}, Gain db: ${dto.estimatedNoiseReduction}`,
+      };
+    });
   }
 
   private async mapArrayEntityToArrayDto(
@@ -224,6 +311,7 @@ export class SoundReducerService {
       updatedBy: soundNoiseReducer.updatedBy,
       createdAt: soundNoiseReducer.createdAt,
       updatedAt: soundNoiseReducer.updatedAt,
+      isDiscounted: soundNoiseReducer.isDiscounted,
     };
   }
 
@@ -269,27 +357,5 @@ export class SoundReducerService {
     if (isExist) {
       throw new BadRequestException(CodeError.SOUND_NOISE_EXIST);
     }
-  }
-
-  /**
-   * Convertie le dto pour l'affichage des factures/commandes
-   * @param item CreateItemInvoiceSupplierDto
-   */
-  public async convertToInvoiceDto(
-    item: CreateItemInvoiceSupplierDto,
-  ): Promise<ItemInvoice> {
-    const rds: SoundNoiseReducerDto = await this.findById(item.objectId);
-    return {
-      id: item.id,
-      quantity: item.quantity,
-      status: item.status,
-      unitPriceHt: item.supplierPriceHT,
-      totalPriceHT: item.supplierPriceHT * item.quantity,
-      caliber: rds.caliber,
-      factory: rds.factory,
-      name: rds.name,
-      reference: rds.reference,
-      description: `Pas de vis: ${rds.threadedSize.size} | Diametre: ${rds.diameter} | Demontable: ${rds.isCleanable ? 'oui' : 'non'} | Description: ${rds.description}`,
-    };
   }
 }

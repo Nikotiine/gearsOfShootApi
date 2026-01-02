@@ -2,10 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpticReadyPlate } from '../../database/entity/optic-ready-plate.entity';
 import { Repository } from 'typeorm';
-import {
-  CreateOpticReadyPlateDto,
-  OpticReadyPlateDto,
-} from '../../dto/optic-ready-plate.dto';
+import { CreateOpticReadyPlateDto, OpticReadyPlateDto } from '../../dto/optic-ready-plate.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';

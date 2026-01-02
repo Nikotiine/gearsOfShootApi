@@ -166,4 +166,7 @@ export class OpticDto extends UpdateOpticDto {
 
   @ApiProperty()
   reference: string;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

@@ -17,6 +17,7 @@ import { RequestContextService } from './request-context/request-context.service
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestContextInterceptor } from './request-context/request-context.interceptor';
 import { InvoiceOrderModule } from './invoice-order/invoice-order.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { InvoiceOrderModule } from './invoice-order/invoice-order.module';
     AccessoryModule,
     SaleModule,
     InvoiceOrderModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [

@@ -237,4 +237,7 @@ export class RiffleDto extends UpdateRiffleDto {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

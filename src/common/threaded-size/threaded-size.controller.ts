@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -18,10 +9,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ThreadedSizeService } from './threaded-size.service';
-import {
-  CreateThreadedSizeDto,
-  ThreadedSizeDto,
-} from '../../dto/threaded-size.dto';
+import { CreateThreadedSizeDto, ThreadedSizeDto } from '../../dto/threaded-size.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { Roles } from '../../decorator/roles.decorator';

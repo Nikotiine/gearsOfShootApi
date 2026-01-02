@@ -129,4 +129,7 @@ export class AmmunitionDto extends UpdateAmmunitionDto {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

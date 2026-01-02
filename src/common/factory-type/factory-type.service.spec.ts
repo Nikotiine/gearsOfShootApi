@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FactoryTypeService } from './factory-type.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AmmunitionHeadType } from '../../database/entity/ammunition-head-type.entity';
 import { FactoryType } from '../../database/entity/factory-type.entity';
 
 describe('FactoryTypeService', () => {

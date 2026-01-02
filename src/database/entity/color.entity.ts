@@ -3,6 +3,7 @@ import { BaseEntity } from './base.entity';
 
 import { HandGun } from './hand-gun.entity';
 import { Riffle } from './riffle.entity';
+
 @Entity()
 export class Color extends BaseEntity {
   @Column()

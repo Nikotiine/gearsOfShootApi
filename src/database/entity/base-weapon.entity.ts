@@ -1,5 +1,5 @@
-import { Column, ManyToOne, ManyToMany, JoinColumn } from 'typeorm';
-import { BaseAuditEntity } from './base-audit.entity';
+import { Column, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
@@ -10,7 +10,7 @@ import { PercussionType } from './percussion-type.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { Material } from './material.entity';
 
-export abstract class WeaponBase extends BaseAuditEntity {
+export abstract class WeaponBase extends BaseAuditEntityWithSaleOptions {
   // =======================
   // Identification
   // =======================

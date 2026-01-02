@@ -113,7 +113,7 @@ export class OpticCollarService {
     return this.mapEntityToDto(collar, price);
   }
 
-  public async edit(
+  public async update(
     id: number,
     collar: UpdateOpticCollarDto,
   ): Promise<OpticCollarDto> {

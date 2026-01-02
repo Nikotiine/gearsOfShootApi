@@ -250,6 +250,10 @@ export class HandGunDto extends UpdateHandGunDto {
 
   @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

@@ -1,6 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
+
 @Entity()
 export class VerificationCode extends BaseEntity {
   @Column()

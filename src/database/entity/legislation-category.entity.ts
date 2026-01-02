@@ -4,6 +4,7 @@ import { Ammunition } from './ammunition.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
+
 @Entity()
 export class LegislationCategory extends BaseEntity {
   @Column({ unique: true })

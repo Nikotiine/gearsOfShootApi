@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
 import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
+
 @Entity()
 export class ThreadedSize extends BaseEntity {
   @OneToMany(() => Riffle, (riffle) => riffle.threadedSize)

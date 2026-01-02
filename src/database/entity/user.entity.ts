@@ -5,6 +5,7 @@ import { promisify } from 'util';
 import { pbkdf2 as _pbkdf2, randomBytes } from 'crypto';
 import { CostumerRoles } from '../../enum/costumer-roles.enum';
 import { VerificationCode } from './verification-code.entity';
+
 @Entity('users')
 export class User extends BaseEntity {
   @Column({ unique: true })

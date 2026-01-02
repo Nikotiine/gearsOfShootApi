@@ -1,10 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PriceHistoryService } from './price-history.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import { PriceHistoryDto } from '../../dto/price-history.dto';
