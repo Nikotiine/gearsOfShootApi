@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HandGun } from '../../database/entity/hand-gun.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import {
   CreateHandGunDto,
   HandGunDto,
@@ -28,8 +28,7 @@ import { HandGunFilter } from '../filters/hand-gun.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { handGunWhereFilterConfig } from '../filters/hand-gun-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
-import { LegislationCategory } from '../../types/legislation-category.type';
-import { NewItemsDto } from '../../dto/new-items.dto';
+import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { HandGunType } from '../../enum/weapon-type.enum';
 
 @Injectable()
@@ -77,6 +76,7 @@ export class HandGunService {
       decocking: handgun.decocking,
       isExternalHammer: handgun.isExternalHammer,
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
+      isDiscounted: handgun.priceHistory.isDiscounted,
     });
     const created = await this.handGunRepository.save(entity);
     const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
@@ -97,7 +97,7 @@ export class HandGunService {
     id: number,
     handgun: UpdateHandGunDto,
   ): Promise<HandGunDto> {
-    const updateResult = await this.handGunRepository.preload({
+    const updateResult: HandGun = await this.handGunRepository.preload({
       id: id,
       ...handgun,
       providedOpticReadyPlate: handgun.providedOpticReadyPlates,
@@ -115,19 +115,21 @@ export class HandGunService {
       threadedSize: handgun.threadedSize,
       triggerType: handgun.triggerType,
       type: handgun.type,
+      isDiscounted: handgun.priceHistory.isDiscounted,
     });
 
-    const updated = await this.handGunRepository.save(updateResult);
-    const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-      handgun.priceHistory,
-      updated.id,
-      PriceableObjectType.HANDGUN,
-    );
+    const updated: HandGun = await this.handGunRepository.save(updateResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        handgun.priceHistory,
+        updated.id,
+        PriceableObjectType.HANDGUN,
+      );
     return this.mapEntityToDto(updated, price);
   }
 
   public async findById(id: number): Promise<HandGunDto> {
-    const handGunEntity = await this.handGunRepository.findOne({
+    const handGunEntity: HandGun = await this.handGunRepository.findOne({
       where: {
         id: id,
       },
@@ -155,11 +157,12 @@ export class HandGunService {
     if (!handGunEntity) {
       throw new NotFoundException(CodeError.WEAPON_NOT_FOUND);
     }
-    const price = await this.priceHistoryService.findLastByObjectId(
-      handGunEntity.id,
-      PriceableObjectType.HANDGUN,
-    );
-    const stock = await this.stockService.findLastByObjectId(
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.findLastByObjectId(
+        handGunEntity.id,
+        PriceableObjectType.HANDGUN,
+      );
+    const stock: StockDto = await this.stockService.findLastByObjectId(
       handGunEntity.id,
       StockableObject.HANDGUN,
     );
@@ -198,33 +201,6 @@ export class HandGunService {
     });
     const data = await this.mapEntityArrayToDtoArray(entities);
     return new PaginatedResponseDto<HandGunDto>(data, total, limit, offset);
-  }
-
-  public async findAllByCategory(category: string): Promise<HandGunDto[]> {
-    const handGuns = await this.handGunRepository.find({
-      where: {
-        category: {
-          name: category,
-        },
-      },
-      relations: {
-        slideMaterial: true,
-        slideColor: true,
-        factory: true,
-        buttMaterial: true,
-        buttColor: true,
-        triggerType: true,
-        threadedSize: true,
-        percussionType: true,
-        category: true,
-        caliber: true,
-        type: true,
-        barrelType: true,
-        createdBy: true,
-        updatedBy: true,
-      },
-    });
-    return this.mapEntityArrayToDtoArray(handGuns);
   }
 
   /**
@@ -268,23 +244,6 @@ export class HandGunService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.WEAPON_DELETE,
     };
-  }
-
-  /**
-   * Verifie si l'arme est pas deja presente en base
-   * @private
-   * @param newEntity {CreateHandGunDto}
-   */
-  private async verifyIfIsExist(newEntity: CreateHandGunDto): Promise<boolean> {
-    const handGun = await this.handGunRepository.findOne({
-      where: {
-        name: newEntity.name,
-        variation: newEntity.variation,
-        caliber: newEntity.caliber,
-        factory: newEntity.factory,
-      },
-    });
-    return !!handGun;
   }
 
   private async mapEntityToDto(
@@ -342,20 +301,8 @@ export class HandGunService {
       updatedBy: handGun.updatedBy,
       createdAt: handGun.createdAt,
       updatedAt: handGun.updatedAt,
+      isDiscounted: handGun.isDiscounted,
     };
-  }
-
-  public async mapEntityArrayToDtoArray(
-    handGuns: HandGun[],
-  ): Promise<HandGunDto[]> {
-    const dtoPromises = handGuns.map(async (handGun) => {
-      return this.mapEntityToDto(handGun);
-    });
-    return await Promise.all(dtoPromises);
-  }
-
-  private createReference(dto: CreateHandGunDto): string {
-    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
   public async findLastEntry(type: HandGunType): Promise<NewItemsDto | null> {
     const [entity] = await this.handGunRepository.find({
@@ -387,6 +334,73 @@ export class HandGunService {
       id: entity.id,
       factory: dto.factory.name,
       sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+      discountedPrice: dto.priceHistory.discountedPrice,
     };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 5,
+  ): Promise<DiscountedItemDto[] | null> {
+    const entities: HandGun[] = await this.handGunRepository.find({
+      where: {
+        isDiscounted: true,
+        category: {
+          name: In(['B', 'C']),
+        },
+      },
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+      take: limit,
+    });
+    if (!entities) {
+      return null;
+    }
+    const dtos = await this.mapEntityArrayToDtoArray(entities);
+    return dtos.map((dto: HandGunDto) => {
+      return {
+        name: dto.name,
+        type: 'handgun',
+        price: dto.priceHistory.currentSalePrice,
+        id: dto.id,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+        sub: `Calibre: ${dto.caliber.name}, Categorie: ${dto.category.name}`,
+      };
+    });
+  }
+
+  public async mapEntityArrayToDtoArray(
+    handGuns: HandGun[],
+  ): Promise<HandGunDto[]> {
+    const dtoPromises = handGuns.map(async (handGun) => {
+      return this.mapEntityToDto(handGun);
+    });
+    return await Promise.all(dtoPromises);
+  }
+
+  private createReference(dto: CreateHandGunDto): string {
+    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
+  }
+
+  /**
+   * Verifie si l'arme est pas deja presente en base
+   * @private
+   * @param newEntity {CreateHandGunDto}
+   */
+  private async verifyIfIsExist(newEntity: CreateHandGunDto): Promise<boolean> {
+    const handGun = await this.handGunRepository.findOne({
+      where: {
+        name: newEntity.name,
+        variation: newEntity.variation,
+        caliber: newEntity.caliber,
+        factory: newEntity.factory,
+      },
+    });
+    return !!handGun;
   }
 }

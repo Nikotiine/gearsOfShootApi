@@ -28,7 +28,7 @@ import { AmmunitionFilter } from './filters/ammunition.filter';
 import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
 import { buildWhereGeneric } from '../database/utils/where-builder';
 import { ammunitionWhereFilterConfig } from './filters/ammunition-where-filter.config';
-import { NewItemsDto } from '../dto/new-items.dto';
+import { DiscountedItemDto, NewItemsDto } from '../dto/new-items.dto';
 import { LegislationCategory } from '../types/legislation-category.type';
 
 @Injectable()
@@ -65,6 +65,7 @@ export class AmmunitionService {
       packaging: ammunition.packaging,
       initialSpeed: ammunition.initialSpeed,
       reference: this.createReference(ammunition),
+      isDiscounted: ammunition.priceHistory.isDiscounted,
     });
     const created: Ammunition = await this.ammunitionRepository.save(entity);
     const price: PriceHistoryDto =
@@ -80,6 +81,112 @@ export class AmmunitionService {
     );
     return this.mapEntityToDto(created, price, stock);
   }
+
+  /**
+   * Met à jour une munition existante et renvoie son DTO mis à jour.
+   *
+   * Cette méthode :
+   * 1. Précharge l'entité existante en fusionnant l'ID et les nouvelles données du DTO `UpdateAmmunitionDto`.
+   * 2. Met automatiquement à jour la référence via `createReference`.
+   * 3. Met à jour les relations associées (caliber, factory, headType, bodyType, percussionType).
+   * 4. Enregistre la munition mise à jour en base.
+   * 5. Met à jour l'historique des prix si le prix a changé, via `priceHistoryService`.
+   * 6. Convertit l'entité mise à jour en DTO pour la réponse.
+   *
+   * @param {number} id - Identifiant de la munition à modifier.
+   * @param {UpdateAmmunitionDto} ammunition - Données de mise à jour de la munition.
+   *
+   * @returns {Promise<AmmunitionDto>} Le DTO de la munition mise à jour, incluant
+   * les informations de prix actualisées.
+   *
+   * @throws {NotFoundException} Si la munition à mettre à jour n'existe pas.
+   */
+  public async update(
+    id: number,
+    ammunition: UpdateAmmunitionDto,
+  ): Promise<AmmunitionDto> {
+    const updatedResult = await this.ammunitionRepository.preload({
+      id,
+      ...ammunition,
+      reference: this.createReference(ammunition),
+      caliber: ammunition.caliber,
+      factory: ammunition.factory,
+      headType: ammunition.headType,
+      bodyType: ammunition.bodyType,
+      percussionType: ammunition.percussionType,
+      isDiscounted: ammunition.priceHistory.isDiscounted,
+    });
+    const updated: Ammunition =
+      await this.ammunitionRepository.save(updatedResult);
+    const price: PriceHistoryDto =
+      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
+        ammunition.priceHistory,
+        ammunition.id,
+        PriceableObjectType.AMMUNITION,
+      );
+    return this.mapEntityToDto(updated, price);
+  }
+
+  /**
+   * Récupère une liste paginée de munitions selon différents filtres.
+   *
+   * Cette méthode :
+   * - Construit dynamiquement un objet `where` en fonction des filtres fournis
+   *   (category, factory, caliber, name, reference).
+   * - Utilise `findAndCount` pour récupérer les entités correspondantes ainsi
+   *   que le nombre total d'enregistrements filtrés.
+   * - Charge automatiquement certaines relations (caliber, factory, category).
+   * - Convertit la liste des entités en liste de DTOs via `mapEntityArrayToDtoArray`.
+   * - Retourne une structure de pagination standardisée via `PaginatedResponseDto`.
+   *
+   *  - `category` (string) : filtre sur le nom de la catégorie
+   *  - `factory` (string) : filtre sur le nom du fabricant
+   *  - `caliber` (string) : filtre sur le nom du calibre
+   *  - `name` (string) : filtre sur le nom de la munition
+   *  - `reference` (string) : filtre sur la référence
+   *  - `limit` (number, default: 10) : nombre de résultats à renvoyer
+   *  - `offset` (number, default: 0) : décalage pour la pagination
+   *
+   * @returns {Promise<PaginatedResponseDto<AmmunitionDto>>}
+   * Retourne une réponse paginée contenant :
+   * - `data` : la liste des munitions au format DTO
+   * - `total` : le nombre total d’enregistrements correspondant au filtre
+   * - `limit` : la limite utilisée
+   * - `offset` : l’offset utilisé
+   *
+   * @example
+   * const result = await findAll({ category: 'Handgun', limit: 20 });
+   * // result.data → AmmunitionDto[]
+   * // result.total → nombre total filtré
+   *
+   * @param filters AmmunitionFilter
+   */
+  public async findAll(
+    filters: AmmunitionFilter,
+  ): Promise<PaginatedResponseDto<AmmunitionDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<Ammunition> = buildWhereGeneric<
+      AmmunitionFilter,
+      Ammunition
+    >(filters, ammunitionWhereFilterConfig);
+
+    const [entities, total] = await this.ammunitionRepository.findAndCount({
+      where,
+      relations: {
+        caliber: true,
+        factory: true,
+        category: true,
+      },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
+    });
+
+    const data: AmmunitionDto[] = await this.mapEntityArrayToDtoArray(entities);
+
+    return new PaginatedResponseDto<AmmunitionDto>(data, total, limit, offset);
+  }
+
   /**
    * Récupère une munition par son identifiant unique.
    *
@@ -131,111 +238,6 @@ export class AmmunitionService {
   }
 
   /**
-   * Met à jour une munition existante et renvoie son DTO mis à jour.
-   *
-   * Cette méthode :
-   * 1. Précharge l'entité existante en fusionnant l'ID et les nouvelles données du DTO `UpdateAmmunitionDto`.
-   * 2. Met automatiquement à jour la référence via `createReference`.
-   * 3. Met à jour les relations associées (caliber, factory, headType, bodyType, percussionType).
-   * 4. Enregistre la munition mise à jour en base.
-   * 5. Met à jour l'historique des prix si le prix a changé, via `priceHistoryService`.
-   * 6. Convertit l'entité mise à jour en DTO pour la réponse.
-   *
-   * @param {number} id - Identifiant de la munition à modifier.
-   * @param {UpdateAmmunitionDto} ammunition - Données de mise à jour de la munition.
-   *
-   * @returns {Promise<AmmunitionDto>} Le DTO de la munition mise à jour, incluant
-   * les informations de prix actualisées.
-   *
-   * @throws {NotFoundException} Si la munition à mettre à jour n'existe pas.
-   */
-  public async edit(
-    id: number,
-    ammunition: UpdateAmmunitionDto,
-  ): Promise<AmmunitionDto> {
-    const updatedResult = await this.ammunitionRepository.preload({
-      id,
-      ...ammunition,
-      reference: this.createReference(ammunition),
-      caliber: ammunition.caliber,
-      factory: ammunition.factory,
-      headType: ammunition.headType,
-      bodyType: ammunition.bodyType,
-      percussionType: ammunition.percussionType,
-    });
-    const updated: Ammunition =
-      await this.ammunitionRepository.save(updatedResult);
-    const price: PriceHistoryDto =
-      await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
-        ammunition.priceHistory,
-        ammunition.id,
-        PriceableObjectType.AMMUNITION,
-      );
-    return this.mapEntityToDto(updated, price);
-  }
-
-  /**
-   * Récupère une liste paginée de munitions selon différents filtres.
-   *
-   * Cette méthode :
-   * - Construit dynamiquement un objet `where` en fonction des filtres fournis
-   *   (category, factory, caliber, name, reference).
-   * - Utilise `findAndCount` pour récupérer les entités correspondantes ainsi
-   *   que le nombre total d'enregistrements filtrés.
-   * - Charge automatiquement certaines relations (caliber, factory, category).
-   * - Convertit la liste des entités en liste de DTOs via `mapEntityArrayToDtoArray`.
-   * - Retourne une structure de pagination standardisée via `PaginatedResponseDto`.
-   *
-   *  - `category` (string) : filtre sur le nom de la catégorie
-   *  - `factory` (string) : filtre sur le nom du fabricant
-   *  - `caliber` (string) : filtre sur le nom du calibre
-   *  - `name` (string) : filtre sur le nom de la munition
-   *  - `reference` (string) : filtre sur la référence
-   *  - `limit` (number, default: 10) : nombre de résultats à renvoyer
-   *  - `offset` (number, default: 0) : décalage pour la pagination
-   *
-   * @returns {Promise<PaginatedResponseDto<AmmunitionDto>>}
-   * Retourne une réponse paginée contenant :
-   * - `data` : la liste des munitions au format DTO
-   * - `total` : le nombre total d’enregistrements correspondant au filtre
-   * - `limit` : la limite utilisée
-   * - `offset` : l’offset utilisé
-   *
-   * @example
-   * const result = await findAll({ category: 'Handgun', limit: 20 });
-   * // result.data → AmmunitionDto[]
-   * // result.total → nombre total filtré
-   *
-   * @param filters AmmunitionFilter
-   */
-  public async findAll(
-    filters: AmmunitionFilter,
-  ): Promise<PaginatedResponseDto<AmmunitionDto>> {
-    console.log('******************', filters.caliberId);
-    const { limit = 10, offset = 0 } = filters;
-    const where: FindOptionsWhere<Ammunition> = buildWhereGeneric<
-      AmmunitionFilter,
-      Ammunition
-    >(filters, ammunitionWhereFilterConfig);
-
-    const [entities, total] = await this.ammunitionRepository.findAndCount({
-      where,
-      relations: {
-        caliber: true,
-        factory: true,
-        category: true,
-      },
-      take: limit,
-      skip: offset,
-      order: { id: 'DESC' },
-    });
-
-    const data: AmmunitionDto[] = await this.mapEntityArrayToDtoArray(entities);
-
-    return new PaginatedResponseDto<AmmunitionDto>(data, total, limit, offset);
-  }
-
-  /**
    * Soft delete de la munition
    * @param id {number} id de la munition
    */
@@ -252,6 +254,71 @@ export class AmmunitionService {
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.AMMUNITION_DELETE,
     };
+  }
+
+  public async findLastEntry(
+    category: LegislationCategory,
+  ): Promise<NewItemsDto | null> {
+    const [entity] = await this.ammunitionRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.name,
+      type: 'ammunition',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+    };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 5,
+  ): Promise<DiscountedItemDto[] | null> {
+    const entities = await this.ammunitionRepository.find({
+      where: {
+        isDiscounted: true,
+      },
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+      take: limit,
+    });
+    if (!entities) {
+      return null;
+    }
+    const dtos = await this.mapEntityArrayToDtoArray(entities);
+    return dtos.map((dto: AmmunitionDto) => {
+      return {
+        name: dto.name,
+        type: 'ammunition',
+        price: dto.priceHistory.currentSalePrice,
+        id: dto.id,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+        sub: `Calibre: ${dto.caliber.name}, Categorie: ${dto.category.name}, Packaging:${dto.packaging}`,
+      };
+    });
   }
 
   /**
@@ -295,38 +362,6 @@ export class AmmunitionService {
       name: ammo.name,
       reference: ammo.reference,
       description: `Packaging: ${ammo.packaging} | Type percussion: ${ammo.percussionType.name} | Ogive: ${ammo.headType.name} | Description: ${ammo.description}`,
-    };
-  }
-
-  public async findLastEntry(
-    category: LegislationCategory,
-  ): Promise<NewItemsDto | null> {
-    const [entity] = await this.ammunitionRepository.find({
-      where: {
-        category: {
-          name: category,
-        },
-      },
-      order: { createdAt: 'DESC' },
-      take: 1,
-      relations: {
-        caliber: true,
-        category: true,
-        factory: true,
-      },
-    });
-    if (!entity) {
-      return null;
-    }
-    const dto = await this.mapEntityToDto(entity);
-
-    return {
-      name: entity.name,
-      type: 'ammunition',
-      price: dto.priceHistory.currentSalePrice,
-      id: entity.id,
-      factory: dto.factory.name,
-      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
     };
   }
 
@@ -410,6 +445,7 @@ export class AmmunitionService {
       updatedBy: ammunition.updatedBy,
       createdAt: ammunition.createdAt,
       updatedAt: ammunition.updatedAt,
+      isDiscounted: ammunition.isDiscounted,
     };
   }
 

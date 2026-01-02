@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Riffle } from '../../database/entity/riffle.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import {
   CreateRiffleDto,
   RiffleDto,
@@ -31,7 +31,7 @@ import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { riffleWhereFilterConfig } from '../filters/riffle-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { LegislationCategory } from '../../types/legislation-category.type';
-import { NewItemsDto } from '../../dto/new-items.dto';
+import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 
 @Injectable()
 export class RiffleService {
@@ -42,6 +42,39 @@ export class RiffleService {
     private readonly stockService: StockService,
   ) {}
 
+  /**
+   * Crée et persiste une nouvelle arme de type carabine (riffle).
+   *
+   * Cette méthode :
+   * - Vérifie qu'une arme identique n'existe pas déjà
+   * - Crée l'entité `Riffle` à partir des données fournies
+   * - Génère une référence unique pour la carabine
+   * - Initialise l'historique de prix associé
+   * - Initialise le stock de la carabine
+   * - Retourne la carabine créée sous forme de `RiffleDto`
+   *
+   * @param riffle - Données nécessaires à la création de la carabine
+   *
+   * @throws {BadRequestException}
+   * Lancée si une carabine identique existe déjà
+   * (`CodeError.WEAPON_IS_EXIST`)
+   *
+   * @returns {Promise<RiffleDto>}
+   * La carabine créée, incluant :
+   * - ses caractéristiques techniques
+   * - son prix courant
+   * - son stock initial
+   *
+   * @remarks
+   * - L'historique de prix est géré via `PriceHistoryService`
+   * - Le stock est initialisé via `StockService`
+   * - La référence est générée automatiquement à la création
+   *
+   * @example
+   * ```ts
+   * const riffle = await riffleService.insert(createRiffleDto);
+   * ```
+   */
   public async insert(riffle: CreateRiffleDto): Promise<RiffleDto> {
     const isExist = await this.verifyIfIsExist(riffle);
     if (isExist) {
@@ -79,6 +112,7 @@ export class RiffleService {
       mLockOptions: riffle.mLockOptions,
       barrelColor: riffle.barrelColor,
       buttColor: riffle.buttColor,
+      isDiscounted: riffle.priceHistory.isDiscounted,
     });
     const created = await this.riffleRepository.save(entity);
     const price = await this.priceHistoryService.addPriceHistoryIfNewOrUpdated(
@@ -108,6 +142,7 @@ export class RiffleService {
       barrelType: riffle.barrelType,
       threadedSize: riffle.threadedSize,
       reference: this.createReference(riffle),
+      isDiscounted: riffle.priceHistory.isDiscounted,
     });
 
     const updated = await this.riffleRepository.save(entity);
@@ -117,6 +152,69 @@ export class RiffleService {
       PriceableObjectType.RIFFLE,
     );
     return this.mapEntityToDto(updated, price);
+  }
+
+  /**
+   * Récupère une liste paginée de carabines (riffles) selon des filtres dynamiques.
+   *
+   * Cette méthode :
+   * - Applique des filtres métier via `buildWhereGeneric`
+   * - Gère la pagination (limit / offset)
+   * - Charge les relations nécessaires à l'affichage détaillé
+   * - Retourne les résultats sous forme paginée de `RiffleDto`
+   *
+   * @param filters - Filtres de recherche et paramètres de pagination
+   *
+   * @returns {Promise<PaginatedResponseDto<RiffleDto>>}
+   * Une réponse paginée contenant :
+   * - la liste des carabines correspondantes
+   * - le nombre total d'éléments
+   * - la limite et l'offset utilisés
+   *
+   * @remarks
+   * - La pagination utilise des valeurs par défaut (`limit = 10`, `offset = 0`)
+   * - Les filtres sont construits dynamiquement via `riffleWhereFilterConfig`
+   * - Les relations sont chargées afin d'éviter des requêtes supplémentaires (N+1)
+   *
+   * @example
+   * ```ts
+   * const result = await riffleService.findAll({
+   *   limit: 20,
+   *   offset: 0,
+   *   caliber: 308,
+   * });
+   * ```
+   */
+  public async findAll(
+    filters: RiffleFilter,
+  ): Promise<PaginatedResponseDto<RiffleDto>> {
+    const { limit = 10, offset = 0 } = filters;
+    const where: FindOptionsWhere<Riffle> = buildWhereGeneric<
+      RiffleFilter,
+      Riffle
+    >(filters, riffleWhereFilterConfig);
+    const [entities, total] = await this.riffleRepository.findAndCount({
+      where,
+      relations: {
+        factory: true,
+        buttMaterial: true,
+        buttColor: true,
+        threadedSize: true,
+        percussionType: true,
+        category: true,
+        caliber: true,
+        type: true,
+        barrelType: true,
+        railSize: true,
+        createdBy: true,
+        updatedBy: true,
+      },
+      take: limit,
+      skip: offset,
+      order: { id: 'DESC' },
+    });
+    const data: RiffleDto[] = await this.mapEntityArrayToDtoArray(entities);
+    return new PaginatedResponseDto<RiffleDto>(data, total, limit, offset);
   }
 
   public async findById(id: number): Promise<RiffleDto> {
@@ -155,63 +253,6 @@ export class RiffleService {
       StockableObject.RIFFLE,
     );
     return this.mapEntityToDto(riffle, price, stock);
-  }
-
-  public async findAll(
-    filters: RiffleFilter,
-  ): Promise<PaginatedResponseDto<RiffleDto>> {
-    const { limit = 10, offset = 0 } = filters;
-    const where: FindOptionsWhere<Riffle> = buildWhereGeneric<
-      RiffleFilter,
-      Riffle
-    >(filters, riffleWhereFilterConfig);
-    const [entities, total] = await this.riffleRepository.findAndCount({
-      where,
-      relations: {
-        factory: true,
-        buttMaterial: true,
-        buttColor: true,
-        threadedSize: true,
-        percussionType: true,
-        category: true,
-        caliber: true,
-        type: true,
-        barrelType: true,
-        railSize: true,
-        createdBy: true,
-        updatedBy: true,
-      },
-      take: limit,
-      skip: offset,
-      order: { id: 'DESC' },
-    });
-    const data = await this.mapEntityArrayToDtoArray(entities);
-    return new PaginatedResponseDto<RiffleDto>(data, total, limit, offset);
-  }
-
-  public async findAllByCategory(category: string): Promise<RiffleDto[]> {
-    const riffles = await this.riffleRepository.find({
-      where: {
-        category: {
-          name: category,
-        },
-      },
-      relations: {
-        factory: true,
-        buttMaterial: true,
-        buttColor: true,
-        threadedSize: true,
-        percussionType: true,
-        category: true,
-        caliber: true,
-        type: true,
-        barrelType: true,
-        railSize: true,
-        createdBy: true,
-        updatedBy: true,
-      },
-    });
-    return this.mapEntityArrayToDtoArray(riffles);
   }
 
   /**
@@ -255,6 +296,87 @@ export class RiffleService {
       colors: `Crosse: ${riffle.buttColor.name}| Cannon: ${riffle.barrelColor.name}`,
       description: `Variante: ${riffle.variation ?? ''} | Type percussion: ${riffle.percussionType.name} | Type: ${riffle.type.name} | Description: ${riffle.description}`,
     };
+  }
+
+  public async mapEntityArrayToDtoArray(
+    riffles: Riffle[],
+  ): Promise<RiffleDto[]> {
+    const dtoPromises = riffles.map(async (riffle) => {
+      return this.mapEntityToDto(riffle);
+    });
+    return await Promise.all(dtoPromises);
+  }
+
+  public async findLastEntry(
+    category: LegislationCategory,
+  ): Promise<NewItemsDto | null> {
+    const [entity] = await this.riffleRepository.find({
+      where: {
+        category: {
+          name: category,
+        },
+      },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+
+    return {
+      name: entity.name,
+      type: 'riffle',
+      price: dto.priceHistory.currentSalePrice,
+      id: entity.id,
+      factory: dto.factory.name,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+    };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 5,
+  ): Promise<DiscountedItemDto[] | null> {
+    const entities: Riffle[] = await this.riffleRepository.find({
+      where: {
+        isDiscounted: true,
+        category: {
+          name: In(['B', 'C']),
+        },
+      },
+      relations: {
+        caliber: true,
+        category: true,
+        factory: true,
+      },
+      take: limit,
+    });
+    if (!entities) {
+      return null;
+    }
+    const dtos = await this.mapEntityArrayToDtoArray(entities);
+    return dtos.map((dto: RiffleDto) => {
+      return {
+        name: dto.name,
+        type: 'riffle',
+        price: dto.priceHistory.currentSalePrice,
+        id: dto.id,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+        sub: `Calibre: ${dto.caliber.name}, Categorie: ${dto.category.name}`,
+      };
+    });
+  }
+
+  private createReference(dto: CreateRiffleDto): string {
+    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
 
   /**
@@ -336,51 +458,7 @@ export class RiffleService {
       updatedBy: riffle.updatedBy,
       createdAt: riffle.createdAt,
       updatedAt: riffle.updatedAt,
+      isDiscounted: riffle.isDiscounted,
     };
-  }
-
-  public async mapEntityArrayToDtoArray(
-    riffles: Riffle[],
-  ): Promise<RiffleDto[]> {
-    const dtoPromises = riffles.map(async (riffle) => {
-      return this.mapEntityToDto(riffle);
-    });
-    return await Promise.all(dtoPromises);
-  }
-
-  public async findLastEntry(
-    category: LegislationCategory,
-  ): Promise<NewItemsDto | null> {
-    const [entity] = await this.riffleRepository.find({
-      where: {
-        category: {
-          name: category,
-        },
-      },
-      order: { createdAt: 'DESC' },
-      take: 1,
-      relations: {
-        caliber: true,
-        category: true,
-        factory: true,
-      },
-    });
-    if (!entity) {
-      return null;
-    }
-    const dto = await this.mapEntityToDto(entity);
-
-    return {
-      name: entity.name,
-      type: 'riffle',
-      price: dto.priceHistory.currentSalePrice,
-      id: entity.id,
-      factory: dto.factory.name,
-      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
-    };
-  }
-
-  private createReference(dto: CreateRiffleDto): string {
-    return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
 }

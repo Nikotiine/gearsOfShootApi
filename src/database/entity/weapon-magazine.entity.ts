@@ -14,11 +14,11 @@ import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { WeaponType } from './weapon-type.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
 
 @Entity()
 @Unique(['factory', 'category', 'body', 'capacity', 'caliber'])
-export class WeaponMagazine extends BaseAuditEntity {
+export class WeaponMagazine extends BaseAuditEntityWithSaleOptions {
   @ManyToOne(() => LegislationCategory, (category) => category.magazines)
   category: LegislationCategory;
 

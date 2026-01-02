@@ -1,11 +1,11 @@
 import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Factory } from './factory.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'height', 'diameter'])
-export class OpticCollar extends BaseAuditEntity {
+export class OpticCollar extends BaseAuditEntityWithSaleOptions {
   @ManyToOne(() => Factory, (factory) => factory.opticsCollar)
   factory: Factory;
 

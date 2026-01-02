@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { OpticService } from './optic.service';
 import {
   ApiBody,
@@ -17,7 +26,10 @@ import { Roles } from '../decorator/roles.decorator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { RolesGuard } from '../auth/strategy/roles.guard';
 import { OpticFilter } from './filters/optic.filter';
-import { ApiPaginatedResponse, PaginatedResponseDto } from '../decorator/paginated-response.decorator';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../decorator/paginated-response.decorator';
 import { QueryFilter } from '../decorator/query-filter.decorator';
 
 import { ReqQueryFilter } from '../decorator/req-query-filter.decorator';
@@ -115,7 +127,7 @@ export class OpticController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() optic: UpdateOpticDto,
   ): Promise<OpticDto> {
-    return await this.opticService.edit(id, optic);
+    return await this.opticService.update(id, optic);
   }
 
   @Delete(SwaggerDescription.ID)

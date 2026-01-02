@@ -6,14 +6,23 @@ import { Supplier } from './supplier.entity';
 
 @Entity()
 export class PriceHistory extends BaseAuditEntity {
-  @Column()
+  @Column({ type: 'float' })
   supplierPrice: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   recommendedSalePrice: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   currentSalePrice: number;
+
+  @Column({ nullable: true, type: 'float' })
+  precentOfDiscount: number;
+
+  @Column({ nullable: true, type: 'float' })
+  discountedPrice: number;
+
+  @Column({ default: false })
+  isDiscounted: boolean;
 
   @Column()
   objectId: number;

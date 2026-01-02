@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { StockableObject } from '../enum/stock-item.enum';
-import { IsArray, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 import { CaliberDto } from './caliber.dto';
 import { FactoryDto } from './factory.dto';

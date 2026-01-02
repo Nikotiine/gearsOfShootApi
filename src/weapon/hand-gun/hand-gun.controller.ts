@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -10,13 +19,20 @@ import {
 } from '@nestjs/swagger';
 import { HandGunService } from './hand-gun.service';
 import { SwaggerDescription } from '../../enum/swagger-description.enum';
-import { CreateHandGunDto, HandGunDto, UpdateHandGunDto } from '../../dto/hand-gun.dto';
+import {
+  CreateHandGunDto,
+  HandGunDto,
+  UpdateHandGunDto,
+} from '../../dto/hand-gun.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { Roles } from '../../decorator/roles.decorator';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { RolesGuard } from '../../auth/strategy/roles.guard';
-import { ApiPaginatedResponse, PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import {
+  ApiPaginatedResponse,
+  PaginatedResponseDto,
+} from '../../decorator/paginated-response.decorator';
 import { QueryFilter } from '../../decorator/query-filter.decorator';
 import { HandGunFilter } from '../filters/hand-gun.filter';
 import { ReqQueryFilter } from '../../decorator/req-query-filter.decorator';
@@ -54,23 +70,6 @@ export class HandGunController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
   ): Promise<HandGunDto> {
     return this.handGunService.findById(id);
-  }
-
-  @Get(SwaggerDescription.FIND_BY_CATEGORY)
-  @ApiOperation({
-    summary: SwaggerDescription.FIND_BY_CATEGORY_SUMMARY,
-    description: 'Retourne la liste des arme de poings filtree par categories',
-  })
-  @ApiOkResponse({
-    type: [HandGunDto],
-  })
-  @ApiParam({
-    name: SwaggerDescription.FIND_BY_CATEGORY_PARAM,
-  })
-  public async findAllByCategory(
-    @Param(SwaggerDescription.FIND_BY_CATEGORY_PARAM) category: string,
-  ): Promise<HandGunDto[]> {
-    return this.handGunService.findAllByCategory(category);
   }
 
   @Post()

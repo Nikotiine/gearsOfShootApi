@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { OpticReadyPlateDto } from './optic-ready-plate.dto';
-import { WeaponBarrelTypeDto, WeaponTriggerTypeDto, WeaponTypeDto } from './weapon.dto';
+import {
+  WeaponBarrelTypeDto,
+  WeaponTriggerTypeDto,
+  WeaponTypeDto,
+} from './weapon.dto';
 import { ColorDto } from './color.dto';
 import { MaterialDto } from './material.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
@@ -246,6 +250,10 @@ export class HandGunDto extends UpdateHandGunDto {
 
   @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

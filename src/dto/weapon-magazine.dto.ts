@@ -120,4 +120,7 @@ export class WeaponMagazineDto extends UpdateWeaponMagazineDto {
   })
   @IsOptional()
   stock?: StockDto;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

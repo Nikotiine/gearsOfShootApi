@@ -5,6 +5,7 @@ import { OpticService } from '../../optic/optic.service';
 import { NewItemsDto } from '../../dto/new-items.dto';
 import { RiffleService } from '../../weapon/riffle/riffle.service';
 import { HandGunService } from '../../weapon/hand-gun/hand-gun.service';
+import { MagazineService } from '../../weapon/magazine/magazine.service';
 
 @Injectable()
 export class NewItemsService {
@@ -14,6 +15,7 @@ export class NewItemsService {
     private readonly opticService: OpticService,
     private readonly riffleService: RiffleService,
     private readonly handGunService: HandGunService,
+    private readonly magazineService: MagazineService,
   ) {}
 
   public async findNewItems(): Promise<NewItemsDto[]> {
@@ -25,6 +27,8 @@ export class NewItemsService {
     const lastRiffleCatC = await this.riffleService.findLastEntry('C');
     const lastPistolet = await this.handGunService.findLastEntry('Pistolet');
     const lastRevolver = await this.handGunService.findLastEntry('Revolver');
+    const lastMagazineCatC = await this.magazineService.findLastEntry('C');
+    const lastMagazineCatB = await this.magazineService.findLastEntry('B');
     return [
       lastRiffleCatB,
       lastRiffleCatC,
@@ -34,6 +38,8 @@ export class NewItemsService {
       lastAmmunitionCatC,
       lastOptic,
       lastRds,
+      lastMagazineCatC,
+      lastMagazineCatB,
     ];
   }
 }

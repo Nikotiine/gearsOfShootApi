@@ -98,4 +98,7 @@ export class SoundNoiseReducerDto extends UpdateSoundNoiseReducerDto {
   })
   @IsOptional()
   stock?: StockDto;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

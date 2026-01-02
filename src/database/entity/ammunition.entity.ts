@@ -5,11 +5,11 @@ import { AmmunitionHeadType } from './ammunition-head-type.entity';
 import { AmmunitionBodyType } from './ammunition-body-type.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { PercussionType } from './percussion-type.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'packaging'])
-export class Ammunition extends BaseAuditEntity {
+export class Ammunition extends BaseAuditEntityWithSaleOptions {
   @Column()
   name: string;
 

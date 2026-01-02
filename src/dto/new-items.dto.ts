@@ -13,4 +13,12 @@ export class NewItemsDto {
   sub?: string;
   @ApiProperty()
   factory: string;
+  @ApiProperty()
+  discountedPrice?: number;
+}
+export class DiscountedItemDto extends NewItemsDto {
+  @ApiProperty()
+  isDiscounted: boolean;
+  @ApiProperty()
+  precentOfDiscount: number;
 }

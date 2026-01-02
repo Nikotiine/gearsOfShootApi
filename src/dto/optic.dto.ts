@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { FactoryDto } from './factory.dto';
 import { CreatePriceHistoryDto } from './price-history.dto';
 import { RailSizeDto } from './rail-size.dto';
@@ -160,4 +166,7 @@ export class OpticDto extends UpdateOpticDto {
 
   @ApiProperty()
   reference: string;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

@@ -5,9 +5,10 @@ import { AccessoryModule } from '../accessory/accessory.module';
 import { AmmunitionModule } from '../ammunition/ammunition.module';
 import { OpticModule } from '../optic/optic.module';
 import { WeaponModule } from '../weapon/weapon.module';
+import { DiscountItemsService } from './discount-items/discount-items.service';
 
 @Module({
-  providers: [NewItemsService],
+  providers: [NewItemsService, DiscountItemsService],
   controllers: [DashboardController],
   imports: [AccessoryModule, AmmunitionModule, OpticModule, WeaponModule],
 })

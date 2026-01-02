@@ -4,7 +4,7 @@ import { OpticType } from './optic-type.entity';
 import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
 import { RailSize } from './rail-size.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
 import { OpticClick } from './optic-click.entity';
 
 @Entity()
@@ -16,7 +16,7 @@ import { OpticClick } from './optic-click.entity';
   'bodyDiameter',
   'lensDiameter',
 ])
-export class Optic extends BaseAuditEntity {
+export class Optic extends BaseAuditEntityWithSaleOptions {
   @Column()
   name: string;
 

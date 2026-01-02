@@ -1,5 +1,5 @@
 import { BaseEntity } from './base.entity';
-import { JoinColumn, ManyToOne } from 'typeorm';
+import { Column, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
 export class BaseAuditEntity extends BaseEntity {
@@ -14,4 +14,8 @@ export class BaseAuditEntity extends BaseEntity {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'deleted_by' })
   deletedBy?: User;
+}
+export class BaseAuditEntityWithSaleOptions extends BaseAuditEntity {
+  @Column({ default: false })
+  isDiscounted: boolean;
 }

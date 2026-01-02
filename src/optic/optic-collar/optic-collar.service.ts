@@ -1,8 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OpticCollar } from '../../database/entity/optic-collar.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { CreateOpticCollarDto, OpticCollarDto, UpdateOpticCollarDto } from '../../dto/optic-collar.dto';
+import {
+  CreateOpticCollarDto,
+  OpticCollarDto,
+  UpdateOpticCollarDto,
+} from '../../dto/optic-collar.dto';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { CodeError } from '../../enum/code-error.enum';
@@ -12,7 +20,10 @@ import { PriceHistoryDto } from '../../dto/price-history.dto';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { StockDto } from '../../dto/stock.dto';
 import { StockService } from '../../sale/stock/stock.service';
-import { CreateItemInvoiceSupplierDto, ItemInvoice } from '../../dto/item-invoice-supplier.dto';
+import {
+  CreateItemInvoiceSupplierDto,
+  ItemInvoice,
+} from '../../dto/item-invoice-supplier.dto';
 import { OpticCollarFilter } from '../filters/optic-collar.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { opticCollarWhereFilterConfig } from '../filters/optic-collar-where-filter.config';
@@ -102,7 +113,7 @@ export class OpticCollarService {
     return this.mapEntityToDto(collar, price);
   }
 
-  public async edit(
+  public async update(
     id: number,
     collar: UpdateOpticCollarDto,
   ): Promise<OpticCollarDto> {

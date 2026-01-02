@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PriceHistory } from '../../database/entity/price-history.entity';
 import { Repository } from 'typeorm';
-import { CreatePriceHistoryDto, PriceHistoryDto, PriceHistoryFromEntity } from '../../dto/price-history.dto';
+import {
+  CreatePriceHistoryDto,
+  PriceHistoryDto,
+  PriceHistoryFromEntity,
+} from '../../dto/price-history.dto';
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
@@ -88,28 +92,32 @@ export class PriceHistoryService {
     id: number,
     object: PriceableObjectType,
   ): Promise<PriceHistoryDto> {
-    const priceHistory = await this.priceHistoryRepository.findOne({
-      where: { objectId: id, object },
-      relations: {
-        createdBy: true,
-        updatedBy: true,
-        supplier: true,
-      },
-      order: { createdAt: 'DESC' },
-    });
+    const priceHistory: PriceHistory =
+      await this.priceHistoryRepository.findOne({
+        where: { objectId: id, object },
+        relations: {
+          createdBy: true,
+          updatedBy: true,
+          supplier: true,
+        },
+        order: { createdAt: 'DESC' },
+      });
 
     const isSamePrice =
       priceHistory &&
       dto.supplierPrice === priceHistory.supplierPrice &&
       dto.currentSalePrice === priceHistory.currentSalePrice &&
       dto.recommendedSalePrice === priceHistory.recommendedSalePrice &&
+      dto.discountedPrice === priceHistory.discountedPrice &&
+      dto.isDiscounted === priceHistory.isDiscounted &&
+      dto.precentOfDiscount === priceHistory.precentOfDiscount &&
       dto.supplier.id === priceHistory.supplier.id;
 
     if (!priceHistory || !isSamePrice) {
       return await this.addPriceHistory(dto, id, object);
     }
 
-    return priceHistory; //
+    return priceHistory;
   }
 
   private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
@@ -124,6 +132,9 @@ export class PriceHistoryService {
       createdBy: null,
       updatedBy: null,
       supplier: null,
+      isDiscounted: false,
+      precentOfDiscount: null,
+      discountedPrice: null,
     };
   }
 
@@ -147,6 +158,9 @@ export class PriceHistoryService {
       objectId: objectId,
       object: object,
       supplier: dto.supplier,
+      isDiscounted: dto.isDiscounted,
+      precentOfDiscount: dto.precentOfDiscount,
+      discountedPrice: dto.discountedPrice,
     };
   }
 
@@ -204,6 +218,9 @@ export class PriceHistoryService {
       updatedBy: entity.updatedBy,
       createdBy: entity.createdBy,
       supplier: entity.supplier ? entity.supplier : null,
+      isDiscounted: entity.isDiscounted,
+      precentOfDiscount: entity.precentOfDiscount,
+      discountedPrice: entity.discountedPrice,
     };
   }
 }

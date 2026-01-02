@@ -2,11 +2,14 @@ import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { ThreadedSize } from './threaded-size.entity';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
-import { BaseAuditEntity } from './base-audit.entity';
+import {
+  BaseAuditEntity,
+  BaseAuditEntityWithSaleOptions,
+} from './base-audit.entity';
 
 @Entity()
 @Unique(['threadedSize', 'factory', 'name'])
-export class SoundNoiseReducer extends BaseAuditEntity {
+export class SoundNoiseReducer extends BaseAuditEntityWithSaleOptions {
   @ManyToOne(
     () => ThreadedSize,
     (threadedSize) => threadedSize.soundNoiseReducers,

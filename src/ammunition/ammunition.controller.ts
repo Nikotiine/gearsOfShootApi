@@ -133,7 +133,7 @@ export class AmmunitionController {
     @Param(SwaggerDescription.ID_PARAM) id: number,
     @Body() ammunition: UpdateAmmunitionDto,
   ): Promise<AmmunitionDto> {
-    return await this.ammunitionService.edit(id, ammunition);
+    return await this.ammunitionService.update(id, ammunition);
   }
 
   @Delete(SwaggerDescription.ID)
