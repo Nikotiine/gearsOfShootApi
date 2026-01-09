@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
+import { LegislationCategoryDto } from './legislation-category.dto';
 
 export class NewItemsDto {
   @ApiProperty()
@@ -15,6 +17,11 @@ export class NewItemsDto {
   factory: string;
   @ApiProperty()
   discountedPrice?: number;
+  @ApiProperty({
+    type: LegislationCategoryDto,
+  })
+  @IsOptional()
+  category?: LegislationCategoryDto;
 }
 export class DiscountedItemDto extends NewItemsDto {
   @ApiProperty()
