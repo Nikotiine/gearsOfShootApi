@@ -6,6 +6,7 @@ import { NewItemsDto } from '../../dto/new-items.dto';
 import { RiffleService } from '../../weapon/riffle/riffle.service';
 import { HandGunService } from '../../weapon/hand-gun/hand-gun.service';
 import { MagazineService } from '../../weapon/magazine/magazine.service';
+import { OpticCollarService } from '../../optic/optic-collar/optic-collar.service';
 
 @Injectable()
 export class NewItemsService {
@@ -16,19 +17,30 @@ export class NewItemsService {
     private readonly riffleService: RiffleService,
     private readonly handGunService: HandGunService,
     private readonly magazineService: MagazineService,
+    private readonly opticCollarService: OpticCollarService,
   ) {}
 
   public async findNewItems(): Promise<NewItemsDto[]> {
-    const lastRds = await this.soundReducerService.findLastEntry();
-    const lastAmmunitionCatB = await this.ammunitionService.findLastEntry('B');
-    const lastAmmunitionCatC = await this.ammunitionService.findLastEntry('C');
-    const lastOptic = await this.opticService.findLastEntry();
-    const lastRiffleCatB = await this.riffleService.findLastEntry('B');
-    const lastRiffleCatC = await this.riffleService.findLastEntry('C');
-    const lastPistolet = await this.handGunService.findLastEntry('Pistolet');
-    const lastRevolver = await this.handGunService.findLastEntry('Revolver');
-    const lastMagazineCatC = await this.magazineService.findLastEntry('C');
-    const lastMagazineCatB = await this.magazineService.findLastEntry('B');
+    const lastRds: NewItemsDto = await this.soundReducerService.findLastEntry();
+    const lastAmmunitionCatB: NewItemsDto =
+      await this.ammunitionService.findLastEntry('B');
+    const lastAmmunitionCatC: NewItemsDto =
+      await this.ammunitionService.findLastEntry('C');
+    const lastOptic: NewItemsDto = await this.opticService.findLastEntry();
+    const lastRiffleCatB: NewItemsDto =
+      await this.riffleService.findLastEntry('B');
+    const lastRiffleCatC: NewItemsDto =
+      await this.riffleService.findLastEntry('C');
+    const lastPistolet: NewItemsDto =
+      await this.handGunService.findLastEntry('Pistolet');
+    const lastRevolver: NewItemsDto =
+      await this.handGunService.findLastEntry('Revolver');
+    const lastMagazineCatC: NewItemsDto =
+      await this.magazineService.findLastEntry('C');
+    const lastMagazineCatB: NewItemsDto =
+      await this.magazineService.findLastEntry('B');
+    const lastOpticCollar: NewItemsDto =
+      await this.opticCollarService.findLastEntry();
     return [
       lastRiffleCatB,
       lastRiffleCatC,
@@ -40,6 +52,7 @@ export class NewItemsService {
       lastRds,
       lastMagazineCatC,
       lastMagazineCatB,
+      lastOpticCollar,
     ];
   }
 }

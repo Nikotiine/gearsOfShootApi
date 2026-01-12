@@ -74,4 +74,7 @@ export class OpticCollarDto extends UpdateOpticCollarDto {
   })
   @IsOptional()
   stock?: StockDto;
+
+  @ApiProperty()
+  isDiscounted: boolean;
 }

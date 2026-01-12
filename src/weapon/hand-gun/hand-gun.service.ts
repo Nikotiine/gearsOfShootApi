@@ -335,6 +335,7 @@ export class HandGunService {
       factory: dto.factory.name,
       sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
       discountedPrice: dto.priceHistory.discountedPrice,
+      category: dto.category,
     };
   }
 
@@ -370,6 +371,7 @@ export class HandGunService {
         discountedPrice: dto.priceHistory.discountedPrice,
         precentOfDiscount: dto.priceHistory.precentOfDiscount,
         sub: `Calibre: ${dto.caliber.name}, Categorie: ${dto.category.name}`,
+        category: dto.category,
       };
     });
   }

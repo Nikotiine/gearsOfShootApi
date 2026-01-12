@@ -28,6 +28,9 @@ import { OpticCollarFilter } from '../filters/optic-collar.filter';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { opticCollarWhereFilterConfig } from '../filters/optic-collar-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
+import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
+import { Optic } from '../../database/entity/optic.entity';
+import { OpticDto } from '../../dto/optic.dto';
 
 @Injectable()
 export class OpticCollarService {
@@ -75,6 +78,7 @@ export class OpticCollarService {
       railSize: collar.railSize,
       reference: await this.createReference(collar),
       description: collar.description,
+      isDiscounted: collar.priceHistory.isDiscounted,
     });
 
     const created = await this.opticCollarRepository.save(entity);
@@ -122,6 +126,7 @@ export class OpticCollarService {
       ...collar,
       factory: collar.factory,
       railSize: collar.railSize,
+      isDiscounted: collar.priceHistory.isDiscounted,
     });
     const updated: OpticCollar =
       await this.opticCollarRepository.save(updatedResult);
@@ -133,53 +138,6 @@ export class OpticCollarService {
         PriceableObjectType.OPTIC_COLLAR,
       );
     return this.mapEntityToDto(updated, price);
-  }
-
-  private async mapOpticCollarArrayToDtoArray(
-    collars: OpticCollar[],
-  ): Promise<OpticCollarDto[]> {
-    const dtoPromises = collars.map(async (collar) =>
-      this.mapEntityToDto(collar),
-    );
-    return await Promise.all(dtoPromises);
-  }
-
-  private async mapEntityToDto(
-    collar: OpticCollar,
-    price?: PriceHistoryDto,
-    stock?: StockDto,
-  ): Promise<OpticCollarDto> {
-    return {
-      id: collar.id,
-      diameter: collar.diameter,
-      height: collar.height,
-      railSize: collar.railSize,
-      factory: collar.factory,
-      description: collar.description,
-      reference: collar.reference,
-      name: collar.name,
-      priceHistory: price
-        ? price
-        : await this.priceHistoryService.findLastByObjectId(
-            collar.id,
-            PriceableObjectType.OPTIC_COLLAR,
-          ),
-      inStock: stock
-        ? stock.quantity
-        : await this.stockService.findCurrentQuantity(
-            collar.id,
-            StockableObject.OPTIC_COLLAR,
-          ),
-      stock: stock,
-      createdBy: collar.createdBy,
-      updatedBy: collar.updatedBy,
-      createdAt: collar.createdAt,
-      updatedAt: collar.updatedAt,
-    };
-  }
-
-  private async createReference(collar: CreateOpticCollarDto): Promise<string> {
-    return `${collar.factory.reference.substring(0, 3)}-${collar.name}-${collar.diameter}-${collar.height}`;
   }
 
   /**
@@ -222,6 +180,62 @@ export class OpticCollarService {
     };
   }
 
+  public async findLastEntry(): Promise<NewItemsDto | null> {
+    const [entity] = await this.opticCollarRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        factory: true,
+        railSize: true,
+      },
+      take: 1,
+    });
+    if (!entity) {
+      return null;
+    }
+    const dto = await this.mapEntityToDto(entity);
+    return {
+      name: dto.name,
+      type: 'optic',
+      id: dto.id,
+      price: dto.priceHistory.currentSalePrice,
+      sub: `Corps d'optique:${dto.diameter}-Pour rail: ${dto.railSize.name}`,
+      factory: dto.factory.name,
+    };
+  }
+
+  public async findDiscountedItems(
+    limit: number = 5,
+  ): Promise<DiscountedItemDto[] | null> {
+    const entities: OpticCollar[] = await this.opticCollarRepository.find({
+      where: {
+        isDiscounted: true,
+      },
+      take: limit,
+      relations: {
+        factory: true,
+      },
+    });
+    if (!entities) {
+      return null;
+    }
+    const dtos = await this.mapOpticCollarArrayToDtoArray(entities);
+    return dtos.map((dto: OpticCollarDto) => {
+      return {
+        name: dto.name,
+        type: 'optic',
+        id: dto.id,
+        price: dto.priceHistory.currentSalePrice,
+        sub: `Corps d'optique:${dto.diameter}-Pour rail: ${dto.railSize.name}`,
+        factory: dto.factory.name,
+        isDiscounted: dto.isDiscounted,
+        discountedPrice: dto.priceHistory.discountedPrice,
+        precentOfDiscount: dto.priceHistory.precentOfDiscount,
+      };
+    });
+  }
+
   private async verifyIsNoExist(dto: CreateOpticCollarDto): Promise<boolean> {
     const entity: OpticCollar = await this.opticCollarRepository.findOne({
       where: {
@@ -234,5 +248,52 @@ export class OpticCollarService {
       },
     });
     return !!entity;
+  }
+
+  private async createReference(collar: CreateOpticCollarDto): Promise<string> {
+    return `${collar.factory.reference.substring(0, 3)}-${collar.name}-${collar.diameter}-${collar.height}`;
+  }
+
+  private async mapEntityToDto(
+    collar: OpticCollar,
+    price?: PriceHistoryDto,
+    stock?: StockDto,
+  ): Promise<OpticCollarDto> {
+    return {
+      id: collar.id,
+      diameter: collar.diameter,
+      height: collar.height,
+      railSize: collar.railSize,
+      factory: collar.factory,
+      description: collar.description,
+      reference: collar.reference,
+      name: collar.name,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            collar.id,
+            PriceableObjectType.OPTIC_COLLAR,
+          ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            collar.id,
+            StockableObject.OPTIC_COLLAR,
+          ),
+      stock: stock,
+      createdBy: collar.createdBy,
+      updatedBy: collar.updatedBy,
+      createdAt: collar.createdAt,
+      updatedAt: collar.updatedAt,
+      isDiscounted: collar.isDiscounted,
+    };
+  }
+  private async mapOpticCollarArrayToDtoArray(
+    collars: OpticCollar[],
+  ): Promise<OpticCollarDto[]> {
+    const dtoPromises = collars.map(async (collar) =>
+      this.mapEntityToDto(collar),
+    );
+    return await Promise.all(dtoPromises);
   }
 }

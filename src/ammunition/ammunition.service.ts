@@ -279,12 +279,13 @@ export class AmmunitionService {
     const dto = await this.mapEntityToDto(entity);
 
     return {
-      name: entity.name,
+      name: dto.name,
       type: 'ammunition',
       price: dto.priceHistory.currentSalePrice,
-      id: entity.id,
+      id: dto.id,
       factory: dto.factory.name,
-      sub: `Calibre: ${entity.caliber.name}, Categorie: ${entity.category.name}`,
+      sub: `Calibre: ${entity.caliber.name}, Categorie: ${dto.category.name}`,
+      category: dto.category,
     };
   }
 
@@ -317,6 +318,7 @@ export class AmmunitionService {
         discountedPrice: dto.priceHistory.discountedPrice,
         precentOfDiscount: dto.priceHistory.precentOfDiscount,
         sub: `Calibre: ${dto.caliber.name}, Categorie: ${dto.category.name}, Packaging:${dto.packaging}`,
+        category: dto.category,
       };
     });
   }
