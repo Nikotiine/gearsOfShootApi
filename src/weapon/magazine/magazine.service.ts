@@ -198,6 +198,7 @@ export class MagazineService {
         caliber: true,
         category: true,
         factory: true,
+        body: true,
       },
     });
     if (!entity) {
