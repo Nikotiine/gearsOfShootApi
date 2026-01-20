@@ -217,7 +217,7 @@ export class SoundReducerService {
       type: 'rds',
       id: entity.id,
       price: dto.priceHistory.currentSalePrice,
-      sub: `Calibre: ${dto.caliber} - Pas de vis: ${dto.threadedSize.size}`,
+      sub: `Calibre: ${dto.caliber.name} - Pas de vis: ${dto.threadedSize.size}`,
       factory: dto.factory.name,
     };
   }
@@ -244,7 +244,7 @@ export class SoundReducerService {
     return dtos.map((dto: SoundNoiseReducerDto) => {
       return {
         name: dto.name,
-        type: 'ammunition',
+        type: 'rds',
         price: dto.priceHistory.currentSalePrice,
         id: dto.id,
         factory: dto.factory.name,
