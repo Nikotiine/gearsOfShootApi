@@ -5,6 +5,7 @@ import { promisify } from 'util';
 import { pbkdf2 as _pbkdf2, randomBytes } from 'crypto';
 import { CostumerRoles } from '../../enum/costumer-roles.enum';
 import { VerificationCode } from './verification-code.entity';
+import { Address } from './address.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -21,19 +22,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column()
-  address: string;
-
-  @Column()
   phone: string;
-
-  @Column()
-  city: string;
-
-  @Column()
-  zipCode: string;
-
-  @Column()
-  state: string;
 
   @Column({ enum: UserRoles, default: UserRoles.USER })
   role: UserRoles;
@@ -46,6 +35,9 @@ export class User extends BaseEntity {
     (verificationCode) => verificationCode.user,
   )
   verificationCodes: VerificationCode[];
+
+  @OneToMany(() => Address, (address) => address.userAddress)
+  addresses: Address[];
 
   @BeforeInsert()
   async setPassword() {

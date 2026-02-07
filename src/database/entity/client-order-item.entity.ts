@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
-import { ClientOrderEntity } from './client-order.entity';
+import { ClientOrder } from './client-order.entity';
 
 @Entity()
 export class ClientOrderItemEntity extends BaseEntity {
@@ -24,6 +24,6 @@ export class ClientOrderItemEntity extends BaseEntity {
   @Column({ default: 'IN_ORDER' })
   status: InvoiceOrderStatus;
 
-  @ManyToOne(() => ClientOrderEntity, (order) => order.items)
-  orders: ClientOrderEntity;
+  @ManyToOne(() => ClientOrder, (order) => order.items)
+  orders: ClientOrder;
 }

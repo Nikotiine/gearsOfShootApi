@@ -13,8 +13,9 @@ import { InvoiceItemController } from './invoice-item/invoice-item.controller';
 import { SaleModule } from '../sale/sale.module';
 import { ClientOrderService } from './client-order/client-order.service';
 import { ClientOrderController } from './client-order/client-order.controller';
-import { ClientOrderEntity } from '../database/entity/client-order.entity';
+import { ClientOrder } from '../database/entity/client-order.entity';
 import { ClientOrderItemEntity } from '../database/entity/client-order-item.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
   providers: [SupplierInvoiceService, InvoiceItemService, ClientOrderService],
@@ -22,7 +23,7 @@ import { ClientOrderItemEntity } from '../database/entity/client-order-item.enti
     TypeOrmModule.forFeature([
       InvoiceSupplier,
       ItemInvoiceSupplier,
-      ClientOrderEntity,
+      ClientOrder,
       ClientOrderItemEntity,
     ]),
     AmmunitionModule,
@@ -30,6 +31,7 @@ import { ClientOrderItemEntity } from '../database/entity/client-order-item.enti
     OpticModule,
     AccessoryModule,
     SaleModule,
+    UserModule,
   ],
   controllers: [
     SupplierInvoiceController,

@@ -1,10 +1,12 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseAuditEntity } from './base-audit.entity';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { ClientOrderItemEntity } from './client-order-item.entity';
+import { Address } from './address.entity';
+import { User } from './user.entity';
 
 @Entity()
-export class ClientOrderEntity extends BaseAuditEntity {
+export class ClientOrder extends BaseAuditEntity {
   @Column()
   totalPriceHt: number;
 
@@ -20,4 +22,19 @@ export class ClientOrderEntity extends BaseAuditEntity {
 
   @OneToMany(() => ClientOrderItemEntity, (item) => item.orders)
   items: ClientOrderItemEntity[];
+
+  @Column()
+  message: string;
+
+  @ManyToOne(() => Address)
+  shippingAddress: Address;
+
+  @ManyToOne(() => User)
+  client: User;
+
+  @Column()
+  totalPriceTTC: number;
+
+  @Column()
+  totalItems: number;
 }

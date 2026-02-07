@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateClientOrderItem } from './client-order-item.dto';
 
-export class CreateClientOrderDTO {
+export class CreateClientOrderDto {
   @ApiProperty()
   shippingCost: number;
 
@@ -12,4 +12,8 @@ export class CreateClientOrderDTO {
     type: [CreateClientOrderItem],
   })
   items: CreateClientOrderItem[];
+}
+export class ClientOrderDto extends CreateClientOrderDto {
+  @ApiProperty()
+  id: number;
 }

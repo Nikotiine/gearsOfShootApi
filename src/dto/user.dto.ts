@@ -24,15 +24,7 @@ export class CreateUserDto {
   @ApiProperty()
   lastName: string;
   @ApiProperty()
-  address: string;
-  @ApiProperty()
   phone: string;
-  @ApiProperty()
-  city: string;
-  @ApiProperty()
-  state: string;
-  @ApiProperty()
-  zipCode: string;
   @ApiProperty({
     enum: UserRoles,
   })
@@ -49,15 +41,7 @@ export class UserDto {
   @ApiProperty()
   lastName: string;
   @ApiProperty()
-  address: string;
-  @ApiProperty()
   phone: string;
-  @ApiProperty()
-  city: string;
-  @ApiProperty()
-  state: string;
-  @ApiProperty()
-  zipCode: string;
   @ApiProperty({
     enum: UserRoles,
   })

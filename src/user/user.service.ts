@@ -37,11 +37,7 @@ export class UserService {
       lastName: user.lastName,
       password: user.password,
       email: user.email,
-      address: user.address,
       phone: user.phone,
-      city: user.city,
-      state: user.state,
-      zipCode: user.zipCode,
       role: user.role,
     });
     const created = await this.userRepository.save(entity);
@@ -86,12 +82,8 @@ export class UserService {
       id: entity.id,
       firstName: entity.firstName,
       lastName: entity.lastName,
-      address: entity.address,
-      city: entity.city,
       phone: entity.phone,
       email: entity.email,
-      state: entity.state,
-      zipCode: entity.zipCode,
       role: entity.role,
       costumerRoles: entity.costumerRole,
     };
