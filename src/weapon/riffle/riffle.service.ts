@@ -293,7 +293,7 @@ export class RiffleService {
       factory: riffle.factory,
       name: riffle.name,
       reference: riffle.reference,
-      colors: `Crosse: ${riffle.buttColor.name}| Cannon: ${riffle.barrelColor.name}`,
+      colors: `Crosse: ${riffle.buttColor?.name}| Cannon: ${riffle.barrelColor?.name}`,
       description: `Variante: ${riffle.variation ?? ''} | Type percussion: ${riffle.percussionType.name} | Type: ${riffle.type.name} | Description: ${riffle.description}`,
     };
   }
