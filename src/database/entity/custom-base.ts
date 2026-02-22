@@ -1,6 +1,11 @@
-import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-export class BaseEntity {
+export class CustomBase {
   @PrimaryGeneratedColumn()
   id: number;
   @CreateDateColumn()

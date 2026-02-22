@@ -30,6 +30,7 @@ import { buildWhereGeneric } from '../database/utils/where-builder';
 import { ammunitionWhereFilterConfig } from './filters/ammunition-where-filter.config';
 import { DiscountedItemDto, NewItemsDto } from '../dto/new-items.dto';
 import { LegislationCategory } from '../types/legislation-category.type';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AmmunitionService {
@@ -38,6 +39,7 @@ export class AmmunitionService {
     private readonly ammunitionRepository: Repository<Ammunition>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -176,6 +178,8 @@ export class AmmunitionService {
         caliber: true,
         factory: true,
         category: true,
+        createdBy: true,
+        updatedBy: true,
       },
       take: limit,
       skip: offset,
@@ -367,6 +371,23 @@ export class AmmunitionService {
     };
   }
 
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<boolean> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return isInStock;
+  }
+
   /**
    * Creer la reference unique de l'arme pour a gestion des stock / recherche ect..
    * @private
@@ -443,8 +464,8 @@ export class AmmunitionService {
             StockableObject.AMMUNITION,
           ),
       stock: stock,
-      createdBy: ammunition.createdBy,
-      updatedBy: ammunition.updatedBy,
+      createdBy: this.userService.mapEntityToDto(ammunition.createdBy),
+      updatedBy: this.userService.mapEntityToDto(ammunition.updatedBy),
       createdAt: ammunition.createdAt,
       updatedAt: ammunition.updatedAt,
       isDiscounted: ammunition.isDiscounted,

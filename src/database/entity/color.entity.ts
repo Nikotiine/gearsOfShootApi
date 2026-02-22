@@ -1,11 +1,11 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 
 import { HandGun } from './hand-gun.entity';
 import { Riffle } from './riffle.entity';
 
 @Entity()
-export class Color extends BaseEntity {
+export class Color extends CustomBase {
   @Column()
   name: string;
 

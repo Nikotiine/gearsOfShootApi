@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { ClientOrder } from '../../database/entity/client-order.entity';
 import {
   ClientOrderDto,
   CreateClientOrderDto,
+  UpdateClientOrderDto,
 } from '../../dto/client-order.dto';
-import { CreateClientOrderItem } from '../../dto/client-order-item.dto';
+import { CreateClientOrderItemDto } from '../../dto/client-order-item.dto';
 import { UserService } from '../../user/user.service';
 import { QueryUser } from '../../decorator/req-query-user.decorator';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { ClientOrderFilter } from './filters/client-order.filter';
 import { clientOrderWhereFilterConfig } from './filters/client-order-where-filter.config';
+import { ClientOrderItemService } from '../client-order-item/client-order-item.service';
+import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
+import { StockableObject } from '../../enum/stock-item.enum';
+import { AmmunitionService } from '../../ammunition/ammunition.service';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class ClientOrderService {
@@ -20,26 +26,44 @@ export class ClientOrderService {
     @InjectRepository(ClientOrder)
     private readonly clientOrderEntityRepository: Repository<ClientOrder>,
     private readonly userService: UserService,
+    private readonly clientOrderItemService: ClientOrderItemService,
+    private readonly ammunitionService: AmmunitionService,
   ) {}
 
   public async insert(
     order: CreateClientOrderDto,
     queryUser: QueryUser,
-  ): Promise<any> {
+  ): Promise<ClientOrderDto> {
     const user = await this.userService.findById(queryUser.id);
-    const entity = this.clientOrderEntityRepository.create({
+    const stockIsOk = await this.verifyIfStockIsOk(order.items);
+    if (!stockIsOk) {
+      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
+      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
+    }
+    //TODO: Enelver les objet du stock le temps que le panier est valide
+    const entity: ClientOrder = this.clientOrderEntityRepository.create({
       vat: order.vat,
-      invoiceStatus: 'IN_ORDER',
+      invoiceStatus: order.status,
       shippingCost: order.shippingCost,
       totalPriceHt: this.getTotalPriceHt(order.items),
-      client: user,
+      orderedBy: user,
+      shippingAddress: order.shippingAddress,
+      paymentAddress: order.paymentAddress,
+      totalItems: this.getTotalItems(order.items),
+      message: order.message,
+      cartValidity: this.getCartValidityTime(order.status),
+      items: [],
     });
     const created = await this.clientOrderEntityRepository.save(entity);
-    //TODO faire le mapper
-    return created;
+    for (const item of order.items) {
+      created.items.push(
+        await this.clientOrderItemService.insert(item, created, created.vat),
+      );
+    }
+    return this.mapEntityToDto(created);
   }
 
-  public async update(id: number, order: ClientOrderDto): Promise<any> {
+  public async update(id: number, order: UpdateClientOrderDto): Promise<any> {
     // TODO: ajouter verifiaction user connecter === client de la commande + access admin
     const updatedResult = await this.clientOrderEntityRepository.preload({
       id,
@@ -47,7 +71,7 @@ export class ClientOrderService {
     });
     const updated: ClientOrder =
       await this.clientOrderEntityRepository.save(updatedResult);
-    return updated;
+    return this.mapEntityToDto(updated);
   }
 
   public async findById(id: number): Promise<any> {
@@ -57,9 +81,11 @@ export class ClientOrderService {
       },
       relations: {
         shippingAddress: true,
+        items: true,
+        paymentAddress: true,
       },
     });
-    return order;
+    return this.mapEntityToDto(order);
   }
 
   public async findAll(
@@ -74,7 +100,6 @@ export class ClientOrderService {
       await this.clientOrderEntityRepository.findAndCount({
         where,
         relations: {
-          client: true,
           shippingAddress: true,
         },
         take: limit,
@@ -91,11 +116,57 @@ export class ClientOrderService {
    * @param items
    * @private
    */
-  private getTotalPriceHt(items: CreateClientOrderItem[]): number {
+  private getTotalPriceHt(items: CreateClientOrderItemDto[]): number {
     let total: number = 0;
     for (const item of items) {
       total += item.quantity * item.price;
     }
     return total;
+  }
+
+  /**
+   * Compte le nombre total d'objet commandés
+   * @param items
+   * @private
+   */
+  private getTotalItems(items: CreateClientOrderItemDto[]): number {
+    let total: number = 0;
+    for (const item of items) {
+      total += item.quantity;
+    }
+    return total;
+  }
+  private getCartValidityTime(status: InvoiceOrderStatus): Date | null {
+    if (status !== 'IN_CART') return null;
+    const now = new Date();
+    return this.addMinutes(now, 15);
+  }
+
+  private addMinutes(date: Date, minutes: number): Date {
+    date.setMinutes(date.getMinutes() + minutes);
+
+    return date;
+  }
+
+  private async verifyIfStockIsOk(
+    items: CreateClientOrderItemDto[],
+  ): Promise<boolean> {
+    for (const item of items) {
+      switch (item.object) {
+        case StockableObject.AMMUNITION:
+          return await this.ammunitionService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+      }
+    }
+  }
+
+  private mapEntityToDto(entity: ClientOrder): ClientOrderDto {
+    return {
+      ...entity,
+      status: entity.invoiceStatus,
+      items: this.clientOrderItemService.mapArrayEntityToArrayDto(entity.items),
+    };
   }
 }

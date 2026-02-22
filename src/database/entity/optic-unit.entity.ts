@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Optic } from './optic.entity';
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { OpticClick } from './optic-click.entity';
 
 @Entity()
-export class OpticUnit extends BaseEntity {
+export class OpticUnit extends CustomBase {
   @Column()
   name: string;
 

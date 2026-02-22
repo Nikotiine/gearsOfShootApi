@@ -57,7 +57,6 @@ export class AuthController {
     type: UserDto,
   })
   public async me(@ReqQueryUser() req: User): Promise<UserDto> {
-    console.log(req);
     return this.authService.getProfile(req.id);
   }
 }

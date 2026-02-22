@@ -11,6 +11,7 @@ import { CommonModule } from '../common/common.module';
 import { AmmunitionHeadTypeController } from './ammunition-head-type/ammunition-head-type.controller';
 import { AmmunitionBodyTypeController } from './ammunition-body-type/ammunition-body-type.controller';
 import { SaleModule } from '../sale/sale.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [
@@ -31,6 +32,7 @@ import { SaleModule } from '../sale/sale.module';
     ]),
     CommonModule,
     SaleModule,
+    UserModule,
   ],
   exports: [AmmunitionService],
 })

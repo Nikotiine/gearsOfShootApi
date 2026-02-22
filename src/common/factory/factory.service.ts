@@ -1,5 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateFactoryDto, FactoryDto, FactoryTypeDto, UpdateFactoryDto } from '../../dto/factory.dto';
+import {
+  CreateFactoryDto,
+  FactoryDto,
+  FactoryTypeDto,
+  UpdateFactoryDto,
+} from '../../dto/factory.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Factory } from '../../database/entity/factory.entity';

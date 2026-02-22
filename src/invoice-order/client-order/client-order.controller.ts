@@ -22,6 +22,7 @@ import { SwaggerDescription } from '../../enum/swagger-description.enum';
 import {
   ClientOrderDto,
   CreateClientOrderDto,
+  UpdateClientOrderDto,
 } from '../../dto/client-order.dto';
 import {
   QueryUser,
@@ -103,15 +104,15 @@ export class ClientOrderController {
     name: SwaggerDescription.ID_PARAM,
   })
   @ApiBody({
-    type: ClientOrderDto,
+    type: UpdateClientOrderDto,
   })
   @ApiCreatedResponse({
     type: ClientOrderDto,
   })
   public async edit(
     @Param(SwaggerDescription.ID_PARAM) id: number,
-    @Body() optic: ClientOrderDto,
+    @Body() order: UpdateClientOrderDto,
   ): Promise<ClientOrderDto> {
-    return await this.clientOrderService.update(id, optic);
+    return await this.clientOrderService.update(id, order);
   }
 }

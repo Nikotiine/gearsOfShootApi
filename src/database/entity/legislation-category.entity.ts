@@ -1,4 +1,4 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Ammunition } from './ammunition.entity';
 import { Riffle } from './riffle.entity';
@@ -6,7 +6,7 @@ import { HandGun } from './hand-gun.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 
 @Entity()
-export class LegislationCategory extends BaseEntity {
+export class LegislationCategory extends CustomBase {
   @Column({ unique: true })
   name: string;
 

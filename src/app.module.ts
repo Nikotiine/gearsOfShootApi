@@ -34,6 +34,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     SaleModule,
     InvoiceOrderModule,
     DashboardModule,
+    NodemailerModule,
   ],
   controllers: [AppController],
   providers: [

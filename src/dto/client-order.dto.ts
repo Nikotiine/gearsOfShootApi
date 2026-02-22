@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateClientOrderItem } from './client-order-item.dto';
+import {
+  ClientOrderItemDto,
+  CreateClientOrderItemDto,
+} from './client-order-item.dto';
+import { IsOptional, IsString } from 'class-validator';
+import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
+import { AddressDto } from './address.dto';
 
 export class CreateClientOrderDto {
   @ApiProperty()
@@ -9,11 +15,71 @@ export class CreateClientOrderDto {
   vat: number;
 
   @ApiProperty({
-    type: [CreateClientOrderItem],
+    type: [CreateClientOrderItemDto],
   })
-  items: CreateClientOrderItem[];
+  items: CreateClientOrderItemDto[];
+
+  @ApiProperty()
+  @IsString()
+  status: InvoiceOrderStatus;
+
+  @ApiProperty()
+  @IsString()
+  message: string;
+
+  @ApiProperty({
+    type: AddressDto,
+    nullable: true,
+  })
+  @IsOptional()
+  shippingAddress?: AddressDto;
+
+  @ApiProperty({
+    type: AddressDto,
+    nullable: true,
+  })
+  @IsOptional()
+  paymentAddress?: AddressDto;
 }
-export class ClientOrderDto extends CreateClientOrderDto {
+
+export class UpdateClientOrderDto extends CreateClientOrderDto {
   @ApiProperty()
   id: number;
+}
+
+export class ClientOrderDto {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  shippingCost: number;
+
+  @ApiProperty()
+  vat: number;
+
+  @ApiProperty({
+    type: [ClientOrderItemDto],
+  })
+  items: ClientOrderItemDto[];
+
+  @ApiProperty()
+  @IsString()
+  status: InvoiceOrderStatus;
+
+  @ApiProperty()
+  @IsString()
+  message: string;
+
+  @ApiProperty({
+    type: AddressDto,
+    nullable: true,
+  })
+  @IsOptional()
+  shippingAddress?: AddressDto;
+
+  @ApiProperty({
+    type: AddressDto,
+    nullable: true,
+  })
+  @IsOptional()
+  paymentAddress?: AddressDto;
 }

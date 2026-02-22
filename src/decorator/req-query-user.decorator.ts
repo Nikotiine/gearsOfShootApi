@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { UserRoles } from '../enum/user-roles.enum';
+
 export interface QueryUser {
   email: string;
   id: number;

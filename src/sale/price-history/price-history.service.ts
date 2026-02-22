@@ -10,12 +10,14 @@ import {
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class PriceHistoryService {
   constructor(
     @InjectRepository(PriceHistory)
     private readonly priceHistoryRepository: Repository<PriceHistory>,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -27,10 +29,11 @@ export class PriceHistoryService {
   private async insert(
     priceHistoryDto: PriceHistoryFromEntity,
   ): Promise<PriceHistoryDto> {
-    const entity = this.priceHistoryRepository.create({
+    const entity: PriceHistory = this.priceHistoryRepository.create({
       ...priceHistoryDto,
     });
-    const created = await this.priceHistoryRepository.save(entity);
+    const created: PriceHistory =
+      await this.priceHistoryRepository.save(entity);
     return this.mapEntityToDto(created);
   }
 
@@ -45,7 +48,7 @@ export class PriceHistoryService {
     objectId: number,
     object: PriceableObjectType,
   ): Promise<PriceHistoryDto> {
-    const price = await this.priceHistoryRepository.findOne({
+    const price: PriceHistory = await this.priceHistoryRepository.findOne({
       where: { objectId: objectId, object: object },
       relations: {
         createdBy: true,
@@ -57,14 +60,14 @@ export class PriceHistoryService {
     if (!price) {
       return this.createEmptyPrice(object);
     }
-    return price;
+    return this.mapEntityToDto(price);
   }
 
   public async findAllByObjectId(
     objectId: number,
     object: PriceableObjectType,
   ): Promise<PriceHistoryDto[]> {
-    return await this.priceHistoryRepository.find({
+    const prices: PriceHistory[] = await this.priceHistoryRepository.find({
       where: { objectId: objectId, object: object },
       relations: {
         createdBy: true,
@@ -73,6 +76,7 @@ export class PriceHistoryService {
       },
       order: { createdAt: 'DESC' },
     });
+    return this.mapEntityArrayToDtoArray(prices);
   }
 
   /**
@@ -117,7 +121,7 @@ export class PriceHistoryService {
       return await this.addPriceHistory(dto, id, object);
     }
 
-    return priceHistory;
+    return this.mapEntityToDto(priceHistory);
   }
 
   private createEmptyPrice(object: PriceableObjectType): PriceHistoryDto {
@@ -197,6 +201,12 @@ export class PriceHistoryService {
     return await this.insert(priceHistory);
   }
 
+  private mapEntityArrayToDtoArray(
+    entities: PriceHistory[],
+  ): PriceHistoryDto[] {
+    return entities.map((price) => this.mapEntityToDto(price));
+  }
+
   /**
    * Convertit une entité `PriceHistory` issue de la base de données en un objet DTO (`PriceHistoryDto`).
    *
@@ -215,8 +225,8 @@ export class PriceHistoryService {
       objectId: entity.objectId,
       object: entity.object,
       createdAt: entity.createdAt,
-      updatedBy: entity.updatedBy,
-      createdBy: entity.createdBy,
+      updatedBy: this.userService.mapEntityToDto(entity.updatedBy),
+      createdBy: this.userService.mapEntityToDto(entity.createdBy),
       supplier: entity.supplier ? entity.supplier : null,
       isDiscounted: entity.isDiscounted,
       precentOfDiscount: entity.precentOfDiscount,

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional } from 'class-validator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { CostumerRoles } from '../enum/costumer-roles.enum';
+import { AddressDto } from './address.dto';
 
 export class UserCredentialDto {
   @ApiProperty()
@@ -51,4 +52,8 @@ export class UserDto {
   })
   @IsOptional()
   costumerRoles?: CostumerRoles;
+  @ApiProperty({
+    type: [AddressDto],
+  })
+  addresses: AddressDto[];
 }

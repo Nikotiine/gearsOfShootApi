@@ -3,8 +3,9 @@ import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { StockableObject } from '../enum/stock-item.enum';
 import { FactoryDto } from './factory.dto';
 import { LegislationCategoryDto } from './legislation-category.dto';
+import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 
-class RouteParamsDto {
+export class RouteParamsDto {
   @ApiProperty()
   id: number;
   @ApiProperty()
@@ -12,18 +13,22 @@ class RouteParamsDto {
   category?: string;
 }
 
-class RouteToDto {
+export class RouteToDto {
   @ApiProperty()
   name: string;
 
   @ApiProperty({ type: RouteParamsDto })
   params: RouteParamsDto;
 }
-export class CreateClientOrderItem {
+export class CreateClientOrderItemDto {
   @ApiProperty()
   @IsNumber()
   @IsPositive()
   objectId: number;
+
+  @ApiProperty()
+  @IsString()
+  status: InvoiceOrderStatus;
 
   @ApiProperty({
     required: true,
@@ -69,4 +74,8 @@ export class CreateClientOrderItem {
   })
   @IsOptional()
   category?: LegislationCategoryDto;
+}
+export class ClientOrderItemDto extends CreateClientOrderItemDto {
+  @ApiProperty()
+  id: number;
 }

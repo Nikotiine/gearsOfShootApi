@@ -1,4 +1,4 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { WeaponReloadMode } from './weapon-reload-mode.entity';
@@ -8,7 +8,7 @@ import { WeaponMagazine } from './weapon-magazine.entity';
 import { WeaponTypeEnum } from '../../enum/weapon-type.enum';
 
 @Entity()
-export class WeaponType extends BaseEntity {
+export class WeaponType extends CustomBase {
   // Type d'arme
   @Column({ unique: true })
   name: string;

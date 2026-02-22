@@ -1,11 +1,12 @@
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { Factory } from './factory.entity';
 import { OpticType } from './optic-type.entity';
 import { OpticFocalPlane } from './optic-focal-plane.entity';
 import { OpticUnit } from './optic-unit.entity';
 import { RailSize } from './rail-size.entity';
-import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './custom-base-audit';
 import { OpticClick } from './optic-click.entity';
+import { User } from './user.entity';
 
 @Entity()
 @Unique([
@@ -80,4 +81,16 @@ export class Optic extends BaseAuditEntityWithSaleOptions {
   // Reference de l'objet
   @Column()
   reference: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

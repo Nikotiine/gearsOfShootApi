@@ -8,11 +8,13 @@ import { UserFilter } from './filters/users.filter';
 import { buildWhereGeneric } from '../database/utils/where-builder';
 import { usersWhereFilterConfig } from './filters/users-where-filter.config';
 import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
+import { AddressService } from '../common/address/address.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly addressService: AddressService,
   ) {}
 
   /**
@@ -49,6 +51,9 @@ export class UserService {
       where: {
         id: id,
       },
+      relations: {
+        addresses: true,
+      },
     });
     return this.mapEntityToDto(user);
   }
@@ -68,6 +73,9 @@ export class UserService {
       order: {
         id: 'DESC',
       },
+      relations: {
+        addresses: true,
+      },
     });
     const data = this.mapEntityArrayToDtoArray(entities);
     return new PaginatedResponseDto<UserDto>(data, total, limit, offset);
@@ -77,7 +85,10 @@ export class UserService {
     return entityArray.map((user) => this.mapEntityToDto(user));
   }
 
-  private mapEntityToDto(entity: User): UserDto {
+  public mapEntityToDto(entity: User): UserDto {
+    if (!entity) {
+      return null;
+    }
     return {
       id: entity.id,
       firstName: entity.firstName,
@@ -86,6 +97,10 @@ export class UserService {
       email: entity.email,
       role: entity.role,
       costumerRoles: entity.costumerRole,
+      addresses:
+        entity.addresses && entity.addresses.length > 0
+          ? this.addressService.mapArrayEntityToArrayDto(entity.addresses)
+          : [],
     };
   }
 }

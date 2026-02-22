@@ -2,7 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ThreadedSize } from '../../database/entity/threaded-size.entity';
 import { Repository } from 'typeorm';
-import { CreateThreadedSizeDto, ThreadedSizeDto } from '../../dto/threaded-size.dto';
+import {
+  CreateThreadedSizeDto,
+  ThreadedSizeDto,
+} from '../../dto/threaded-size.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { ApiDeleteResponseDto } from '../../dto/api-response.dto';
 import { CodeSuccess } from '../../enum/code-success.enum';

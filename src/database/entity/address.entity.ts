@@ -1,8 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
+
 @Entity()
-export class Address extends BaseEntity {
+export class Address extends CustomBase {
   @Column()
   firstName: string;
 

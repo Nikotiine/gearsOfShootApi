@@ -3,9 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Stock } from '../../database/entity/stock.entity';
 import { Repository } from 'typeorm';
 import { StockHistory } from '../../database/entity/stock-history.entity';
-import { CreateStockDto, StockDto, StockHistoriesDto } from '../../dto/stock.dto';
+import {
+  CreateStockDto,
+  StockDto,
+  StockHistoriesDto,
+} from '../../dto/stock.dto';
 import { CodeError } from '../../enum/code-error.enum';
 import { StockableObject } from '../../enum/stock-item.enum';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class StockService {
@@ -14,6 +19,7 @@ export class StockService {
     private readonly stockRepository: Repository<Stock>,
     @InjectRepository(StockHistory)
     private readonly stockHistoryRepository: Repository<StockHistory>,
+    private readonly userService: UserService,
   ) {}
 
   public async insert(dto: CreateStockDto): Promise<StockDto> {
@@ -46,7 +52,10 @@ export class StockService {
         objectId: dto.objectId,
       },
       relations: {
-        histories: true,
+        histories: {
+          createdBy: true,
+          updatedBy: true,
+        },
       },
     });
   }
@@ -143,7 +152,7 @@ export class StockService {
       previousQuantity: entity.previousQuantity,
       movement: entity.movement,
       reason: entity.reason,
-      createdBy: entity.createdBy,
+      createdBy: this.userService.mapEntityToDto(entity.createdBy),
     };
   }
 

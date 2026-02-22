@@ -1,10 +1,10 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { StockHistory } from './stock-history.entity';
 
 @Entity()
-export class Stock extends BaseEntity {
+export class Stock extends CustomBase {
   @Column({ enum: StockableObject })
   object: StockableObject;
 

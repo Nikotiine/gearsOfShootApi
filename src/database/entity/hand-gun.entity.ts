@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -11,7 +12,8 @@ import { OpticReadyPlate } from './optic-ready-plate.entity';
 import { Material } from './material.entity';
 import { Color } from './color.entity';
 import { TriggerType } from './trigger-type.entity';
-import { WeaponBase } from './base-weapon.entity';
+import { WeaponBase } from './custom-base-weapon';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['name', 'variation', 'factory', 'caliber', 'reference'])
@@ -61,4 +63,16 @@ export class HandGun extends WeaponBase {
 
   @ManyToOne(() => Color)
   barrelColor: Color;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

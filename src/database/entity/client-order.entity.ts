@@ -1,16 +1,16 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { BaseAuditEntity } from './base-audit.entity';
+import { CustomBase } from './custom-base';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
-import { ClientOrderItemEntity } from './client-order-item.entity';
+import { ClientOrderItem } from './client-order-item.entity';
 import { Address } from './address.entity';
 import { User } from './user.entity';
+import { CustomBaseAudit } from './custom-base-audit';
 
 @Entity()
-export class ClientOrder extends BaseAuditEntity {
+export class ClientOrder extends CustomBaseAudit {
   @Column()
   totalPriceHt: number;
 
-  // TVA
   @Column({ default: 20 })
   vat: number;
 
@@ -20,8 +20,8 @@ export class ClientOrder extends BaseAuditEntity {
   @Column({ default: 'IN_ORDER' })
   invoiceStatus: InvoiceOrderStatus;
 
-  @OneToMany(() => ClientOrderItemEntity, (item) => item.orders)
-  items: ClientOrderItemEntity[];
+  @OneToMany(() => ClientOrderItem, (item) => item.order)
+  items: ClientOrderItem[];
 
   @Column()
   message: string;
@@ -29,12 +29,30 @@ export class ClientOrder extends BaseAuditEntity {
   @ManyToOne(() => Address)
   shippingAddress: Address;
 
-  @ManyToOne(() => User)
-  client: User;
+  @ManyToOne(() => Address)
+  paymentAddress: Address;
 
   @Column()
   totalPriceTTC: number;
 
   @Column()
   totalItems: number;
+
+  @Column()
+  cartValidity: Date;
+
+  @ManyToOne(() => User, (user) => user.orders)
+  orderedBy: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

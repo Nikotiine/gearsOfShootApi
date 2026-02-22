@@ -1,4 +1,4 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { promisify } from 'util';
@@ -6,9 +6,10 @@ import { pbkdf2 as _pbkdf2, randomBytes } from 'crypto';
 import { CostumerRoles } from '../../enum/costumer-roles.enum';
 import { VerificationCode } from './verification-code.entity';
 import { Address } from './address.entity';
+import { ClientOrder } from './client-order.entity';
 
 @Entity('users')
-export class User extends BaseEntity {
+export class User extends CustomBase {
   @Column({ unique: true })
   email: string;
 
@@ -38,6 +39,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Address, (address) => address.userAddress)
   addresses: Address[];
+
+  @OneToMany(() => ClientOrder, (order) => order.orderedBy)
+  orders: ClientOrder[];
 
   @BeforeInsert()
   async setPassword() {

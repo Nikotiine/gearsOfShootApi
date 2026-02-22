@@ -20,6 +20,7 @@ import { SaleModule } from '../sale/sale.module';
 import { OpticClick } from '../database/entity/optic-click.entity';
 import { OpticClickController } from './optic-click/optic-click.controller';
 import { OpticClickService } from './optic-click/optic-click.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [
@@ -49,6 +50,7 @@ import { OpticClickService } from './optic-click/optic-click.service';
     ]),
     CommonModule,
     SaleModule,
+    UserModule,
   ],
   exports: [OpticService, OpticCollarService],
 })

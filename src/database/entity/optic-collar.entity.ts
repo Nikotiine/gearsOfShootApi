@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { RailSize } from './rail-size.entity';
 import { Factory } from './factory.entity';
-import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './custom-base-audit';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'height', 'diameter'])
@@ -26,4 +27,16 @@ export class OpticCollar extends BaseAuditEntityWithSaleOptions {
 
   @Column()
   description: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

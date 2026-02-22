@@ -1,9 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
-export class VerificationCode extends BaseEntity {
+export class VerificationCode extends CustomBase {
   @Column()
   code: number;
   @Column()

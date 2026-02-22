@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Ammunition } from './ammunition.entity';
 import { WeaponMagazine } from './weapon-magazine.entity';
 import { SoundNoiseReducer } from './sound-noise-reducer.entity';
@@ -12,7 +12,7 @@ import { OpticCollar } from './optic-collar.entity';
 
 @Entity()
 @Unique(['name', 'type'])
-export class Factory extends BaseEntity {
+export class Factory extends CustomBase {
   @Column()
   name: string;
 

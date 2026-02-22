@@ -30,6 +30,8 @@ import { RailSizeController } from './rail-size/rail-size.controller';
 import { PercussionTypeController } from './percussion-type/percussion-type.controller';
 import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate.controller';
 import { FactoryTypeController } from './factory-type/factory-type.controller';
+import { AddressService } from './address/address.service';
+import { Address } from '../database/entity/address.entity';
 
 @Module({
   controllers: [
@@ -55,6 +57,7 @@ import { FactoryTypeController } from './factory-type/factory-type.controller';
     MaterialService,
     ColorService,
     OpticReadyPlateService,
+    AddressService,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -68,6 +71,7 @@ import { FactoryTypeController } from './factory-type/factory-type.controller';
       Material,
       Color,
       OpticReadyPlate,
+      Address,
     ]),
   ],
   exports: [
@@ -80,6 +84,7 @@ import { FactoryTypeController } from './factory-type/factory-type.controller';
     MaterialService,
     ColorService,
     OpticReadyPlateService,
+    AddressService,
   ],
 })
 export class CommonModule {}

@@ -25,6 +25,7 @@ import { PaginatedResponseDto } from '../decorator/paginated-response.decorator'
 import { buildWhereGeneric } from '../database/utils/where-builder';
 import { opticWhereFilterConfig } from './filters/optic-where-filter.config';
 import { DiscountedItemDto, NewItemsDto } from '../dto/new-items.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class OpticService {
@@ -33,6 +34,7 @@ export class OpticService {
     private readonly opticRepository: Repository<Optic>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -488,8 +490,8 @@ export class OpticService {
             StockableObject.OPTIC,
           ),
       stock: stock,
-      createdBy: optic.createdBy,
-      updatedBy: optic.updatedBy,
+      createdBy: this.userService.mapEntityToDto(optic.createdBy),
+      updatedBy: this.userService.mapEntityToDto(optic.updatedBy),
       createdAt: optic.createdAt,
       updatedAt: optic.updatedAt,
       isDiscounted: optic.isDiscounted,
