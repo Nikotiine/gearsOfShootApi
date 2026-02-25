@@ -9,6 +9,7 @@ import { buildWhereGeneric } from '../database/utils/where-builder';
 import { usersWhereFilterConfig } from './filters/users-where-filter.config';
 import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
 import { AddressService } from '../common/address/address.service';
+import { ClientOrder } from '../database/entity/client-order.entity';
 
 @Injectable()
 export class UserService {
@@ -53,6 +54,7 @@ export class UserService {
       },
       relations: {
         addresses: true,
+        orders: true,
       },
     });
     return this.mapEntityToDto(user);
@@ -101,6 +103,18 @@ export class UserService {
         entity.addresses && entity.addresses.length > 0
           ? this.addressService.mapArrayEntityToArrayDto(entity.addresses)
           : [],
+      inCartId: entity.orders ? this.haveInCartId(entity.orders) : null,
     };
+  }
+
+  private haveInCartId(orders: ClientOrder[]): number | null {
+    if (orders.length === 0) {
+      return null;
+    }
+    const inCart = orders.find((order) => order.invoiceStatus === 'IN_CART');
+    if (inCart) {
+      return inCart.id;
+    }
+    return null;
   }
 }

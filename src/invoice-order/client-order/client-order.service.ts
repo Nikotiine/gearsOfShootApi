@@ -35,6 +35,13 @@ export class ClientOrderService {
     queryUser: QueryUser,
   ): Promise<ClientOrderDto> {
     const user = await this.userService.findById(queryUser.id);
+    const verifyIfUserHaveCart = user.inCartId !== null;
+    if (verifyIfUserHaveCart) {
+      return this.update(user.inCartId, {
+        ...order,
+        id: user.inCartId,
+      });
+    }
     const stockIsOk = await this.verifyIfStockIsOk(order.items);
     if (!stockIsOk) {
       //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
@@ -46,6 +53,7 @@ export class ClientOrderService {
       invoiceStatus: order.status,
       shippingCost: order.shippingCost,
       totalPriceHt: this.getTotalPriceHt(order.items),
+      totalPriceTTC: this.getTotalPriceTTC(order.items, order.vat),
       orderedBy: user,
       shippingAddress: order.shippingAddress,
       paymentAddress: order.paymentAddress,
@@ -65,6 +73,11 @@ export class ClientOrderService {
 
   public async update(id: number, order: UpdateClientOrderDto): Promise<any> {
     // TODO: ajouter verifiaction user connecter === client de la commande + access admin
+    const stockIsOk = await this.verifyIfStockIsOk(order.items);
+    if (!stockIsOk) {
+      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
+      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
+    }
     const updatedResult = await this.clientOrderEntityRepository.preload({
       id,
       ...order,
@@ -74,7 +87,7 @@ export class ClientOrderService {
     return this.mapEntityToDto(updated);
   }
 
-  public async findById(id: number): Promise<any> {
+  public async findById(id: number): Promise<ClientOrderDto> {
     const order: ClientOrder = await this.clientOrderEntityRepository.findOne({
       where: {
         id: id,
@@ -144,7 +157,6 @@ export class ClientOrderService {
 
   private addMinutes(date: Date, minutes: number): Date {
     date.setMinutes(date.getMinutes() + minutes);
-
     return date;
   }
 
@@ -152,7 +164,7 @@ export class ClientOrderService {
     items: CreateClientOrderItemDto[],
   ): Promise<boolean> {
     for (const item of items) {
-      switch (item.object) {
+      switch (item.object.toUpperCase()) {
         case StockableObject.AMMUNITION:
           return await this.ammunitionService.isItemsAreInStock(
             item.objectId,
@@ -168,5 +180,10 @@ export class ClientOrderService {
       status: entity.invoiceStatus,
       items: this.clientOrderItemService.mapArrayEntityToArrayDto(entity.items),
     };
+  }
+
+  private getTotalPriceTTC(items: CreateClientOrderItemDto[], vat: number) {
+    const priceHT = this.getTotalPriceHt(items);
+    return priceHT + (priceHT * vat) / 100;
   }
 }
