@@ -1,4 +1,7 @@
-import { TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import {
+  TypeOrmModuleAsyncOptions,
+  TypeOrmModuleOptions,
+} from '@nestjs/typeorm';
 
 import * as process from 'process';
 import { ConfigModule, ConfigService } from '@nestjs/config';

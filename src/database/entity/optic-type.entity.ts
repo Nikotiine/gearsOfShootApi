@@ -1,9 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Optic } from './optic.entity';
 
 @Entity()
-export class OpticType extends BaseEntity {
+export class OpticType extends CustomBase {
   @Column()
   name: string;
 

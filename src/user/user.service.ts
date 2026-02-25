@@ -1,14 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/entity/user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto, UserDto } from '../dto/user.dto';
 import { CodeError } from '../enum/code-error.enum';
+import { UserFilter } from './filters/users.filter';
+import { buildWhereGeneric } from '../database/utils/where-builder';
+import { usersWhereFilterConfig } from './filters/users-where-filter.config';
+import { PaginatedResponseDto } from '../decorator/paginated-response.decorator';
+import { AddressService } from '../common/address/address.service';
+import { ClientOrder } from '../database/entity/client-order.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly addressService: AddressService,
   ) {}
 
   /**
@@ -24,7 +31,7 @@ export class UserService {
   }
 
   public async insert(user: CreateUserDto): Promise<UserDto> {
-    const isExist = await this.findOneByEmail(user.email);
+    const isExist: User = await this.findOneByEmail(user.email);
     if (isExist) {
       throw new BadRequestException(CodeError.EMAIL_IS_USED);
     }
@@ -33,34 +40,81 @@ export class UserService {
       lastName: user.lastName,
       password: user.password,
       email: user.email,
-      address: user.address,
       phone: user.phone,
-      city: user.city,
-      state: user.state,
-      zipCode: user.zipCode,
       role: user.role,
     });
     const created = await this.userRepository.save(entity);
-    return created;
+    return this.mapEntityToDto(created);
   }
 
   public async findById(id: number): Promise<UserDto> {
-    const user = await this.userRepository.findOne({
+    const user: User = await this.userRepository.findOne({
       where: {
         id: id,
       },
+      relations: {
+        addresses: true,
+        orders: true,
+      },
     });
+    return this.mapEntityToDto(user);
+  }
+
+  public async findAll(
+    filter: UserFilter,
+  ): Promise<PaginatedResponseDto<UserDto>> {
+    const { limit, offset } = filter;
+    const where: FindOptionsWhere<User> = buildWhereGeneric<UserFilter, User>(
+      filter,
+      usersWhereFilterConfig,
+    );
+    const [entities, total] = await this.userRepository.findAndCount({
+      where,
+      take: limit,
+      skip: offset,
+      order: {
+        id: 'DESC',
+      },
+      relations: {
+        addresses: true,
+      },
+    });
+    const data = this.mapEntityArrayToDtoArray(entities);
+    return new PaginatedResponseDto<UserDto>(data, total, limit, offset);
+  }
+
+  private mapEntityArrayToDtoArray(entityArray: User[]): UserDto[] {
+    return entityArray.map((user) => this.mapEntityToDto(user));
+  }
+
+  public mapEntityToDto(entity: User): UserDto {
+    if (!entity) {
+      return null;
+    }
     return {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      address: user.address,
-      city: user.city,
-      phone: user.phone,
-      email: user.email,
-      state: user.state,
-      zipCode: user.zipCode,
-      role: user.role,
+      id: entity.id,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
+      phone: entity.phone,
+      email: entity.email,
+      role: entity.role,
+      costumerRoles: entity.costumerRole,
+      addresses:
+        entity.addresses && entity.addresses.length > 0
+          ? this.addressService.mapArrayEntityToArrayDto(entity.addresses)
+          : [],
+      inCartId: entity.orders ? this.haveInCartId(entity.orders) : null,
     };
+  }
+
+  private haveInCartId(orders: ClientOrder[]): number | null {
+    if (orders.length === 0) {
+      return null;
+    }
+    const inCart = orders.find((order) => order.invoiceStatus === 'IN_CART');
+    if (inCart) {
+      return inCart.id;
+    }
+    return null;
   }
 }

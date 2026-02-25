@@ -27,6 +27,7 @@ import { magazineFilterConfig } from './filters/magazine-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { LegislationCategory } from '../../types/legislation-category.type';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class MagazineService {
@@ -37,6 +38,7 @@ export class MagazineService {
     private readonly handGunService: HandGunService,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -321,8 +323,8 @@ export class MagazineService {
             StockableObject.MAGAZINE,
           ),
       stock: stock,
-      createdBy: magazine.createdBy,
-      updatedBy: magazine.updatedBy,
+      createdBy: this.userService.mapEntityToDto(magazine.createdBy),
+      updatedBy: this.userService.mapEntityToDto(magazine.updatedBy),
       createdAt: magazine.createdAt,
       updatedAt: magazine.updatedAt,
       isDiscounted: magazine.isDiscounted,

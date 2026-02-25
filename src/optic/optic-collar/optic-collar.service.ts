@@ -29,8 +29,7 @@ import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { opticCollarWhereFilterConfig } from '../filters/optic-collar-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
-import { Optic } from '../../database/entity/optic.entity';
-import { OpticDto } from '../../dto/optic.dto';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class OpticCollarService {
@@ -39,6 +38,7 @@ export class OpticCollarService {
     private readonly opticCollarRepository: Repository<OpticCollar>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   public async findAll(
@@ -281,8 +281,8 @@ export class OpticCollarService {
             StockableObject.OPTIC_COLLAR,
           ),
       stock: stock,
-      createdBy: collar.createdBy,
-      updatedBy: collar.updatedBy,
+      createdBy: this.userService.mapEntityToDto(collar.createdBy),
+      updatedBy: this.userService.mapEntityToDto(collar.updatedBy),
       createdAt: collar.createdAt,
       updatedAt: collar.updatedAt,
       isDiscounted: collar.isDiscounted,

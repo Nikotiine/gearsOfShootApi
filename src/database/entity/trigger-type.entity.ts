@@ -1,9 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { HandGun } from './hand-gun.entity';
 
 @Entity()
-export class TriggerType extends BaseEntity {
+export class TriggerType extends CustomBase {
   @Column()
   name: string;
 

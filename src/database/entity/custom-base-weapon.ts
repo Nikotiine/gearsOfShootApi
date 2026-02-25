@@ -1,5 +1,5 @@
 import { Column, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
-import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './custom-base-audit';
 import { LegislationCategory } from './legislation-category.entity';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';

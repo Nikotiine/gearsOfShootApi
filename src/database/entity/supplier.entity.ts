@@ -1,10 +1,10 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { PriceHistory } from './price-history.entity';
 import { InvoiceSupplier } from './invoice-supplier.entity';
 
 @Entity()
-export class Supplier extends BaseEntity {
+export class Supplier extends CustomBase {
   @Column({ unique: true })
   name: string;
   @Column()

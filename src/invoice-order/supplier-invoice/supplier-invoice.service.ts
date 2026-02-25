@@ -30,6 +30,7 @@ import { SoundReducerService } from '../../accessory/sound-reducer/sound-reducer
 import { CodeError } from '../../enum/code-error.enum';
 import { CodeSuccess } from '../../enum/code-success.enum';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class SupplierInvoiceService {
@@ -44,6 +45,7 @@ export class SupplierInvoiceService {
     private readonly opticService: OpticService,
     private readonly opticCollarService: OpticCollarService,
     private readonly soundReducerService: SoundReducerService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -403,7 +405,7 @@ export class SupplierInvoiceService {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       items: await this.mapItemsToFullItemsDto(entity.items),
-      createdBy: entity.createdBy,
+      createdBy: this.userService.mapEntityToDto(entity.createdBy),
       invoiceSupplierReference: entity.invoiceSupplierReference,
       totalAccountHT: entity.totalAccountHT,
       totalInvoiceItems: entity.totalInvoiceItems,

@@ -29,6 +29,7 @@ import { buildWhereGeneric } from '../../database/utils/where-builder';
 import { soundNoiseFilterConfig } from './filters/sound-noise-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class SoundReducerService {
@@ -37,6 +38,7 @@ export class SoundReducerService {
     private readonly soundNoiseReducerRepository: Repository<SoundNoiseReducer>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   public async insert(
@@ -307,8 +309,8 @@ export class SoundReducerService {
             StockableObject.RDS,
           ),
       stock: stock,
-      createdBy: soundNoiseReducer.createdBy,
-      updatedBy: soundNoiseReducer.updatedBy,
+      createdBy: this.userService.mapEntityToDto(soundNoiseReducer.createdBy),
+      updatedBy: this.userService.mapEntityToDto(soundNoiseReducer.updatedBy),
       createdAt: soundNoiseReducer.createdAt,
       updatedAt: soundNoiseReducer.updatedAt,
       isDiscounted: soundNoiseReducer.isDiscounted,

@@ -10,11 +10,13 @@ import { PriceHistoryController } from './price-history/price-history.controller
 import { SupplierController } from './supplier/supplier.controller';
 import { SupplierService } from './supplier/supplier.service';
 import { Supplier } from '../database/entity/supplier.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
   providers: [StockService, PriceHistoryService, SupplierService],
   imports: [
     TypeOrmModule.forFeature([Stock, StockHistory, PriceHistory, Supplier]),
+    UserModule,
   ],
   exports: [StockService, PriceHistoryService],
   controllers: [StockController, PriceHistoryController, SupplierController],

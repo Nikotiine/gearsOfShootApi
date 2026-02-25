@@ -2,10 +2,10 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceSupplier } from './invoice-supplier.entity';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 
 @Entity()
-export class ItemInvoiceSupplier extends BaseEntity {
+export class ItemInvoiceSupplier extends CustomBase {
   @Column({ enum: StockableObject })
   object: StockableObject;
 

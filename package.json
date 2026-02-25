@@ -1,8 +1,8 @@
 {
   "name": "back",
-  "version": "0.4.21",
+  "version": "0.5.0",
   "description": "",
-  "author": "",
+  "author": "Nicolas.GODIN",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

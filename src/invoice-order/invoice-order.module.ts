@@ -11,17 +11,38 @@ import { OpticModule } from '../optic/optic.module';
 import { AccessoryModule } from '../accessory/accessory.module';
 import { InvoiceItemController } from './invoice-item/invoice-item.controller';
 import { SaleModule } from '../sale/sale.module';
+import { ClientOrderService } from './client-order/client-order.service';
+import { ClientOrderController } from './client-order/client-order.controller';
+import { ClientOrder } from '../database/entity/client-order.entity';
+import { ClientOrderItem } from '../database/entity/client-order-item.entity';
+import { UserModule } from '../user/user.module';
+import { ClientOrderItemService } from './client-order-item/client-order-item.service';
 
 @Module({
-  providers: [SupplierInvoiceService, InvoiceItemService],
+  providers: [
+    SupplierInvoiceService,
+    InvoiceItemService,
+    ClientOrderService,
+    ClientOrderItemService,
+  ],
   imports: [
-    TypeOrmModule.forFeature([InvoiceSupplier, ItemInvoiceSupplier]),
+    TypeOrmModule.forFeature([
+      InvoiceSupplier,
+      ItemInvoiceSupplier,
+      ClientOrder,
+      ClientOrderItem,
+    ]),
     AmmunitionModule,
     WeaponModule,
     OpticModule,
     AccessoryModule,
     SaleModule,
+    UserModule,
   ],
-  controllers: [SupplierInvoiceController, InvoiceItemController],
+  controllers: [
+    SupplierInvoiceController,
+    InvoiceItemController,
+    ClientOrderController,
+  ],
 })
 export class InvoiceOrderModule {}

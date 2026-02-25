@@ -1,11 +1,9 @@
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { ThreadedSize } from './threaded-size.entity';
 import { Caliber } from './caliber.entity';
 import { Factory } from './factory.entity';
-import {
-  BaseAuditEntity,
-  BaseAuditEntityWithSaleOptions,
-} from './base-audit.entity';
+import { BaseAuditEntityWithSaleOptions } from './custom-base-audit';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['threadedSize', 'factory', 'name'])
@@ -45,4 +43,16 @@ export class SoundNoiseReducer extends BaseAuditEntityWithSaleOptions {
 
   @Column()
   reference: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

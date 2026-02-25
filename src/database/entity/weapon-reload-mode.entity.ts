@@ -1,9 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { WeaponType } from './weapon-type.entity';
 
 @Entity()
-export class WeaponReloadMode extends BaseEntity {
+export class WeaponReloadMode extends CustomBase {
   // Mode de rechargement pour l'arme
   @Column({ unique: true })
   name: string;

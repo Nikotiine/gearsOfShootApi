@@ -1,8 +1,16 @@
-import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
-import { BaseAuditEntity } from './base-audit.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
+import { CustomBaseAudit } from './custom-base-audit';
 import { Supplier } from './supplier.entity';
 import { ItemInvoiceSupplier } from './item-invoice-supplier.entity';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
+import { User } from './user.entity';
 
 @Entity()
 @Unique([
@@ -12,7 +20,7 @@ import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
   'totalInvoiceItems',
   'shippingCost',
 ])
-export class InvoiceSupplier extends BaseAuditEntity {
+export class InvoiceSupplier extends CustomBaseAudit {
   @Column()
   totalPriceHt: number;
 
@@ -49,4 +57,16 @@ export class InvoiceSupplier extends BaseAuditEntity {
 
   @Column({ default: 'IN_ORDER' })
   invoiceStatus: InvoiceOrderStatus;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

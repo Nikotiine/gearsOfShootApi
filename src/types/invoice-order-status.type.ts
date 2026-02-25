@@ -3,4 +3,5 @@ export type InvoiceOrderStatus =
   | 'SHIPPING'
   | 'RECEIVED'
   | 'CANCELED'
+  | 'IN_CART'
   | 'ARCHIVE';

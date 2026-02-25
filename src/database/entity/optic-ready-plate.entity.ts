@@ -1,10 +1,10 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { Factory } from './factory.entity';
 
 @Entity()
 @Unique(['name', 'factory', 'reference'])
-export class OpticReadyPlate extends BaseEntity {
+export class OpticReadyPlate extends CustomBase {
   @Column()
   name: string;
 

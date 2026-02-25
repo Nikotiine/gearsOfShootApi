@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsOptional } from 'class-validator';
 import { UserRoles } from '../enum/user-roles.enum';
+import { CostumerRoles } from '../enum/costumer-roles.enum';
+import { AddressDto } from './address.dto';
+import { ClientOrder } from '../database/entity/client-order.entity';
+import { ClientOrderDto } from './client-order.dto';
 
 export class UserCredentialDto {
   @ApiProperty()
@@ -23,15 +27,7 @@ export class CreateUserDto {
   @ApiProperty()
   lastName: string;
   @ApiProperty()
-  address: string;
-  @ApiProperty()
   phone: string;
-  @ApiProperty()
-  city: string;
-  @ApiProperty()
-  state: string;
-  @ApiProperty()
-  zipCode: string;
   @ApiProperty({
     enum: UserRoles,
   })
@@ -48,17 +44,23 @@ export class UserDto {
   @ApiProperty()
   lastName: string;
   @ApiProperty()
-  address: string;
-  @ApiProperty()
   phone: string;
-  @ApiProperty()
-  city: string;
-  @ApiProperty()
-  state: string;
-  @ApiProperty()
-  zipCode: string;
   @ApiProperty({
     enum: UserRoles,
   })
   role: UserRoles;
+  @ApiProperty({
+    enum: CostumerRoles,
+  })
+  @IsOptional()
+  costumerRoles?: CostumerRoles;
+  @ApiProperty({
+    type: [AddressDto],
+  })
+  addresses: AddressDto[];
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  inCartId?: number;
 }

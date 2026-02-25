@@ -32,6 +32,7 @@ import { riffleWhereFilterConfig } from '../filters/riffle-where-filter.config';
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { LegislationCategory } from '../../types/legislation-category.type';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class RiffleService {
@@ -40,6 +41,7 @@ export class RiffleService {
     private readonly riffleRepository: Repository<Riffle>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -293,7 +295,7 @@ export class RiffleService {
       factory: riffle.factory,
       name: riffle.name,
       reference: riffle.reference,
-      colors: `Crosse: ${riffle.buttColor.name}| Cannon: ${riffle.barrelColor.name}`,
+      colors: `Crosse: ${riffle.buttColor?.name}| Cannon: ${riffle.barrelColor?.name}`,
       description: `Variante: ${riffle.variation ?? ''} | Type percussion: ${riffle.percussionType.name} | Type: ${riffle.type.name} | Description: ${riffle.description}`,
     };
   }
@@ -456,8 +458,8 @@ export class RiffleService {
             StockableObject.RIFFLE,
           ),
       stock: stock,
-      createdBy: riffle.createdBy,
-      updatedBy: riffle.updatedBy,
+      createdBy: this.userService.mapEntityToDto(riffle.createdBy),
+      updatedBy: this.userService.mapEntityToDto(riffle.updatedBy),
       createdAt: riffle.createdAt,
       updatedAt: riffle.updatedAt,
       isDiscounted: riffle.isDiscounted,

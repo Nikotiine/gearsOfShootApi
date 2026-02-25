@@ -1,12 +1,13 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   Unique,
 } from 'typeorm';
-
+import { BaseAuditEntityWithSaleOptions } from './custom-base-audit';
 import { Factory } from './factory.entity';
 import { Caliber } from './caliber.entity';
 import { Material } from './material.entity';
@@ -14,7 +15,7 @@ import { Riffle } from './riffle.entity';
 import { HandGun } from './hand-gun.entity';
 import { LegislationCategory } from './legislation-category.entity';
 import { WeaponType } from './weapon-type.entity';
-import { BaseAuditEntityWithSaleOptions } from './base-audit.entity';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['factory', 'category', 'body', 'capacity', 'caliber'])
@@ -63,4 +64,16 @@ export class WeaponMagazine extends BaseAuditEntityWithSaleOptions {
 
   @ManyToOne(() => WeaponType, (type) => type.magazines)
   forWeaponType: WeaponType;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }

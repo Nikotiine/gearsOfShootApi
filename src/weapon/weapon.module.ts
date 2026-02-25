@@ -26,6 +26,7 @@ import { ReloadModeController } from './reload-mode/reload-mode.controller';
 import { TriggerTypeController } from './trigger-type/trigger-type.controller';
 import { MLockOptionController } from './m-lock-option/m-lock-option.controller';
 import { SaleModule } from '../sale/sale.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [
@@ -61,6 +62,7 @@ import { SaleModule } from '../sale/sale.module';
     ]),
     CommonModule,
     SaleModule,
+    UserModule,
   ],
   exports: [HandGunService, RiffleService, MagazineService],
 })

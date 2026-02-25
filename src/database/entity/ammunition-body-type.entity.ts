@@ -1,9 +1,9 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Ammunition } from './ammunition.entity';
 
 @Entity()
-export class AmmunitionBodyType extends BaseEntity {
+export class AmmunitionBodyType extends CustomBase {
   // Nom du type de douille
   @Column({ unique: true })
   name: string;

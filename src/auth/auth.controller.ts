@@ -1,4 +1,11 @@
-import { Controller, Get, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -12,6 +19,8 @@ import { AuthService } from './auth.service';
 import { TokenDto, UserCredentialDto, UserDto } from '../dto/user.dto';
 import { LocalAuthGuard } from './strategy/local-auth.guard';
 import { JwtAuthGuard } from './strategy/jwt-auth.guard';
+import { ReqQueryUser } from '../decorator/req-query-user.decorator';
+import { User } from '../database/entity/user.entity';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -47,7 +56,7 @@ export class AuthController {
   @ApiOkResponse({
     type: UserDto,
   })
-  public async me(@Req() req: any): Promise<UserDto> {
-    return this.authService.getProfile(parseInt(req.user.id));
+  public async me(@ReqQueryUser() req: User): Promise<UserDto> {
+    return this.authService.getProfile(req.id);
   }
 }

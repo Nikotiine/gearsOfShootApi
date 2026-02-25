@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SoundNoiseReducer } from '../database/entity/sound-noise-reducer.entity';
 import { CommonModule } from '../common/common.module';
 import { SaleModule } from '../sale/sale.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   providers: [SoundReducerService],
@@ -13,6 +14,7 @@ import { SaleModule } from '../sale/sale.module';
     TypeOrmModule.forFeature([SoundNoiseReducer]),
     CommonModule,
     SaleModule,
+    UserModule,
   ],
   exports: [SoundReducerService],
 })

@@ -1,10 +1,10 @@
-import { BaseEntity } from './base.entity';
+import { CustomBase } from './custom-base';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { OpticCollar } from './optic-collar.entity';
 import { Riffle } from './riffle.entity';
 
 @Entity()
-export class RailSize extends BaseEntity {
+export class RailSize extends CustomBase {
   @Column({ unique: true })
   name: string;
 

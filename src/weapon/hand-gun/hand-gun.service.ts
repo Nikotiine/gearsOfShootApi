@@ -30,6 +30,7 @@ import { handGunWhereFilterConfig } from '../filters/hand-gun-where-filter.confi
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { HandGunType } from '../../enum/weapon-type.enum';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class HandGunService {
@@ -38,6 +39,7 @@ export class HandGunService {
     private readonly handGunRepository: Repository<HandGun>,
     private readonly priceHistoryService: PriceHistoryService,
     private readonly stockService: StockService,
+    private readonly userService: UserService,
   ) {}
 
   public async insert(handgun: CreateHandGunDto): Promise<HandGunDto> {
@@ -297,8 +299,8 @@ export class HandGunService {
             StockableObject.HANDGUN,
           ),
       stock: stock,
-      createdBy: handGun.createdBy,
-      updatedBy: handGun.updatedBy,
+      createdBy: this.userService.mapEntityToDto(handGun.createdBy),
+      updatedBy: this.userService.mapEntityToDto(handGun.updatedBy),
       createdAt: handGun.createdAt,
       updatedAt: handGun.updatedAt,
       isDiscounted: handGun.isDiscounted,

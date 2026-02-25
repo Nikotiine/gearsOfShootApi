@@ -1,11 +1,12 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { PriceableObjectType } from '../../enum/priceable-object-type.enum';
-import { BaseAuditEntity } from './base-audit.entity';
+import { CustomBaseAudit } from './custom-base-audit';
 import { Supplier } from './supplier.entity';
+import { User } from './user.entity';
 
 @Entity()
-export class PriceHistory extends BaseAuditEntity {
+export class PriceHistory extends CustomBaseAudit {
   @Column({ type: 'float' })
   supplierPrice: number;
 
@@ -32,4 +33,16 @@ export class PriceHistory extends BaseAuditEntity {
 
   @ManyToOne(() => Supplier, (supplier) => supplier.priceHistories)
   supplier: Supplier;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'created_by' })
+  createdBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy?: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedBy?: User;
 }
