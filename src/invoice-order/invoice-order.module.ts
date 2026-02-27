@@ -44,5 +44,6 @@ import { ClientOrderItemService } from './client-order-item/client-order-item.se
     InvoiceItemController,
     ClientOrderController,
   ],
+  exports: [ClientOrderService],
 })
 export class InvoiceOrderModule {}

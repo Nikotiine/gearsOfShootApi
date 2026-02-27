@@ -1,4 +1,3 @@
-import { CustomBase } from './custom-base';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { ClientOrderItem } from './client-order-item.entity';

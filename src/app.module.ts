@@ -18,10 +18,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestContextInterceptor } from './request-context/request-context.interceptor';
 import { InvoiceOrderModule } from './invoice-order/invoice-order.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
+
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     CommonModule,
     WeaponModule,
@@ -35,6 +39,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     InvoiceOrderModule,
     DashboardModule,
     NodemailerModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [
