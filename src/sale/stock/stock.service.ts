@@ -35,7 +35,9 @@ export class StockService {
     let newQuantity: number = 0;
     if (dto.movementType === 'IN') {
       newQuantity = previousQuantity + dto.quantity;
-    } else if (dto.movementType === 'OUT') {
+    } else if (dto.movementType === 'OUT' || dto.movementType === 'CART_OUT') {
+      console.log('ELELELELELELELELEEL', previousQuantity);
+      console.log('ELELELELELELELELEEL', dto.quantity);
       this.handleQuantityError(previousQuantity, dto.quantity);
       newQuantity = previousQuantity - dto.quantity;
     }
@@ -46,6 +48,7 @@ export class StockService {
   }
 
   private async verifyIfExist(dto: CreateStockDto): Promise<Stock | null> {
+    console.log('DTO verify', dto);
     return await this.stockRepository.findOne({
       where: {
         object: dto.object,

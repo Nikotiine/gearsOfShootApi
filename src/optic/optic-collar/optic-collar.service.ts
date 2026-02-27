@@ -204,6 +204,22 @@ export class OpticCollarService {
       factory: dto.factory.name,
     };
   }
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<boolean> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return isInStock;
+  }
 
   public async findDiscountedItems(
     limit: number = 5,

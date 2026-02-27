@@ -7,4 +7,4 @@ export enum StockableObject {
   RDS = 'RDS',
   MAGAZINE = 'MAGAZINE',
 }
-export type MovementType = 'IN' | 'OUT';
+export type MovementType = 'IN' | 'OUT' | 'CART_OUT' | 'CART_ROLLBACK';

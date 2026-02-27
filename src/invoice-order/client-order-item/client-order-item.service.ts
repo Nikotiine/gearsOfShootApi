@@ -7,12 +7,15 @@ import {
   CreateClientOrderItemDto,
 } from '../../dto/client-order-item.dto';
 import { ClientOrder } from '../../database/entity/client-order.entity';
+import { CreateStockDto } from '../../dto/stock.dto';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class ClientOrderItemService {
   constructor(
     @InjectRepository(ClientOrderItem)
     private readonly clientOrderItemRepository: Repository<ClientOrderItem>,
+    private readonly stockService: StockService,
   ) {}
 
   public async insert(
@@ -36,6 +39,14 @@ export class ClientOrderItemService {
       order: order,
       to: item.to,
     });
+    const updateStockDto: CreateStockDto = {
+      objectId: item.objectId,
+      object: item.object,
+      quantity: item.quantity,
+      reason: 'Mis dans le panier',
+      movementType: 'CART_OUT',
+    };
+    await this.stockService.insert(updateStockDto);
     return await this.clientOrderItemRepository.save(entity);
   }
 

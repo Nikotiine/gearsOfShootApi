@@ -19,6 +19,12 @@ import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { AmmunitionService } from '../../ammunition/ammunition.service';
 import { CodeError } from '../../enum/code-error.enum';
+import { HandGunService } from '../../weapon/hand-gun/hand-gun.service';
+import { RiffleService } from '../../weapon/riffle/riffle.service';
+import { MagazineService } from '../../weapon/magazine/magazine.service';
+import { OpticService } from '../../optic/optic.service';
+import { OpticCollarService } from '../../optic/optic-collar/optic-collar.service';
+import { SoundReducerService } from '../../accessory/sound-reducer/sound-reducer.service';
 
 @Injectable()
 export class ClientOrderService {
@@ -28,6 +34,12 @@ export class ClientOrderService {
     private readonly userService: UserService,
     private readonly clientOrderItemService: ClientOrderItemService,
     private readonly ammunitionService: AmmunitionService,
+    private readonly handgunService: HandGunService,
+    private readonly riffleService: RiffleService,
+    private readonly magazineService: MagazineService,
+    private readonly opticService: OpticService,
+    private readonly opticCollarService: OpticCollarService,
+    private readonly soundReducerService: SoundReducerService,
   ) {}
 
   public async insert(
@@ -177,6 +189,36 @@ export class ClientOrderService {
       switch (item.object.toUpperCase()) {
         case StockableObject.AMMUNITION:
           return await this.ammunitionService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.RDS:
+          return this.soundReducerService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.OPTIC:
+          return this.opticService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.OPTIC_COLLAR:
+          return this.opticCollarService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.HANDGUN:
+          return this.handgunService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.MAGAZINE:
+          return this.magazineService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.RIFFLE:
+          return this.riffleService.isItemsAreInStock(
             item.objectId,
             item.quantity,
           );

@@ -7,10 +7,10 @@ import { CustomBaseAudit } from './custom-base-audit';
 
 @Entity()
 export class ClientOrder extends CustomBaseAudit {
-  @Column()
+  @Column({ type: 'float' })
   totalPriceHt: number;
 
-  @Column({ default: 20 })
+  @Column({ default: 20, type: 'float' })
   vat: number;
 
   @Column({ default: 0 })
@@ -31,7 +31,7 @@ export class ClientOrder extends CustomBaseAudit {
   @ManyToOne(() => Address)
   paymentAddress: Address;
 
-  @Column()
+  @Column({ type: 'float' })
   totalPriceTTC: number;
 
   @Column()

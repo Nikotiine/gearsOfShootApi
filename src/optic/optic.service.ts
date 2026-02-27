@@ -433,6 +433,28 @@ export class OpticService {
     };
   }
 
+  /**
+   * Verifie si le stock est coreect par rapport a la quantite demandée
+   * @param id
+   * @param quantity
+   */
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<boolean> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return isInStock;
+  }
+
   private async mapOpticsArrayToOpticsDtoArray(
     optics: Optic[],
   ): Promise<OpticDto[]> {

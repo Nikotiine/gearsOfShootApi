@@ -379,6 +379,24 @@ export class RiffleService {
     });
   }
 
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<boolean> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return isInStock;
+  }
+
+  //******************************************** PRIVATE***************************************************************
   private createReference(dto: CreateRiffleDto): string {
     return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }
