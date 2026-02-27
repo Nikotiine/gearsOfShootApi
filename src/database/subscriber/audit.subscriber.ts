@@ -17,7 +17,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
    */
   beforeInsert(event: InsertEvent<any>): Promise<any> | void {
     const userId = RequestContextService.getUserId();
-    if (userId && event.metadata.findColumnWithPropertyName('createdBy')) {
+    if (userId && event.metadata.findColumnWithPropertyName('createdById')) {
       event.entity.createdBy = { id: userId };
     }
   }
@@ -26,7 +26,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
    */
   beforeUpdate(event: UpdateEvent<any>) {
     const userId = RequestContextService.getUserId();
-    if (userId && event.metadata.findColumnWithPropertyName('updatedBy')) {
+    if (userId && event.metadata.findColumnWithPropertyName('updatedById')) {
       event.entity.updatedBy = { id: userId };
     }
   }
@@ -36,7 +36,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
    */
   beforeSoftRemove(event: SoftRemoveEvent<any>): Promise<any> | void {
     const userId = RequestContextService.getUserId();
-    if (userId && event.metadata.findColumnWithPropertyName('deletedBy')) {
+    if (userId && event.metadata.findColumnWithPropertyName('deletedById')) {
       event.entity.deletedBy = { id: userId };
     }
   }

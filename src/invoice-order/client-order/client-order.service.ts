@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, LessThan, Repository } from 'typeorm';
 import { ClientOrder } from '../../database/entity/client-order.entity';
 import {
   ClientOrderDto,
@@ -114,14 +114,24 @@ export class ClientOrderService {
         where,
         relations: {
           shippingAddress: true,
+          items: true,
+          paymentAddress: true,
         },
         take: limit,
         skip: offset,
         order: { id: 'DESC' },
       });
-    // TODO: Mapper a faire
-    const data: any = entities;
+    const data: ClientOrderDto[] = this.mapArrayEntityToArrayDto(entities);
     return new PaginatedResponseDto<ClientOrderDto>(data, total, limit, offset);
+  }
+
+  public async deleteAllExpiredCart(): Promise<number> {
+    const result = await this.clientOrderEntityRepository.delete({
+      invoiceStatus: 'IN_CART',
+      cartValidity: LessThan(new Date()),
+    });
+
+    return result.affected ?? 0;
   }
 
   /**
@@ -180,6 +190,10 @@ export class ClientOrderService {
       status: entity.invoiceStatus,
       items: this.clientOrderItemService.mapArrayEntityToArrayDto(entity.items),
     };
+  }
+
+  private mapArrayEntityToArrayDto(order: ClientOrder[]): ClientOrderDto[] {
+    return order.map((order) => this.mapEntityToDto(order));
   }
 
   private getTotalPriceTTC(items: CreateClientOrderItemDto[], vat: number) {

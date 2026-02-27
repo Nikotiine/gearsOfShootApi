@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { BeforeRemove, Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 import { CustomBase } from './custom-base';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
@@ -26,7 +26,10 @@ export class ClientOrderItem extends CustomBase {
   @Column({ default: 'IN_ORDER' })
   status: InvoiceOrderStatus;
 
-  @ManyToOne(() => ClientOrder, (order) => order.items)
+  @ManyToOne(() => ClientOrder, (order) => order.items, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   order: ClientOrder;
 
   @Column()
