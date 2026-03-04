@@ -30,6 +30,7 @@ import { soundNoiseFilterConfig } from './filters/sound-noise-where-filter.confi
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class SoundReducerService {
@@ -260,18 +261,20 @@ export class SoundReducerService {
   public async isItemsAreInStock(
     id: number,
     quantity: number,
-  ): Promise<boolean> {
+  ): Promise<ItemsInStockResult> {
     let isInStock = true;
     const item = await this.findById(id);
     if (!item) {
-      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
       isInStock = false;
     }
     const inStockQuantity = item.inStock;
     if (quantity > inStockQuantity) {
       isInStock = false;
     }
-    return isInStock;
+    return {
+      isInStock,
+      codeError: CodeError.SOUND_NOISE_OUT_OF_STOCK,
+    };
   }
   private async mapArrayEntityToArrayDto(
     soundNoiseReducers: SoundNoiseReducer[],

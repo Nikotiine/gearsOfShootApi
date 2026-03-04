@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientOrderItem } from '../../database/entity/client-order-item.entity';
-import {
-  ClientOrderItemDto,
-  CreateClientOrderItemDto,
-} from '../../dto/client-order-item.dto';
+import { CreateClientOrderItemDto } from '../../dto/client-order-item.dto';
 import { ClientOrder } from '../../database/entity/client-order.entity';
 import { CreateStockDto } from '../../dto/stock.dto';
 import { StockService } from '../../sale/stock/stock.service';
@@ -22,6 +19,7 @@ export class ClientOrderItemService {
     item: CreateClientOrderItemDto,
     order: ClientOrder,
     vat: number,
+    removeOlder?: boolean,
   ): Promise<ClientOrderItem> {
     const entity: ClientOrderItem = this.clientOrderItemRepository.create({
       object: item.object,
@@ -39,18 +37,28 @@ export class ClientOrderItemService {
       order: order,
       to: item.to,
     });
+    //TODO : Trouver l utilisateur et l'jouter a a la raison
     const updateStockDto: CreateStockDto = {
       objectId: item.objectId,
       object: item.object,
       quantity: item.quantity,
       reason: 'Mis dans le panier',
       movementType: 'CART_OUT',
+      cartValidity: order.cartValidity,
     };
-    await this.stockService.insert(updateStockDto);
+    await this.stockService.insert(updateStockDto, removeOlder);
     return await this.clientOrderItemRepository.save(entity);
   }
 
-  public mapEntityToDto(entity: ClientOrderItem): ClientOrderItemDto {
+  public async deleteByOrder(orderId: number): Promise<any> {
+    await this.clientOrderItemRepository.delete({
+      order: {
+        id: orderId,
+      },
+    });
+  }
+
+  public mapEntityToDto(entity: ClientOrderItem): CreateClientOrderItemDto {
     return {
       ...entity,
       price: entity.unitPriceHT,
@@ -59,7 +67,7 @@ export class ClientOrderItemService {
 
   public mapArrayEntityToArrayDto(
     entities: ClientOrderItem[],
-  ): ClientOrderItemDto[] {
+  ): CreateClientOrderItemDto[] {
     return entities.map((entity: ClientOrderItem) =>
       this.mapEntityToDto(entity),
     );

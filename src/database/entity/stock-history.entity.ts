@@ -24,6 +24,9 @@ export class StockHistory extends CustomBaseAudit {
   @Column({ nullable: true })
   reason: string;
 
+  @Column({ nullable: true })
+  cartValidity: Date;
+
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'created_by' })
   createdBy?: User;

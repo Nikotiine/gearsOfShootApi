@@ -31,6 +31,7 @@ import { ammunitionWhereFilterConfig } from './filters/ammunition-where-filter.c
 import { DiscountedItemDto, NewItemsDto } from '../dto/new-items.dto';
 import { LegislationCategory } from '../types/legislation-category.type';
 import { UserService } from '../user/user.service';
+import { ItemsInStockResult } from '../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class AmmunitionService {
@@ -374,18 +375,21 @@ export class AmmunitionService {
   public async isItemsAreInStock(
     id: number,
     quantity: number,
-  ): Promise<boolean> {
+  ): Promise<ItemsInStockResult> {
     let isInStock = true;
     const item = await this.findById(id);
     if (!item) {
-      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
       isInStock = false;
     }
+    console.log('*********************', item);
     const inStockQuantity = item.inStock;
     if (quantity > inStockQuantity) {
       isInStock = false;
     }
-    return isInStock;
+    return {
+      isInStock,
+      codeError: CodeError.AMMUNITION_OUT_OF_STOCK,
+    };
   }
 
   /**

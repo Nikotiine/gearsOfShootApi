@@ -74,8 +74,9 @@ export class CreateClientOrderItemDto {
   })
   @IsOptional()
   category?: LegislationCategoryDto;
-}
-export class ClientOrderItemDto extends CreateClientOrderItemDto {
-  @ApiProperty()
-  id: number;
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  id?: number;
 }

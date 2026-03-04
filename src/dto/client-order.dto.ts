@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ClientOrderItemDto,
-  CreateClientOrderItemDto,
-} from './client-order-item.dto';
+import { CreateClientOrderItemDto } from './client-order-item.dto';
 import { IsOptional, IsString } from 'class-validator';
 import { InvoiceOrderStatus } from '../types/invoice-order-status.type';
 import { AddressDto } from './address.dto';
@@ -57,9 +54,9 @@ export class ClientOrderDto {
   vat: number;
 
   @ApiProperty({
-    type: [ClientOrderItemDto],
+    type: [CreateClientOrderItemDto],
   })
-  items: ClientOrderItemDto[];
+  items: CreateClientOrderItemDto[];
 
   @ApiProperty()
   @IsString()

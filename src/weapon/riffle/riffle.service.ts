@@ -33,6 +33,7 @@ import { PaginatedResponseDto } from '../../decorator/paginated-response.decorat
 import { LegislationCategory } from '../../types/legislation-category.type';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class RiffleService {
@@ -382,18 +383,20 @@ export class RiffleService {
   public async isItemsAreInStock(
     id: number,
     quantity: number,
-  ): Promise<boolean> {
+  ): Promise<ItemsInStockResult> {
     let isInStock = true;
     const item = await this.findById(id);
     if (!item) {
-      //throw new BadRequestException(CodeError.AMMUNITION_ARE_NOT_IN_STOCK);
       isInStock = false;
     }
     const inStockQuantity = item.inStock;
     if (quantity > inStockQuantity) {
       isInStock = false;
     }
-    return isInStock;
+    return {
+      isInStock,
+      codeError: CodeError.RIFFLE_OUT_OF_STOCK,
+    };
   }
 
   //******************************************** PRIVATE***************************************************************

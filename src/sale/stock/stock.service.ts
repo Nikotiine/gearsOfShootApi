@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Stock } from '../../database/entity/stock.entity';
-import { Repository } from 'typeorm';
+import { In, LessThan, Not, Repository } from 'typeorm';
 import { StockHistory } from '../../database/entity/stock-history.entity';
 import {
   CreateStockDto,
@@ -22,7 +26,10 @@ export class StockService {
     private readonly userService: UserService,
   ) {}
 
-  public async insert(dto: CreateStockDto): Promise<StockDto> {
+  public async insert(
+    dto: CreateStockDto,
+    removeOlder?: boolean,
+  ): Promise<StockDto> {
     let stock = await this.verifyIfExist(dto);
     if (!stock) {
       stock = this.stockRepository.create({
@@ -31,24 +38,25 @@ export class StockService {
         quantity: 0,
       });
     }
-    const previousQuantity = stock.quantity;
+    let previousQuantity = stock.quantity;
+    if (removeOlder) {
+      previousQuantity = await this.getPreviousQuantity(stock.id);
+    }
+
     let newQuantity: number = 0;
     if (dto.movementType === 'IN') {
       newQuantity = previousQuantity + dto.quantity;
     } else if (dto.movementType === 'OUT' || dto.movementType === 'CART_OUT') {
-      console.log('ELELELELELELELELEEL', previousQuantity);
-      console.log('ELELELELELELELELEEL', dto.quantity);
       this.handleQuantityError(previousQuantity, dto.quantity);
       newQuantity = previousQuantity - dto.quantity;
     }
     stock.quantity = newQuantity;
     const stockSaved = await this.stockRepository.save(stock);
-    await this.saveHistory(stockSaved, dto, previousQuantity);
+    await this.saveHistory(stockSaved, dto, previousQuantity, removeOlder);
     return this.mapEntityToDto(stockSaved);
   }
 
   private async verifyIfExist(dto: CreateStockDto): Promise<Stock | null> {
-    console.log('DTO verify', dto);
     return await this.stockRepository.findOne({
       where: {
         object: dto.object,
@@ -75,7 +83,21 @@ export class StockService {
     stock: Stock,
     dto: CreateStockDto,
     previousQuantity: number,
+    removeOlder?: boolean,
   ): Promise<StockHistory> {
+    if (removeOlder) {
+      const older = await this.stockHistoryRepository.findOne({
+        where: {
+          movement: 'CART_OUT',
+          stock: {
+            id: stock.id,
+          },
+        },
+      });
+      if (older) {
+        await this.stockHistoryRepository.delete(older.id);
+      }
+    }
     const entity = this.stockHistoryRepository.create({
       stock: stock,
       newQuantity: stock.quantity,
@@ -83,8 +105,27 @@ export class StockService {
       movement: dto.movementType,
       movementQuantity: dto.quantity,
       reason: dto.reason,
+      cartValidity: dto.cartValidity,
     });
     return await this.stockHistoryRepository.save(entity);
+  }
+
+  public async getPreviousQuantity(stockId: number): Promise<number | null> {
+    const older = await this.stockHistoryRepository.findOne({
+      where: {
+        stock: {
+          id: stockId,
+        },
+        movement: In(['IN', 'OUT']),
+      },
+      order: {
+        id: 'DESC',
+      },
+    });
+    if (!older) {
+      return null;
+    }
+    return older.newQuantity;
   }
 
   public initStock(
@@ -164,6 +205,41 @@ export class StockService {
   ): StockHistoriesDto[] {
     return entities.map((history) => {
       return this.mapHistoryEntityToDto(history);
+    });
+  }
+
+  public async removeAllInCart(): Promise<any> {
+    const histories: StockHistory[] = await this.getInCartHistories();
+    for (const history of histories) {
+      const previousQuantity = await this.getPreviousQuantity(history.stock.id);
+      const stock = await this.stockRepository.findOne({
+        where: {
+          id: history.stock.id,
+        },
+      });
+      if (!stock) {
+        throw new NotFoundException(
+          `stock with id ${history.stock.id} not found`,
+        );
+      }
+      stock.quantity = previousQuantity;
+      await this.stockHistoryRepository.save(stock);
+      await this.stockHistoryRepository.delete({
+        movement: 'CART_OUT',
+        cartValidity: LessThan(new Date()),
+      });
+    }
+  }
+
+  private async getInCartHistories(): Promise<StockHistory[]> {
+    return this.stockHistoryRepository.find({
+      where: {
+        movement: 'CART_OUT',
+        cartValidity: LessThan(new Date()),
+      },
+      relations: {
+        stock: true,
+      },
     });
   }
 }

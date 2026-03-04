@@ -25,6 +25,8 @@ import { MagazineService } from '../../weapon/magazine/magazine.service';
 import { OpticService } from '../../optic/optic.service';
 import { OpticCollarService } from '../../optic/optic-collar/optic-collar.service';
 import { SoundReducerService } from '../../accessory/sound-reducer/sound-reducer.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class ClientOrderService {
@@ -40,6 +42,7 @@ export class ClientOrderService {
     private readonly opticService: OpticService,
     private readonly opticCollarService: OpticCollarService,
     private readonly soundReducerService: SoundReducerService,
+    private readonly stockService: StockService,
   ) {}
 
   public async insert(
@@ -56,10 +59,8 @@ export class ClientOrderService {
     }
     const stockIsOk = await this.verifyIfStockIsOk(order.items);
     if (!stockIsOk) {
-      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
-      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
+      throw new BadRequestException(stockIsOk.codeError);
     }
-    //TODO: Enelver les objet du stock le temps que le panier est valide
     const entity: ClientOrder = this.clientOrderEntityRepository.create({
       vat: order.vat,
       invoiceStatus: order.status,
@@ -86,16 +87,33 @@ export class ClientOrderService {
   public async update(id: number, order: UpdateClientOrderDto): Promise<any> {
     // TODO: ajouter verifiaction user connecter === client de la commande + access admin
     const stockIsOk = await this.verifyIfStockIsOk(order.items);
-    if (!stockIsOk) {
-      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
-      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
+
+    if (!stockIsOk.isInStock) {
+      throw new BadRequestException(stockIsOk.codeError);
     }
-    const updatedResult = await this.clientOrderEntityRepository.preload({
-      id,
-      ...order,
+    const existingOrder = await this.clientOrderEntityRepository.findOne({
+      where: { id },
+      relations: { items: true },
     });
+    if (!existingOrder) {
+      throw new BadRequestException(CodeError.ORDER_NOT_FOUND);
+    }
+    //TODO faire la suite
+    existingOrder.invoiceStatus = order.status;
+    existingOrder.totalPriceTTC = this.getTotalPriceTTC(order.items, order.vat);
+    existingOrder.message = order.message;
+    existingOrder.cartValidity = this.getCartValidityTime(order.status);
     const updated: ClientOrder =
-      await this.clientOrderEntityRepository.save(updatedResult);
+      await this.clientOrderEntityRepository.save(existingOrder);
+    await this.clientOrderItemService.deleteByOrder(id);
+    for (const item of order.items) {
+      await this.clientOrderItemService.insert(
+        item,
+        updated,
+        updated.vat,
+        true,
+      );
+    }
     return this.mapEntityToDto(updated);
   }
 
@@ -138,6 +156,8 @@ export class ClientOrderService {
   }
 
   public async deleteAllExpiredCart(): Promise<number> {
+    await this.stockService.removeAllInCart();
+
     const result = await this.clientOrderEntityRepository.delete({
       invoiceStatus: 'IN_CART',
       cartValidity: LessThan(new Date()),
@@ -184,7 +204,7 @@ export class ClientOrderService {
 
   private async verifyIfStockIsOk(
     items: CreateClientOrderItemDto[],
-  ): Promise<boolean> {
+  ): Promise<ItemsInStockResult> {
     for (const item of items) {
       switch (item.object.toUpperCase()) {
         case StockableObject.AMMUNITION:
