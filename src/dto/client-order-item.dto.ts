@@ -74,9 +74,16 @@ export class CreateClientOrderItemDto {
   })
   @IsOptional()
   category?: LegislationCategoryDto;
+
   @ApiProperty({
     nullable: true,
   })
   @IsOptional()
   id?: number;
+
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  maxAvailableQuantity?: number;
 }

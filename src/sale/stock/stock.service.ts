@@ -1,11 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Stock } from '../../database/entity/stock.entity';
-import { In, LessThan, Not, Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { StockHistory } from '../../database/entity/stock-history.entity';
 import {
   CreateStockDto,
@@ -25,7 +21,7 @@ export class StockService {
     private readonly stockHistoryRepository: Repository<StockHistory>,
     private readonly userService: UserService,
   ) {}
-
+  private readonly logger = new Logger(StockService.name);
   public async insert(
     dto: CreateStockDto,
     removeOlder?: boolean,
@@ -40,14 +36,19 @@ export class StockService {
     }
     let previousQuantity = stock.quantity;
     if (removeOlder) {
-      previousQuantity = await this.getPreviousQuantity(stock.id);
+      previousQuantity = await this.getPreviousQuantity(stock.id, dto.orderId);
     }
 
     let newQuantity: number = 0;
     if (dto.movementType === 'IN') {
       newQuantity = previousQuantity + dto.quantity;
     } else if (dto.movementType === 'OUT' || dto.movementType === 'CART_OUT') {
-      this.handleQuantityError(previousQuantity, dto.quantity);
+      this.handleQuantityError(
+        previousQuantity,
+        dto.quantity,
+        dto.object,
+        dto.objectId,
+      );
       newQuantity = previousQuantity - dto.quantity;
     }
     stock.quantity = newQuantity;
@@ -73,10 +74,47 @@ export class StockService {
   private handleQuantityError(
     quantityInStock: number,
     quantityToRemove: number,
+    object: StockableObject,
+    objectId: number,
   ): void {
     if (quantityInStock < quantityToRemove) {
-      throw new BadRequestException(CodeError.STOCK_QUANTITY_ERROR);
+      this.handleBadRequestException(object, objectId);
     }
+  }
+
+  private handleBadRequestException(object: StockableObject, objectId: number) {
+    let message: string = CodeError.STOCK_QUANTITY_ERROR;
+    switch (object) {
+      case StockableObject.AMMUNITION:
+        message = CodeError.AMMUNITION_OUT_OF_STOCK;
+        break;
+      case StockableObject.OPTIC:
+        message = CodeError.OPTIC_NOT_FOUND;
+        break;
+      case StockableObject.HANDGUN:
+        message = CodeError.HANDGUN_OUT_OF_STOCK;
+        break;
+      case StockableObject.RIFFLE:
+        message = CodeError.RIFFLE_OUT_OF_STOCK;
+        break;
+      case StockableObject.MAGAZINE:
+        message = CodeError.WEAPON_MAGAZINE_OUT_OF_STOCK;
+        break;
+      case StockableObject.OPTIC_COLLAR:
+        message = CodeError.OPTIC_COLLAR_OUT_OF_STOCK;
+        break;
+      case StockableObject.RDS:
+        message = CodeError.SOUND_NOISE_OUT_OF_STOCK;
+        break;
+    }
+    const error = {
+      message: message,
+      object: object,
+      id: objectId,
+      error: 'Bad Request',
+      statusCode: 400,
+    };
+    throw new BadRequestException(error);
   }
 
   private async saveHistory(
@@ -92,6 +130,7 @@ export class StockService {
           stock: {
             id: stock.id,
           },
+          orderId: dto.orderId,
         },
       });
       if (older) {
@@ -106,17 +145,21 @@ export class StockService {
       movementQuantity: dto.quantity,
       reason: dto.reason,
       cartValidity: dto.cartValidity,
+      orderId: dto.orderId,
     });
     return await this.stockHistoryRepository.save(entity);
   }
 
-  public async getPreviousQuantity(stockId: number): Promise<number | null> {
+  public async getPreviousQuantity(
+    stockId: number,
+    orderId: number,
+  ): Promise<number | null> {
     const older = await this.stockHistoryRepository.findOne({
       where: {
         stock: {
           id: stockId,
         },
-        movement: In(['IN', 'OUT']),
+        orderId: orderId,
       },
       order: {
         id: 'DESC',
@@ -125,7 +168,7 @@ export class StockService {
     if (!older) {
       return null;
     }
-    return older.newQuantity;
+    return older.previousQuantity;
   }
 
   public initStock(
@@ -211,22 +254,26 @@ export class StockService {
   public async removeAllInCart(): Promise<any> {
     const histories: StockHistory[] = await this.getInCartHistories();
     for (const history of histories) {
-      const previousQuantity = await this.getPreviousQuantity(history.stock.id);
+      const previousQuantity = await this.getPreviousQuantity(
+        history.stock.id,
+        history.orderId,
+      );
       const stock = await this.stockRepository.findOne({
         where: {
           id: history.stock.id,
         },
       });
       if (!stock) {
-        throw new NotFoundException(
-          `stock with id ${history.stock.id} not found`,
-        );
+        this.logger.log(`${history.stock.id} not found`);
       }
       stock.quantity = previousQuantity;
-      await this.stockHistoryRepository.save(stock);
+      await this.stockRepository.save(stock);
       await this.stockHistoryRepository.delete({
         movement: 'CART_OUT',
         cartValidity: LessThan(new Date()),
+        stock: {
+          id: stock.id,
+        },
       });
     }
   }

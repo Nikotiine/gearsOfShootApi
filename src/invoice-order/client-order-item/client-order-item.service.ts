@@ -45,6 +45,7 @@ export class ClientOrderItemService {
       reason: 'Mis dans le panier',
       movementType: 'CART_OUT',
       cartValidity: order.cartValidity,
+      orderId: order.id,
     };
     await this.stockService.insert(updateStockDto, removeOlder);
     return await this.clientOrderItemRepository.save(entity);
@@ -58,18 +59,28 @@ export class ClientOrderItemService {
     });
   }
 
-  public mapEntityToDto(entity: ClientOrderItem): CreateClientOrderItemDto {
+  public async mapEntityToDto(
+    entity: ClientOrderItem,
+  ): Promise<CreateClientOrderItemDto> {
+    const available =
+      entity.quantity +
+      (await this.stockService.findCurrentQuantity(
+        entity.objectId,
+        entity.object,
+      ));
     return {
       ...entity,
       price: entity.unitPriceHT,
+      maxAvailableQuantity: available ?? null,
     };
   }
 
-  public mapArrayEntityToArrayDto(
+  public async mapArrayEntityToArrayDto(
     entities: ClientOrderItem[],
-  ): CreateClientOrderItemDto[] {
-    return entities.map((entity: ClientOrderItem) =>
+  ): Promise<CreateClientOrderItemDto[]> {
+    const promise = entities.map(async (entity: ClientOrderItem) =>
       this.mapEntityToDto(entity),
     );
+    return await Promise.all(promise);
   }
 }

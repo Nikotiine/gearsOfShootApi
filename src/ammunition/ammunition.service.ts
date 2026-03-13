@@ -381,7 +381,7 @@ export class AmmunitionService {
     if (!item) {
       isInStock = false;
     }
-    console.log('*********************', item);
+
     const inStockQuantity = item.inStock;
     if (quantity > inStockQuantity) {
       isInStock = false;

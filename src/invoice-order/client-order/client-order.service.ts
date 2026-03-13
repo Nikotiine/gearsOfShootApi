@@ -86,11 +86,6 @@ export class ClientOrderService {
 
   public async update(id: number, order: UpdateClientOrderDto): Promise<any> {
     // TODO: ajouter verifiaction user connecter === client de la commande + access admin
-    const stockIsOk = await this.verifyIfStockIsOk(order.items);
-
-    if (!stockIsOk.isInStock) {
-      throw new BadRequestException(stockIsOk.codeError);
-    }
     const existingOrder = await this.clientOrderEntityRepository.findOne({
       where: { id },
       relations: { items: true },
@@ -151,7 +146,8 @@ export class ClientOrderService {
         skip: offset,
         order: { id: 'DESC' },
       });
-    const data: ClientOrderDto[] = this.mapArrayEntityToArrayDto(entities);
+    const data: ClientOrderDto[] =
+      await this.mapArrayEntityToArrayDto(entities);
     return new PaginatedResponseDto<ClientOrderDto>(data, total, limit, offset);
   }
 
@@ -246,16 +242,22 @@ export class ClientOrderService {
     }
   }
 
-  private mapEntityToDto(entity: ClientOrder): ClientOrderDto {
+  private async mapEntityToDto(entity: ClientOrder): Promise<ClientOrderDto> {
     return {
       ...entity,
       status: entity.invoiceStatus,
-      items: this.clientOrderItemService.mapArrayEntityToArrayDto(entity.items),
+      items: await this.clientOrderItemService.mapArrayEntityToArrayDto(
+        entity.items,
+      ),
     };
   }
 
-  private mapArrayEntityToArrayDto(order: ClientOrder[]): ClientOrderDto[] {
-    return order.map((order) => this.mapEntityToDto(order));
+  private async mapArrayEntityToArrayDto(
+    order: ClientOrder[],
+  ): Promise<ClientOrderDto[]> {
+    const promises = order.map(async (order) => this.mapEntityToDto(order));
+
+    return Promise.all(promises);
   }
 
   private getTotalPriceTTC(items: CreateClientOrderItemDto[], vat: number) {
