@@ -31,6 +31,7 @@ import { PaginatedResponseDto } from '../../decorator/paginated-response.decorat
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { HandGunType } from '../../enum/weapon-type.enum';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class HandGunService {
@@ -245,6 +246,25 @@ export class HandGunService {
       id: id,
       isSuccess: deleted.affected > 0,
       message: CodeSuccess.WEAPON_DELETE,
+    };
+  }
+
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<ItemsInStockResult> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return {
+      isInStock,
+      codeError: CodeError.HANDGUN_OUT_OF_STOCK,
     };
   }
 

@@ -28,6 +28,8 @@ import { PaginatedResponseDto } from '../../decorator/paginated-response.decorat
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { LegislationCategory } from '../../types/legislation-category.type';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
+import { CodeError } from '../../enum/code-error.enum';
 
 @Injectable()
 export class MagazineService {
@@ -272,62 +274,22 @@ export class MagazineService {
     };
   }
 
-  /**
-   * Transforme un tableau de chargeur ( entite bdd ) en DTO
-   * @param magazines
-   * @private
-   */
-  private async mapEntityArrayToDtoArray(
-    magazines: WeaponMagazine[],
-  ): Promise<WeaponMagazineDto[]> {
-    const dtoPromises = magazines.map(async (magazine) => {
-      return this.mapEntityToDto(magazine);
-    });
-    return await Promise.all(dtoPromises);
-  }
-
-  private async mapEntityToDto(
-    magazine: WeaponMagazine,
-    price?: PriceHistoryDto,
-    stock?: StockDto,
-  ): Promise<WeaponMagazineDto> {
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<ItemsInStockResult> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
     return {
-      id: magazine.id,
-      body: magazine.body,
-      caliber: magazine.caliber,
-      factory: magazine.factory,
-      reference: magazine.reference,
-      height: magazine.height,
-      length: magazine.length,
-      width: magazine.width,
-      capacity: magazine.capacity,
-      category: magazine.category,
-      compatibleRiffle: magazine.riffles
-        ? await this.riffleService.mapEntityArrayToDtoArray(magazine.riffles)
-        : [],
-      compatibleHandGun: magazine.handguns
-        ? await this.handGunService.mapEntityArrayToDtoArray(magazine.handguns)
-        : [],
-      weaponType: magazine.forWeaponType,
-      description: magazine.description,
-      priceHistory: price
-        ? price
-        : await this.priceHistoryService.findLastByObjectId(
-            magazine.id,
-            PriceableObjectType.MAGAZINE,
-          ),
-      inStock: stock
-        ? stock.quantity
-        : await this.stockService.findCurrentQuantity(
-            magazine.id,
-            StockableObject.MAGAZINE,
-          ),
-      stock: stock,
-      createdBy: this.userService.mapEntityToDto(magazine.createdBy),
-      updatedBy: this.userService.mapEntityToDto(magazine.updatedBy),
-      createdAt: magazine.createdAt,
-      updatedAt: magazine.updatedAt,
-      isDiscounted: magazine.isDiscounted,
+      isInStock,
+      codeError: CodeError.WEAPON_MAGAZINE_OUT_OF_STOCK,
     };
   }
 
@@ -399,6 +361,66 @@ export class MagazineService {
       },
     });
     return this.mapEntityArrayToDtoArray(magazines);
+  }
+
+  //******************************************** PRIVATE***************************************************************
+  /**
+   * Transforme un tableau de chargeur ( entite bdd ) en DTO
+   * @param magazines
+   * @private
+   */
+  private async mapEntityArrayToDtoArray(
+    magazines: WeaponMagazine[],
+  ): Promise<WeaponMagazineDto[]> {
+    const dtoPromises = magazines.map(async (magazine) => {
+      return this.mapEntityToDto(magazine);
+    });
+    return await Promise.all(dtoPromises);
+  }
+
+  private async mapEntityToDto(
+    magazine: WeaponMagazine,
+    price?: PriceHistoryDto,
+    stock?: StockDto,
+  ): Promise<WeaponMagazineDto> {
+    return {
+      id: magazine.id,
+      body: magazine.body,
+      caliber: magazine.caliber,
+      factory: magazine.factory,
+      reference: magazine.reference,
+      height: magazine.height,
+      length: magazine.length,
+      width: magazine.width,
+      capacity: magazine.capacity,
+      category: magazine.category,
+      compatibleRiffle: magazine.riffles
+        ? await this.riffleService.mapEntityArrayToDtoArray(magazine.riffles)
+        : [],
+      compatibleHandGun: magazine.handguns
+        ? await this.handGunService.mapEntityArrayToDtoArray(magazine.handguns)
+        : [],
+      weaponType: magazine.forWeaponType,
+      description: magazine.description,
+      priceHistory: price
+        ? price
+        : await this.priceHistoryService.findLastByObjectId(
+            magazine.id,
+            PriceableObjectType.MAGAZINE,
+          ),
+      inStock: stock
+        ? stock.quantity
+        : await this.stockService.findCurrentQuantity(
+            magazine.id,
+            StockableObject.MAGAZINE,
+          ),
+      stock: stock,
+      createdBy: this.userService.mapEntityToDto(magazine.createdBy),
+      updatedBy: this.userService.mapEntityToDto(magazine.updatedBy),
+      createdAt: magazine.createdAt,
+      updatedAt: magazine.updatedAt,
+      isDiscounted: magazine.isDiscounted,
+    };
   }
 
   private async createReference(

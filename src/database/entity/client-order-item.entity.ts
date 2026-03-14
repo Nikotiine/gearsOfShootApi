@@ -1,4 +1,4 @@
-import { BeforeRemove, Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 import { CustomBase } from './custom-base';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
@@ -17,10 +17,10 @@ export class ClientOrderItem extends CustomBase {
   @Column({ default: 0 })
   quantity: number;
 
-  @Column()
+  @Column({ type: 'float' })
   unitPriceHT: number;
 
-  @Column()
+  @Column({ type: 'float' })
   totalPriceHT: number;
 
   @Column({ default: 'IN_ORDER' })
@@ -38,7 +38,7 @@ export class ClientOrderItem extends CustomBase {
   @ManyToOne(() => LegislationCategory)
   category: LegislationCategory;
 
-  @Column()
+  @Column({ type: 'float' })
   totalPrice: number;
 
   @Column()

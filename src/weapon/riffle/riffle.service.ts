@@ -33,6 +33,7 @@ import { PaginatedResponseDto } from '../../decorator/paginated-response.decorat
 import { LegislationCategory } from '../../types/legislation-category.type';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class RiffleService {
@@ -379,6 +380,26 @@ export class RiffleService {
     });
   }
 
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<ItemsInStockResult> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return {
+      isInStock,
+      codeError: CodeError.RIFFLE_OUT_OF_STOCK,
+    };
+  }
+
+  //******************************************** PRIVATE***************************************************************
   private createReference(dto: CreateRiffleDto): string {
     return `${dto.factory.reference.substring(0, 4)}-${dto.name}-${dto.caliber.reference}`;
   }

@@ -27,6 +27,18 @@ export class CreateStockDto {
   @IsOptional()
   @IsString()
   reason: string;
+
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  cartValidity?: Date;
+
+  @ApiProperty({
+    nullable: true,
+  })
+  @IsOptional()
+  orderId?: number;
 }
 
 export class StockHistoriesDto {

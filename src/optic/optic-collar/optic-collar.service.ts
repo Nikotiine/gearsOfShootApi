@@ -30,6 +30,7 @@ import { opticCollarWhereFilterConfig } from '../filters/optic-collar-where-filt
 import { PaginatedResponseDto } from '../../decorator/paginated-response.decorator';
 import { DiscountedItemDto, NewItemsDto } from '../../dto/new-items.dto';
 import { UserService } from '../../user/user.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class OpticCollarService {
@@ -202,6 +203,24 @@ export class OpticCollarService {
       price: dto.priceHistory.currentSalePrice,
       sub: `Corps d'optique:${dto.diameter}-Pour rail: ${dto.railSize.name}`,
       factory: dto.factory.name,
+    };
+  }
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<ItemsInStockResult> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return {
+      isInStock,
+      codeError: CodeError.OPTIC_COLLAR_OUT_OF_STOCK,
     };
   }
 

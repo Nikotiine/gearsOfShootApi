@@ -19,6 +19,14 @@ import { InvoiceOrderStatus } from '../../types/invoice-order-status.type';
 import { StockableObject } from '../../enum/stock-item.enum';
 import { AmmunitionService } from '../../ammunition/ammunition.service';
 import { CodeError } from '../../enum/code-error.enum';
+import { HandGunService } from '../../weapon/hand-gun/hand-gun.service';
+import { RiffleService } from '../../weapon/riffle/riffle.service';
+import { MagazineService } from '../../weapon/magazine/magazine.service';
+import { OpticService } from '../../optic/optic.service';
+import { OpticCollarService } from '../../optic/optic-collar/optic-collar.service';
+import { SoundReducerService } from '../../accessory/sound-reducer/sound-reducer.service';
+import { ItemsInStockResult } from '../../utils/interface/ItemsInStockResult.interface';
+import { StockService } from '../../sale/stock/stock.service';
 
 @Injectable()
 export class ClientOrderService {
@@ -28,6 +36,13 @@ export class ClientOrderService {
     private readonly userService: UserService,
     private readonly clientOrderItemService: ClientOrderItemService,
     private readonly ammunitionService: AmmunitionService,
+    private readonly handgunService: HandGunService,
+    private readonly riffleService: RiffleService,
+    private readonly magazineService: MagazineService,
+    private readonly opticService: OpticService,
+    private readonly opticCollarService: OpticCollarService,
+    private readonly soundReducerService: SoundReducerService,
+    private readonly stockService: StockService,
   ) {}
 
   public async insert(
@@ -44,10 +59,8 @@ export class ClientOrderService {
     }
     const stockIsOk = await this.verifyIfStockIsOk(order.items);
     if (!stockIsOk) {
-      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
-      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
+      throw new BadRequestException(stockIsOk.codeError);
     }
-    //TODO: Enelver les objet du stock le temps que le panier est valide
     const entity: ClientOrder = this.clientOrderEntityRepository.create({
       vat: order.vat,
       invoiceStatus: order.status,
@@ -73,17 +86,29 @@ export class ClientOrderService {
 
   public async update(id: number, order: UpdateClientOrderDto): Promise<any> {
     // TODO: ajouter verifiaction user connecter === client de la commande + access admin
-    const stockIsOk = await this.verifyIfStockIsOk(order.items);
-    if (!stockIsOk) {
-      //TODO : Gerer le retrour utilisateur pour savoir quel produit est hors stock
-      throw new BadRequestException(CodeError.ORDER_OUT_OF_STOCK);
-    }
-    const updatedResult = await this.clientOrderEntityRepository.preload({
-      id,
-      ...order,
+    const existingOrder = await this.clientOrderEntityRepository.findOne({
+      where: { id },
+      relations: { items: true },
     });
+    if (!existingOrder) {
+      throw new BadRequestException(CodeError.ORDER_NOT_FOUND);
+    }
+    //TODO faire la suite
+    existingOrder.invoiceStatus = order.status;
+    existingOrder.totalPriceTTC = this.getTotalPriceTTC(order.items, order.vat);
+    existingOrder.message = order.message;
+    existingOrder.cartValidity = this.getCartValidityTime(order.status);
     const updated: ClientOrder =
-      await this.clientOrderEntityRepository.save(updatedResult);
+      await this.clientOrderEntityRepository.save(existingOrder);
+    await this.clientOrderItemService.deleteByOrder(id);
+    for (const item of order.items) {
+      await this.clientOrderItemService.insert(
+        item,
+        updated,
+        updated.vat,
+        true,
+      );
+    }
     return this.mapEntityToDto(updated);
   }
 
@@ -121,11 +146,14 @@ export class ClientOrderService {
         skip: offset,
         order: { id: 'DESC' },
       });
-    const data: ClientOrderDto[] = this.mapArrayEntityToArrayDto(entities);
+    const data: ClientOrderDto[] =
+      await this.mapArrayEntityToArrayDto(entities);
     return new PaginatedResponseDto<ClientOrderDto>(data, total, limit, offset);
   }
 
   public async deleteAllExpiredCart(): Promise<number> {
+    await this.stockService.removeAllInCart();
+
     const result = await this.clientOrderEntityRepository.delete({
       invoiceStatus: 'IN_CART',
       cartValidity: LessThan(new Date()),
@@ -172,7 +200,7 @@ export class ClientOrderService {
 
   private async verifyIfStockIsOk(
     items: CreateClientOrderItemDto[],
-  ): Promise<boolean> {
+  ): Promise<ItemsInStockResult> {
     for (const item of items) {
       switch (item.object.toUpperCase()) {
         case StockableObject.AMMUNITION:
@@ -180,20 +208,56 @@ export class ClientOrderService {
             item.objectId,
             item.quantity,
           );
+        case StockableObject.RDS:
+          return this.soundReducerService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.OPTIC:
+          return this.opticService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.OPTIC_COLLAR:
+          return this.opticCollarService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.HANDGUN:
+          return this.handgunService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.MAGAZINE:
+          return this.magazineService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
+        case StockableObject.RIFFLE:
+          return this.riffleService.isItemsAreInStock(
+            item.objectId,
+            item.quantity,
+          );
       }
     }
   }
 
-  private mapEntityToDto(entity: ClientOrder): ClientOrderDto {
+  private async mapEntityToDto(entity: ClientOrder): Promise<ClientOrderDto> {
     return {
       ...entity,
       status: entity.invoiceStatus,
-      items: this.clientOrderItemService.mapArrayEntityToArrayDto(entity.items),
+      items: await this.clientOrderItemService.mapArrayEntityToArrayDto(
+        entity.items,
+      ),
     };
   }
 
-  private mapArrayEntityToArrayDto(order: ClientOrder[]): ClientOrderDto[] {
-    return order.map((order) => this.mapEntityToDto(order));
+  private async mapArrayEntityToArrayDto(
+    order: ClientOrder[],
+  ): Promise<ClientOrderDto[]> {
+    const promises = order.map(async (order) => this.mapEntityToDto(order));
+
+    return Promise.all(promises);
   }
 
   private getTotalPriceTTC(items: CreateClientOrderItemDto[], vat: number) {

@@ -26,6 +26,7 @@ import { buildWhereGeneric } from '../database/utils/where-builder';
 import { opticWhereFilterConfig } from './filters/optic-where-filter.config';
 import { DiscountedItemDto, NewItemsDto } from '../dto/new-items.dto';
 import { UserService } from '../user/user.service';
+import { ItemsInStockResult } from '../utils/interface/ItemsInStockResult.interface';
 
 @Injectable()
 export class OpticService {
@@ -430,6 +431,30 @@ export class OpticService {
       name: `${optic.name} | ${optic.minZoom}-${optic.maxZoom}X${optic.lensDiameter}`,
       reference: optic.reference,
       description: `Plan focal: ${optic.focalPlane.name ?? ''} | Type: ${optic.opticType.name} | Description: ${optic.description}`,
+    };
+  }
+
+  /**
+   * Verifie si le stock est coreect par rapport a la quantite demandée
+   * @param id
+   * @param quantity
+   */
+  public async isItemsAreInStock(
+    id: number,
+    quantity: number,
+  ): Promise<ItemsInStockResult> {
+    let isInStock = true;
+    const item = await this.findById(id);
+    if (!item) {
+      isInStock = false;
+    }
+    const inStockQuantity = item.inStock;
+    if (quantity > inStockQuantity) {
+      isInStock = false;
+    }
+    return {
+      isInStock,
+      codeError: CodeError.OPTIC_OUT_OF_STOCK,
     };
   }
 
