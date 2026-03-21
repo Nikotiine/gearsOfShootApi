@@ -72,6 +72,8 @@ export class ClientOrderItemService {
       ...entity,
       price: entity.unitPriceHT,
       maxAvailableQuantity: available ?? null,
+      factory: entity.factory,
+      to: entity.to,
     };
   }
 
