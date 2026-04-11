@@ -80,7 +80,7 @@ export class ClientOrderController {
     summary: SwaggerDescription.CREATE_SUMMARY,
     description: 'Ajout d une nouvelle commande client',
   })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: ClientOrderDto,
   })
   @ApiBody({

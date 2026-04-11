@@ -1,8 +1,9 @@
 import { CustomBase } from './custom-base';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
+@Unique(['firstName', 'lastName', 'streetNumber', 'city', 'state', 'zipCode'])
 export class Address extends CustomBase {
   @Column()
   firstName: string;

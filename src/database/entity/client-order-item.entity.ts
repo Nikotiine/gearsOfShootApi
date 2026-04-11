@@ -44,7 +44,7 @@ export class ClientOrderItem extends CustomBase {
   @Column()
   comment: string;
 
-  @ManyToMany(() => Factory)
+  @ManyToOne(() => Factory)
   factory: Factory;
 
   @Column({

@@ -113,14 +113,23 @@ export class ClientOrderService {
   }
 
   public async findById(id: number): Promise<ClientOrderDto> {
+    console.log(
+      this.clientOrderEntityRepository.metadata.relations.map(
+        (r) => r.propertyName,
+      ),
+    );
     const order: ClientOrder = await this.clientOrderEntityRepository.findOne({
       where: {
         id: id,
       },
       relations: {
         shippingAddress: true,
-        items: true,
+        items: {
+          factory: true,
+          category: true,
+        },
         paymentAddress: true,
+        orderedBy: true,
       },
     });
     return this.mapEntityToDto(order);

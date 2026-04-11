@@ -3,8 +3,6 @@ import { IsEmail, IsOptional } from 'class-validator';
 import { UserRoles } from '../enum/user-roles.enum';
 import { CostumerRoles } from '../enum/costumer-roles.enum';
 import { AddressDto } from './address.dto';
-import { ClientOrder } from '../database/entity/client-order.entity';
-import { ClientOrderDto } from './client-order.dto';
 
 export class UserCredentialDto {
   @ApiProperty()

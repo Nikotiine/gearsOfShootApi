@@ -19,4 +19,6 @@ export class AddressDto {
   additionalInformation: string;
   @ApiProperty()
   zipCode: string;
+  @ApiProperty()
+  id?: number;
 }
