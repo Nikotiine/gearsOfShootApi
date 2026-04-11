@@ -32,6 +32,7 @@ import { OpticReadyPlateController } from './optic-ready-plate/optic-ready-plate
 import { FactoryTypeController } from './factory-type/factory-type.controller';
 import { AddressService } from './address/address.service';
 import { Address } from '../database/entity/address.entity';
+import { AddressController } from './address/address.controller';
 
 @Module({
   controllers: [
@@ -45,6 +46,7 @@ import { Address } from '../database/entity/address.entity';
     PercussionTypeController,
     OpticReadyPlateController,
     FactoryTypeController,
+    AddressController,
   ],
   providers: [
     FactoryService,
