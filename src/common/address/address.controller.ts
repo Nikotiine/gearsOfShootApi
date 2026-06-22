@@ -31,7 +31,7 @@ import { SwaggerDescription } from '../../enum/swagger-description.enum';
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Get()
+  @Get('user')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-Auth')
   @ApiOperation({

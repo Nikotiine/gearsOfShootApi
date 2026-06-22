@@ -1,6 +1,7 @@
 import { CustomBase } from './custom-base';
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne, Unique } from 'typeorm';
 import { User } from './user.entity';
+import { Store } from './store.entity';
 
 @Entity()
 @Unique(['firstName', 'lastName', 'streetNumber', 'city', 'state', 'zipCode'])
