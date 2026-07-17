@@ -43,3 +43,7 @@ export class CreateStoreDto {
   @IsNotEmpty()
   email: string;
 }
+export class StoreDto extends CreateStoreDto {
+  @ApiProperty()
+  id: number;
+}

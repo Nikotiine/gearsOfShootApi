@@ -1,6 +1,6 @@
 import { CustomBase } from './custom-base';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { Address } from './address.entity';
+import { Column, Entity } from 'typeorm';
+
 @Entity()
 export class Store extends CustomBase {
   @Column()
