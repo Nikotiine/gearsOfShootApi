@@ -1,6 +1,6 @@
 {
   "name": "back",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "",
   "author": "Nicolas.GODIN",
   "private": true,
@@ -22,7 +22,10 @@
     "migration:create": "npm run typeorm migration:create src/database/migrations/Version",
     "migration:run": "npm run typeorm:path-config -- migration:run",
     "migration:revert": "npm run typeorm:path-config -- migration:revert",
+    "seed:truncate": "npm run build && node dist/database/config/truncate.js",
     "seed:run": "npm run build && npx ts-node ./node_modules/typeorm-extension/bin/cli.cjs seed:run  -d dist/database/config/data-source.config.js",
+    "seed:refresh": "npm run seed:truncate && npm run seed:run",
+    "seed:re": "npm run seed:refresh",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

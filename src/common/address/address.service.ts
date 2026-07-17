@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Address } from '../../database/entity/address.entity';
-import { AddressDto } from '../../dto/address.dto';
+import { AddressDto, CreateAddressDto } from '../../dto/address.dto';
 
 @Injectable()
 export class AddressService {
@@ -22,7 +22,7 @@ export class AddressService {
   }
 
   public async addAddressToUser(
-    address: AddressDto,
+    address: CreateAddressDto,
     userId: number,
   ): Promise<AddressDto> {
     const entity = this.addressRepository.create({
@@ -44,5 +44,23 @@ export class AddressService {
       },
     });
     return this.mapArrayEntityToArrayDto(entities);
+  }
+
+  public async findById(id: number): Promise<AddressDto> {
+    const entity: Address = await this.addressRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return this.mapEntityToDto(entity);
+  }
+
+  public async update(id: number, dto: AddressDto): Promise<AddressDto> {
+    const update = await this.addressRepository.preload({
+      id: id,
+      ...dto,
+    });
+    const updated = await this.addressRepository.save(update);
+    return this.mapEntityToDto(updated);
   }
 }

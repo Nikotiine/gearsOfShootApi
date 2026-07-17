@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
-export class AddressDto {
+export class CreateAddressDto {
   @ApiProperty()
   firstName: string;
   @ApiProperty()
@@ -19,6 +20,9 @@ export class AddressDto {
   additionalInformation: string;
   @ApiProperty()
   zipCode: string;
-  @ApiProperty()
-  id?: number;
+}
+
+export class AddressDto extends CreateAddressDto {
+  @ApiProperty({})
+  id: number;
 }

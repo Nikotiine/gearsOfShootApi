@@ -20,6 +20,7 @@ import { InvoiceOrderModule } from './invoice-order/invoice-order.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from './cron/cron.module';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CronModule } from './cron/cron.module';
     DashboardModule,
     NodemailerModule,
     CronModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [

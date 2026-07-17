@@ -7,7 +7,7 @@ export class CartCronService {
   private readonly logger = new Logger(CartCronService.name);
   constructor(private readonly clientOrderService: ClientOrderService) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_HOUR)
   async handleCleanExpiredCart(): Promise<void> {
     const deletedCount = await this.clientOrderService.deleteAllExpiredCart();
 
